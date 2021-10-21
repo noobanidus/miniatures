@@ -153,7 +153,8 @@ public class MiniMeEntity extends MonsterEntity {
     // 2: On Fire
     // 3: Ghost
     // 4: Glow
-    // 5:
+    // 5: Charged
+    // 6: Prone
   }
 
   public int getNoobVariant() {
