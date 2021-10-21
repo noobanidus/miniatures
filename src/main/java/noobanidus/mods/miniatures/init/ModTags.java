@@ -10,8 +10,8 @@ import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
 public class ModTags {
   static {
     REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, (p) -> {
-      p.getOrCreateBuilder(MiniTags.Blocks.BREAK_BLOCKS).add(Blocks.TORCH);
-      p.getOrCreateBuilder(MiniTags.Blocks.BREAK_BLOCKS).addTag(BlockTags.FLOWERS);
+      p.tag(MiniTags.Blocks.BREAK_BLOCKS).add(Blocks.TORCH);
+      p.tag(MiniTags.Blocks.BREAK_BLOCKS).addTag(BlockTags.FLOWERS);
     });
   }
 

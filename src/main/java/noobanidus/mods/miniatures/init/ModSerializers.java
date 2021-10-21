@@ -15,7 +15,7 @@ public class ModSerializers {
     public void write(@Nonnull PacketBuffer packetBuffer, @Nonnull Optional<GameProfile> gameProfile) {
       if (gameProfile.isPresent()) {
         packetBuffer.writeBoolean(true);
-        packetBuffer.writeCompoundTag(NBTUtil.writeGameProfile(new CompoundNBT(), gameProfile.get()));
+        packetBuffer.writeNbt(NBTUtil.writeGameProfile(new CompoundNBT(), gameProfile.get()));
       } else {
         packetBuffer.writeBoolean(false);
       }
@@ -25,7 +25,7 @@ public class ModSerializers {
     @Nonnull
     public Optional<GameProfile> read(@Nonnull PacketBuffer packetBuffer) {
       if (packetBuffer.readBoolean()) {
-        CompoundNBT tag = packetBuffer.readCompoundTag();
+        CompoundNBT tag = packetBuffer.readNbt();
         if (tag != null) {
           GameProfile profile = NBTUtil.readGameProfile(tag);
           if (profile != null) {
@@ -38,7 +38,7 @@ public class ModSerializers {
 
     @Override
     @Nonnull
-    public Optional<GameProfile> copyValue(@Nonnull Optional<GameProfile> gameProfile) {
+    public Optional<GameProfile> copy(@Nonnull Optional<GameProfile> gameProfile) {
       return gameProfile;
     }
   };

@@ -39,7 +39,7 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
   }
 
   @Override
-  public ResourceLocation getEntityTexture(MiniMeEntity entity) {
+  public ResourceLocation getTextureLocation(MiniMeEntity entity) {
     return entity.getGameProfile()
         .map(this::getSkin)
         .orElse(TEXTURE_STEVE);
@@ -51,9 +51,9 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
     } else {
       final Minecraft minecraft = Minecraft.getInstance();
       SkinManager skinManager = minecraft.getSkinManager();
-      final Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> loadSkinFromCache = skinManager.loadSkinFromCache(gameProfile); // returned map may or may not be typed
+      final Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> loadSkinFromCache = skinManager.getInsecureSkinInformation(gameProfile); // returned map may or may not be typed
       if (loadSkinFromCache.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-        return skinManager.loadSkin(loadSkinFromCache.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+        return skinManager.registerTexture(loadSkinFromCache.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
       } else {
         return DefaultPlayerSkin.getDefaultSkin(gameProfile.getId());
       }
@@ -62,22 +62,22 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
 
   @Override
   public void render(MiniMeEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-    this.entityModel = ModelHolder.miniMe;
-    if (entityIn.isSlim() && this.entityModel != ModelHolder.miniMeSlim) {
-      this.entityModel = ModelHolder.miniMeSlim;
+    this.model = ModelHolder.miniMe;
+    if (entityIn.isSlim() && this.model != ModelHolder.miniMeSlim) {
+      this.model = ModelHolder.miniMeSlim;
     }
     int noob = entityIn.getNoobVariant();
     if (noob == 3) {
       packedLightIn = 15728880;
-      this.entityModel = ModelHolder.miniMeGhost;
-      if (entityIn.isSlim() && this.entityModel != ModelHolder.miniMeGhostSlim) {
-        this.entityModel = ModelHolder.miniMeGhostSlim;
+      this.model = ModelHolder.miniMeGhost;
+      if (entityIn.isSlim() && this.model != ModelHolder.miniMeGhostSlim) {
+        this.model = ModelHolder.miniMeGhostSlim;
       }
     } else if (noob == 4) {
       packedLightIn = 15728880;
-      this.entityModel = ModelHolder.miniMeGlow;
-      if (entityIn.isSlim() && this.entityModel != ModelHolder.miniMeGlowSlim) {
-        this.entityModel = ModelHolder.miniMeGlowSlim;
+      this.model = ModelHolder.miniMeGlow;
+      if (entityIn.isSlim() && this.model != ModelHolder.miniMeGlowSlim) {
+        this.model = ModelHolder.miniMeGlowSlim;
       }
     }
     super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
@@ -85,7 +85,7 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
 
 
 
-  protected void preRenderCallback(MiniMeEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+  protected void scale(MiniMeEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
     float scale = entitylivingbaseIn.getScale();
     if (NoobUtil.isNoob(entitylivingbaseIn)) {
       matrixStackIn.scale(1.0975F * scale, 1.0975F * scale, 1.0975F * scale);
@@ -95,12 +95,12 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
   }
 
   @Override
-  protected void applyRotations(MiniMeEntity entityLiving, MatrixStack matrixStackIn, float p_225621_3_, float p_225621_4_, float p_225621_5_) {
-    super.applyRotations(entityLiving, matrixStackIn, p_225621_3_, p_225621_4_, p_225621_5_);
+  protected void setupRotations(MiniMeEntity entityLiving, MatrixStack matrixStackIn, float pAgeInTicks, float pRotationYaw, float pPartialTicks) {
+    super.setupRotations(entityLiving, matrixStackIn, pAgeInTicks, pRotationYaw, pPartialTicks);
     int noob = entityLiving.getNoobVariant();
     if (noob == 0) {
-      matrixStackIn.translate(0.0D, (double) (entityLiving.getHeight() + 0.3F), 0.0D);
-      matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+      matrixStackIn.translate(0.0D, (double) (entityLiving.getBbHeight() + 0.3F), 0.0D);
+      matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
     } else if (noob == 1) {
       matrixStackIn.translate(0.0D, 0.5F, 0.0D);
     }

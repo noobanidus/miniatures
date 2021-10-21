@@ -14,7 +14,7 @@ public class MiniMeModel<E extends MiniMeEntity> extends PlayerRenderModel<E> {
   private final boolean arms;
 
   public MiniMeModel(float modelSize, boolean arms) {
-    this(AdditionalRenderTypes::getEntityTranslucent, modelSize, arms);
+    this(AdditionalRenderTypes::entityTranslucent, modelSize, arms);
   }
 
   public MiniMeModel(Function<ResourceLocation, RenderType> renderTypeIn, float modelSize, boolean smallArmsIn) {
@@ -31,32 +31,32 @@ public class MiniMeModel<E extends MiniMeEntity> extends PlayerRenderModel<E> {
   }
 
   @Override
-  public void setRotationAngles(E entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-    super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+  public void setupAnim(E entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     int noob = entityIn.getNoobVariant();
     if (noob == 1) {
-      this.bipedLeftLeg.rotateAngleX = 0.0f;
-      this.bipedLeftLeg.rotateAngleZ = 0.0f;
-      this.bipedRightLeg.rotateAngleX = 0.0f;
-      this.bipedRightLeg.rotateAngleZ = 0.0f;
+      this.leftLeg.xRot = 0.0f;
+      this.leftLeg.zRot = 0.0f;
+      this.rightLeg.xRot = 0.0f;
+      this.rightLeg.zRot = 0.0f;
     }
-    if (entityIn.isBeingRidden()) {
-      this.bipedLeftArm.rotateAngleX = -3f;
-      this.bipedRightArm.rotateAngleX = -3f;
-      this.bipedLeftArm.rotateAngleZ = 0.3f;
-      this.bipedRightArm.rotateAngleZ = -0.3f;
+    if (entityIn.isVehicle()) {
+      this.leftArm.xRot = -3f;
+      this.rightArm.xRot = -3f;
+      this.leftArm.zRot = 0.3f;
+      this.rightArm.zRot = -0.3f;
     }
-    this.bipedHeadwear.copyModelAngles(this.bipedHead);
-    this.bipedBodyWear.copyModelAngles(this.bipedBody);
-    this.bipedLeftArmwear.copyModelAngles(this.bipedLeftArm);
-    this.bipedRightArmwear.copyModelAngles(this.bipedRightArm);
-    this.bipedLeftLegwear.copyModelAngles(this.bipedLeftLeg);
-    this.bipedRightLegwear.copyModelAngles(this.bipedRightLeg);
+    this.hat.copyFrom(this.head);
+    this.bipedBodyWear.copyFrom(this.body);
+    this.bipedLeftArmwear.copyFrom(this.leftArm);
+    this.bipedRightArmwear.copyFrom(this.rightArm);
+    this.bipedLeftLegwear.copyFrom(this.leftLeg);
+    this.bipedRightLegwear.copyFrom(this.rightLeg);
   }
 
   @Override
-  protected Iterable<ModelRenderer> getHeadParts() {
-    return ImmutableList.of(this.bipedHead, this.bipedHeadwear);
+  protected Iterable<ModelRenderer> headParts() {
+    return ImmutableList.of(this.head, this.hat);
   }
 
 

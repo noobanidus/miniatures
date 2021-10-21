@@ -13,11 +13,11 @@ import noobanidus.mods.miniatures.config.ConfigManager;
 public class MaxiMeEntity extends MiniMeEntity {
   public MaxiMeEntity(EntityType<? extends MiniMeEntity> type, World world) {
     super(type, world);
-    enablePersistence();
+    setPersistenceRequired();
   }
 
   public static AttributeModifierMap.MutableAttribute attributes() {
-    return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, ConfigManager.getMaxHealth()).createMutableAttribute(Attributes.MOVEMENT_SPEED, ConfigManager.getMovementSpeed()).createMutableAttribute(Attributes.ATTACK_DAMAGE, ConfigManager.getAttackDamage()).createMutableAttribute(Attributes.ARMOR, ConfigManager.getArmorValue());
+    return MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, ConfigManager.getMaxHealth()).add(Attributes.MOVEMENT_SPEED, ConfigManager.getMovementSpeed()).add(Attributes.ATTACK_DAMAGE, ConfigManager.getAttackDamage()).add(Attributes.ARMOR, ConfigManager.getArmorValue());
   }
 
   public MaxiMeEntity(EntityType<? extends MiniMeEntity> type, World world, GameProfile owner) {
@@ -25,17 +25,17 @@ public class MaxiMeEntity extends MiniMeEntity {
   }
 
   @Override
-  public double getYOffset() {
+  public double getMyRidingOffset() {
     return 0;
   }
 
   @Override
-  public boolean isChild() {
+  public boolean isBaby() {
     return false;
   }
 
   @Override
-  protected float getStandingEyeHeight(Pose p_213348_1_, EntitySize p_213348_2_) {
+  protected float getStandingEyeHeight(Pose pPose, EntitySize pSize) {
     return 6.25f;
   }
 }

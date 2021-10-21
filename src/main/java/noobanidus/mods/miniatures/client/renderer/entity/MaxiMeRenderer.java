@@ -37,7 +37,7 @@ public class MaxiMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
   }
 
   @Override
-  public ResourceLocation getEntityTexture(MiniMeEntity entity) {
+  public ResourceLocation getTextureLocation(MiniMeEntity entity) {
     return entity.getGameProfile()
         .map(this::getSkin)
         .orElse(TEXTURE_STEVE);
@@ -49,9 +49,9 @@ public class MaxiMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
     } else {
       final Minecraft minecraft = Minecraft.getInstance();
       SkinManager skinManager = minecraft.getSkinManager();
-      final Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> loadSkinFromCache = skinManager.loadSkinFromCache(gameProfile); // returned map may or may not be typed
+      final Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> loadSkinFromCache = skinManager.getInsecureSkinInformation(gameProfile); // returned map may or may not be typed
       if (loadSkinFromCache.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-        return skinManager.loadSkin(loadSkinFromCache.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+        return skinManager.registerTexture(loadSkinFromCache.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
       } else {
         return DefaultPlayerSkin.getDefaultSkin(gameProfile.getId());
       }
@@ -60,28 +60,28 @@ public class MaxiMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
 
   @Override
   public void render(MiniMeEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-    this.entityModel = ModelHolder.miniMe;
-    if (entityIn.isSlim() && this.entityModel != ModelHolder.miniMeSlim) {
-      this.entityModel = ModelHolder.miniMeSlim;
+    this.model = ModelHolder.miniMe;
+    if (entityIn.isSlim() && this.model != ModelHolder.miniMeSlim) {
+      this.model = ModelHolder.miniMeSlim;
     }
     int noob = entityIn.getNoobVariant();
     if (noob == 3) {
       packedLightIn = 15728880;
-      this.entityModel = ModelHolder.miniMeGhost;
-      if (entityIn.isSlim() && this.entityModel != ModelHolder.miniMeGhostSlim) {
-        this.entityModel = ModelHolder.miniMeGhostSlim;
+      this.model = ModelHolder.miniMeGhost;
+      if (entityIn.isSlim() && this.model != ModelHolder.miniMeGhostSlim) {
+        this.model = ModelHolder.miniMeGhostSlim;
       }
     } else if (noob == 4) {
       packedLightIn = 15728880;
-      this.entityModel = ModelHolder.miniMeGlow;
-      if (entityIn.isSlim() && this.entityModel != ModelHolder.miniMeGlowSlim) {
-        this.entityModel = ModelHolder.miniMeGlowSlim;
+      this.model = ModelHolder.miniMeGlow;
+      if (entityIn.isSlim() && this.model != ModelHolder.miniMeGlowSlim) {
+        this.model = ModelHolder.miniMeGlowSlim;
       }
     }
     super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
   }
 
-  protected void preRenderCallback(MiniMeEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+  protected void scale(MiniMeEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
     matrixStackIn.scale(3.5375F, 3.5375F, 3.5375F);
   }
 

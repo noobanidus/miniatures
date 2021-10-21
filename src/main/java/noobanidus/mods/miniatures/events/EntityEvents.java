@@ -27,7 +27,7 @@ public class EntityEvents {
       if (isMiniature(event.getEntity())) {
         MiniMeEntity mini = (MiniMeEntity) event.getEntity();
         EntitySize oldSize = event.getOldSize();
-        event.setNewSize(EntitySize.flexible(oldSize.width * mini.getScale(), oldSize.height * mini.getScale()));
+        event.setNewSize(EntitySize.scalable(oldSize.width * mini.getScale(), oldSize.height * mini.getScale()));
         event.setNewEyeHeight(event.getOldEyeHeight() * mini.getScale());
       }
     }
@@ -39,7 +39,7 @@ public class EntityEvents {
       Entity mounted = event.getEntityBeingMounted();
       if (isMiniature(event.getEntityBeingMounted())) {
         MiniMeEntity mini = (MiniMeEntity) mounted;
-        mini.setPickupCooldown(mini.world.rand.nextInt(800) + 600);
+        mini.setPickupCooldown(mini.level.random.nextInt(800) + 600);
       }
     }
   }

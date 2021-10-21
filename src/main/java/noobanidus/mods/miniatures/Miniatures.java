@@ -49,8 +49,8 @@ public class Miniatures {
 
   public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
     MinecraftServer server = event.getServer();
-    MiniMeEntity.setProfileCache(server.getPlayerProfileCache());
-    MiniMeEntity.setSessionService(server.getMinecraftSessionService());
-    PlayerProfileCache.setOnlineMode(server.isServerInOnlineMode());
+    MiniMeEntity.setProfileCache(server.getProfileCache());
+    MiniMeEntity.setSessionService(server.getSessionService());
+    PlayerProfileCache.setUsesAuthentication(server.usesAuthentication());
   }
 }

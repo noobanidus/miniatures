@@ -15,19 +15,19 @@ public class GameProfileSerializer {
       output.writeBoolean(false);
     } else {
       output.writeBoolean(true);
-      output.writeUniqueId(uuid);
+      output.writeUUID(uuid);
     }
-    output.writeString(Strings.nullToEmpty(o.getName()));
+    output.writeUtf(Strings.nullToEmpty(o.getName()));
     final PropertyMap properties = o.getProperties();
     output.writeVarInt(properties.size());
     for (Property p : properties.values()) {
-      output.writeString(p.getName());
-      output.writeString(p.getValue());
+      output.writeUtf(p.getName());
+      output.writeUtf(p.getValue());
 
       final String signature = p.getSignature();
       if (signature != null) {
         output.writeBoolean(true);
-        output.writeString(signature);
+        output.writeUtf(signature);
       } else {
         output.writeBoolean(false);
       }
@@ -36,17 +36,17 @@ public class GameProfileSerializer {
 
   public static GameProfile read(PacketBuffer input) {
     boolean hasUuid = input.readBoolean();
-    UUID uuid = hasUuid ? input.readUniqueId() : null;
-    final String name = input.readString(Short.MAX_VALUE);
+    UUID uuid = hasUuid ? input.readUUID() : null;
+    final String name = input.readUtf(Short.MAX_VALUE);
     GameProfile result = new GameProfile(uuid, name);
     int propertyCount = input.readVarInt();
 
     final PropertyMap properties = result.getProperties();
     for (int i = 0; i < propertyCount; ++i) {
-      String key = input.readString(Short.MAX_VALUE);
-      String value = input.readString(Short.MAX_VALUE);
+      String key = input.readUtf(Short.MAX_VALUE);
+      String value = input.readUtf(Short.MAX_VALUE);
       if (input.readBoolean()) {
-        String signature = input.readString(Short.MAX_VALUE);
+        String signature = input.readUtf(Short.MAX_VALUE);
         properties.put(key, new Property(key, value, signature));
       } else {
         properties.put(key, new Property(key, value));

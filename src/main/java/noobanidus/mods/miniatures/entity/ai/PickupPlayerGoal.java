@@ -20,11 +20,11 @@ public class PickupPlayerGoal extends Goal {
 
   public PickupPlayerGoal(MiniMeEntity entity) {
     this.minime = entity;
-    this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+    this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
   }
 
   @Override
-  public boolean shouldExecute() {
+  public boolean canUse() {
     if (!ConfigManager.getDoesPickup() || this.minime.getHostile()) {
       return false;
     }
@@ -35,14 +35,14 @@ public class PickupPlayerGoal extends Goal {
       return false;
     }
     if (targetPlayer == null || targetPlayer.isAlive()) {
-      List<PlayerEntity> players = minime.world.getEntitiesWithinAABB(PlayerEntity.class, minime.getBoundingBox().grow(10));
+      List<PlayerEntity> players = minime.level.getEntitiesOfClass(PlayerEntity.class, minime.getBoundingBox().inflate(10));
       for (PlayerEntity player : players) {
         if (player.isPassenger()) {
           continue;
         }
         if (!ConfigManager.getOwnerRider() || canRidePlayer(player)) {
           targetPlayer = player;
-          path = minime.getNavigator().getPathToEntity(targetPlayer, 0);
+          path = minime.getNavigation().createPath(targetPlayer, 0);
           return path != null;
         }
       }
@@ -51,27 +51,27 @@ public class PickupPlayerGoal extends Goal {
   }
 
   @Override
-  public void resetTask() {
+  public void stop() {
     path = null;
     targetPlayer = null;
-    minime.getNavigator().clearPath();
+    minime.getNavigation().stop();
   }
 
   @Override
-  public boolean shouldContinueExecuting() {
+  public boolean canContinueToUse() {
     return targetPlayer != null && !targetPlayer.isPassenger() && ConfigManager.getDoesPickup() && !minime.getHostile() && minime.isAlive() && path != null && (!ConfigManager.getOwnerRider() || canRidePlayer(targetPlayer));
   }
 
   @Override
-  public void startExecuting() {
-    minime.getNavigator().setPath(this.path, 1);
+  public void start() {
+    minime.getNavigation().moveTo(this.path, 1);
   }
 
   @Override
   public void tick() {
     super.tick();
-    if (!minime.world.isRemote && (!ConfigManager.getOwnerRider() || canRidePlayer(targetPlayer))) {
-      if (minime.getDistance(targetPlayer) < 1.5) {
+    if (!minime.level.isClientSide && (!ConfigManager.getOwnerRider() || canRidePlayer(targetPlayer))) {
+      if (minime.distanceTo(targetPlayer) < 1.5) {
         targetPlayer.startRiding(minime);
       }
     }
