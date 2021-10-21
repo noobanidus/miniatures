@@ -13,6 +13,9 @@ public class ModTags {
       p.tag(MiniTags.Blocks.BREAK_BLOCKS).add(Blocks.TORCH);
       p.tag(MiniTags.Blocks.BREAK_BLOCKS).addTag(BlockTags.FLOWERS);
     });
+    REGISTRATE.addDataGenerator(ProviderType.ENTITY_TAGS, (p) -> {
+      p.tag(MiniTags.Entity.MOB_ATTACK_BLACKLIST).add(ModEntities.MAXIME.get(), ModEntities.MINIME.get(), ModEntities.ME.get());
+    });
   }
 
   public static void load () {
