@@ -27,8 +27,8 @@ public class EntityEvents {
       if (isMiniature(event.getEntity())) {
         MiniMeEntity mini = (MiniMeEntity) event.getEntity();
         EntitySize oldSize = event.getOldSize();
-        event.setNewSize(EntitySize.scalable(oldSize.width * mini.getScale(), oldSize.height * mini.getScale()));
-        event.setNewEyeHeight(event.getOldEyeHeight() * mini.getScale());
+        event.setNewSize(EntitySize.scalable(oldSize.width * mini.getMiniScale(), oldSize.height * mini.getMiniScale()));
+        event.setNewEyeHeight(event.getOldEyeHeight() * mini.getMiniScale());
       }
     }
   }

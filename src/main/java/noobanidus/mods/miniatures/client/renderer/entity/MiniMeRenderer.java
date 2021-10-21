@@ -86,7 +86,7 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
 
 
   protected void scale(MiniMeEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
-    float scale = entitylivingbaseIn.getScale();
+    float scale = entitylivingbaseIn.getMiniScale();
     if (NoobUtil.isNoob(entitylivingbaseIn)) {
       matrixStackIn.scale(1.0975F * scale, 1.0975F * scale, 1.0975F * scale);
     } else {

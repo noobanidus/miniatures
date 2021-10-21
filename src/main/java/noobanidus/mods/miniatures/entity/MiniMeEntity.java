@@ -160,11 +160,11 @@ public class MiniMeEntity extends MonsterEntity {
     entityData.set(NOOB, (byte) variant);
   }
 
-  public float getScale() {
+  public float getMiniScale() {
     return entityData.get(SCALE);
   }
 
-  public void setScale(float scale) {
+  public void setMiniScale(float scale) {
     entityData.set(SCALE, scale);
   }
 
@@ -313,7 +313,7 @@ public class MiniMeEntity extends MonsterEntity {
       compound.put("gameProfile", NBTUtil.writeGameProfile(new CompoundNBT(), entityData.get(GAMEPROFILE).get()));
     }
     compound.putByte("Noob", (byte) getNoobVariant());
-    compound.putFloat("Scale", getScale());
+    compound.putFloat("Scale", getMiniScale());
 
     compound.putInt("pickupCooldown", pickupCooldown);
     if (healthBoosted) {
@@ -353,7 +353,7 @@ public class MiniMeEntity extends MonsterEntity {
       this.setNoobVariant(tag.getByte("Noob"));
     }
     if (tag.contains("Scale")) {
-      this.setScale(tag.getFloat("Scale"));
+      this.setMiniScale(tag.getFloat("Scale"));
     }
     if (tag.contains("Hostile")) {
       this.setAggro(tag.getInt("Hostile"));
@@ -400,9 +400,9 @@ public class MiniMeEntity extends MonsterEntity {
       if (health != null) {
         double value = 0.0;
         if (compound.contains("HealthAddition", Constants.NBT.TAG_FLOAT)) {
-          value = (double) compound.getFloat("HealthAddition");
+          value = compound.getFloat("HealthAddition");
         } else if (compound.contains("HealthAddition", Constants.NBT.TAG_INT)) {
-          value = (double) compound.getInt("HealthAddition");
+          value = compound.getInt("HealthAddition");
         } else if (compound.contains("HealthAddition", Constants.NBT.TAG_DOUBLE)) {
           value = compound.getDouble("HealthAddition");
         }
