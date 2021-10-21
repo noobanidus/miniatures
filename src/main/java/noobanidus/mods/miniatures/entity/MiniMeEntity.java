@@ -36,6 +36,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.common.util.Constants;
 import noobanidus.mods.miniatures.MiniTags;
+import noobanidus.mods.miniatures.Miniatures;
+import noobanidus.mods.miniatures.client.NullProfileCache;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.ai.MiniBreakBlockGoal;
 import noobanidus.mods.miniatures.entity.ai.MiniMeleeAttackGoal;
@@ -43,11 +45,11 @@ import noobanidus.mods.miniatures.entity.ai.PickupPlayerGoal;
 import noobanidus.mods.miniatures.init.ModModifiers;
 import noobanidus.mods.miniatures.init.ModSerializers;
 import noobanidus.mods.miniatures.util.NoobUtil;
-import noobanidus.mods.miniatures.util.SkinUtil;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 public class MiniMeEntity extends MonsterEntity {
   private static final DataParameter<Optional<GameProfile>> GAMEPROFILE = EntityDataManager.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE);
@@ -71,6 +73,10 @@ public class MiniMeEntity extends MonsterEntity {
   @Nullable
   public static GameProfile updateGameProfile(@Nullable GameProfile input) {
     if (input != null && !StringUtils.isNullOrEmpty(input.getName())) {
+      if (NullProfileCache.isCachedNull(input.getName())) {
+        return input;
+      }
+
       if (input.isComplete() && input.getProperties().containsKey("textures")) {
         return input;
       } else if (profileCache != null && sessionService != null) {
@@ -80,6 +86,7 @@ public class MiniMeEntity extends MonsterEntity {
         } else {
           Property property = Iterables.getFirst(gameprofile.getProperties().get("textures"), null);
           if (property == null) {
+            Miniatures.LOG.info("Refilling cache for gameprofile: " + gameprofile);
             gameprofile = sessionService.fillProfileProperties(gameprofile, true);
           }
 
@@ -211,12 +218,24 @@ public class MiniMeEntity extends MonsterEntity {
     return entityData.get(GAMEPROFILE);
   }
 
+  public void setGameProfile(String name) {
+    setGameProfile(new GameProfile(null, name));
+  }
+
+  public void setGameProfile(UUID id) {
+    setGameProfile(new GameProfile(id, null));
+  }
+
   public void setGameProfile(GameProfile playerProfile) {
+    if (NullProfileCache.isCachedNull(playerProfile.getName(), playerProfile.getId())) {
+      return;
+    }
+
     GameProfile profile = updateGameProfile(playerProfile);
     if (profile != null) {
       entityData.set(GAMEPROFILE, Optional.of(profile));
-
-      this.setSlim(profile.getId() != null && SkinUtil.isSlimSkin(profile.getId()));
+    } else {
+      NullProfileCache.cacheNull(playerProfile.getName(), playerProfile.getId());
     }
   }
 
@@ -309,9 +328,8 @@ public class MiniMeEntity extends MonsterEntity {
     super.addAdditionalSaveData(compound);
 
     compound.putBoolean("gameProfileExists", entityData.get(GAMEPROFILE).isPresent());
-    if (getGameProfile().isPresent()) {
-      compound.put("gameProfile", NBTUtil.writeGameProfile(new CompoundNBT(), entityData.get(GAMEPROFILE).get()));
-    }
+    getGameProfile().ifPresent(profile -> compound.put("gameProfile", NBTUtil.writeGameProfile(new CompoundNBT(), profile)));
+    /* compound.put("gameProfile", NBTUtil.writeGameProfile(new CompoundNBT(), entityData.get(GAMEPROFILE).get()));*/
     compound.putByte("Noob", (byte) getNoobVariant());
     compound.putFloat("Scale", getMiniScale());
 
@@ -365,9 +383,11 @@ public class MiniMeEntity extends MonsterEntity {
     super.load(compound);
 
     if (compound.contains("owner", Constants.NBT.TAG_STRING)) {
-      setGameProfile(new GameProfile(null, compound.getString("owner")));
+      setGameProfile(compound.getString("owner"));
+      //setGameProfile(new GameProfile(null, compound.getString("owner")));
     } else if (compound.hasUUID("OwnerUUID")) {
-      setGameProfile(new GameProfile(compound.getUUID("OwnerUUID"), null));
+      setGameProfile(compound.getUUID("OwnerUUID"));
+      //setGameProfile(new GameProfile(compound.getUUID("OwnerUUID"), null));
     } else {
       entityData.set(GAMEPROFILE, !compound.getBoolean("gameProfileExists") ? Optional.empty() : Optional.ofNullable(NBTUtil.readGameProfile(compound.getCompound("gameProfile"))));
     }
@@ -427,7 +447,12 @@ public class MiniMeEntity extends MonsterEntity {
       if (compound.contains("BossBarOverlay", Constants.NBT.TAG_STRING)) {
         bossInfoOverlay = BossInfo.Overlay.byName(compound.getString("BossBarOverlay").toLowerCase());
       }
-      bossInfo = new ServerBossInfo(TextComponentUtils.getDisplayName(getGameProfile().get()), bossInfoColor, bossInfoOverlay);
+      ITextComponent name = new StringTextComponent("Unknown Mini");
+      if (getGameProfile().isPresent()) {
+        name = TextComponentUtils.getDisplayName(getGameProfile().get());
+      }
+
+      bossInfo = new ServerBossInfo(name, bossInfoColor, bossInfoOverlay);
     }
   }
 
@@ -449,16 +474,15 @@ public class MiniMeEntity extends MonsterEntity {
 
   @Override
   public void onSyncedDataUpdated(DataParameter<?> key) {
-    if(GAMEPROFILE.equals(key) && this.level.isClientSide()) {
-      GameProfile gameprofile = this.getGameProfile().get();
-      if(gameprofile != null) {
+    if (GAMEPROFILE.equals(key) && this.level.isClientSide()) {
+      this.getGameProfile().ifPresent(gameprofile -> {
         Minecraft.getInstance().getSkinManager().registerSkins(gameprofile, (textureType, textureLocation, profileTexture) -> {
-          if (textureType.equals(MinecraftProfileTexture.Type.SKIN))  {
+          if (textureType.equals(MinecraftProfileTexture.Type.SKIN)) {
             String metadata = profileTexture.getMetadata("model");
             this.setSlim(metadata != null && metadata.equals("slim"));
           }
         }, true);
-      }
+      });
     }
   }
 
