@@ -37,7 +37,6 @@ import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.common.util.Constants;
 import noobanidus.mods.miniatures.MiniTags;
 import noobanidus.mods.miniatures.Miniatures;
-import noobanidus.mods.miniatures.util.NullProfileCache;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.ai.MiniBreakBlockGoal;
 import noobanidus.mods.miniatures.entity.ai.MiniMeleeAttackGoal;
@@ -45,6 +44,7 @@ import noobanidus.mods.miniatures.entity.ai.PickupPlayerGoal;
 import noobanidus.mods.miniatures.init.ModModifiers;
 import noobanidus.mods.miniatures.init.ModSerializers;
 import noobanidus.mods.miniatures.util.NoobUtil;
+import noobanidus.mods.miniatures.util.NullProfileCache;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
@@ -73,7 +73,7 @@ public class MiniMeEntity extends MonsterEntity {
   @Nullable
   public static GameProfile updateGameProfile(@Nullable GameProfile input) {
     if (input != null && !StringUtils.isNullOrEmpty(input.getName())) {
-      if (NullProfileCache.isCachedNull(input.getName())) {
+      if (NullProfileCache.isCachedNull(input.getName(), null)) {
         return input;
       }
 
@@ -310,7 +310,7 @@ public class MiniMeEntity extends MonsterEntity {
     super.setCustomName(name);
 
     if (name != null) {
-      if (!entityData.get(GAMEPROFILE).isPresent()) {
+      if (!entityData.get(GAMEPROFILE).isPresent() && !level.isClientSide()) {
         this.setGameProfile(new GameProfile(null, name.getContents().toLowerCase(Locale.ROOT)));
       }
       if (bossInfo != null) {
@@ -401,19 +401,19 @@ public class MiniMeEntity extends MonsterEntity {
 
     if (!hasProfile) {
       if (!compound.getBoolean("gameProfileExists")) {
-        if (compound.contains("owner", Constants.NBT.TAG_STRING)) {
-          if (this.level.isClientSide()) {
-            Miniatures.LOG.info("Set a profile on the client side.");
-          }
-          setGameProfile(compound.getString("owner"));
-          //setGameProfile(new GameProfile(null, compound.getString("owner")));
-        } else if (compound.hasUUID("OwnerUUID")) {
-          setGameProfile(compound.getUUID("OwnerUUID"));
-          //setGameProfile(new GameProfile(compound.getUUID("OwnerUUID"), null));
+        if (this.level.isClientSide()) {
+          Miniatures.LOG.info("Set a profile on the client side.");
         } else {
-          entityData.set(GAMEPROFILE, Optional.empty());
+          if (compound.contains("owner", Constants.NBT.TAG_STRING)) {
+            setGameProfile(compound.getString("owner"));
+          } else if (compound.hasUUID("OwnerUUID")) {
+            setGameProfile(compound.getUUID("OwnerUUID"));
+          } else {
+            entityData.set(GAMEPROFILE, Optional.empty());
+          }
         }
       } else {
+        // TODO: Should this be server only? IDK
         entityData.set(GAMEPROFILE, Optional.ofNullable(NBTUtil.readGameProfile(compound.getCompound("gameProfile"))));
       }
     }
