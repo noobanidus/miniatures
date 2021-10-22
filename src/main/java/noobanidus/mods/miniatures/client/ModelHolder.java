@@ -11,6 +11,7 @@ public class ModelHolder {
   public static MiniMeModel miniMeGhostSlim;
   public static MiniMeModel miniMeGlow;
   public static MiniMeModel miniMeGlowSlim;
+  public static MiniMeModel chargedMiniMe;
 
   public static void init () {
     miniMe = new MiniMeModel(0.5f, false);
@@ -19,5 +20,6 @@ public class ModelHolder {
     miniMeGhostSlim = new GhostlyMiniMeModel(0.5f, true);
     miniMeGlow = new GlowingMiniMeModel(0.5f, false);
     miniMeGlowSlim = new GlowingMiniMeModel(0.5f, true);
+    chargedMiniMe = new MiniMeModel(1.0f, false);
   }
 }

@@ -18,6 +18,7 @@ import noobanidus.mods.miniatures.client.ModelHolder;
 import noobanidus.mods.miniatures.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.client.renderer.layers.ArrowRenderTypeLayer;
 import noobanidus.mods.miniatures.client.renderer.layers.BeeStingerRenderTypeLayer;
+import noobanidus.mods.miniatures.client.renderer.layers.ChargedLayer;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.util.NoobUtil;
 
@@ -35,7 +36,8 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
     this.addLayer(new HeadLayer<>(this));
     this.addLayer(new ElytraLayer<>(this));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this));
-    this.addLayer(new BipedArmorLayer<>(this, new BipedModel(1.02F), new BipedModel(1.02F)));
+    this.addLayer(new BipedArmorLayer<>(this, new BipedModel<>(1.02F), new BipedModel<>(1.02F)));
+    this.addLayer(new ChargedLayer<>(this));
   }
 
   @Override
@@ -99,10 +101,16 @@ public class MiniMeRenderer extends BipedRenderer<MiniMeEntity, MiniMeModel<Mini
     super.setupRotations(entityLiving, matrixStackIn, pAgeInTicks, pRotationYaw, pPartialTicks);
     int noob = entityLiving.getNoobVariant();
     if (noob == 0) {
-      matrixStackIn.translate(0.0D, (double) (entityLiving.getBbHeight() + 0.3F), 0.0D);
+      matrixStackIn.translate(0.0D, entityLiving.getBbHeight() + 0.3F, 0.0D);
       matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
     } else if (noob == 1) {
       matrixStackIn.translate(0.0D, 0.5F, 0.0D);
+    } else if (noob == 6) {
+      matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0f));
+    } else if (noob == 7) {
+      matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0f));
+    } else if (noob == 8) {
+      matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0f));
     }
   }
 

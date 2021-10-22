@@ -51,7 +51,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MiniMeEntity extends MonsterEntity {
+public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   private static final DataParameter<Optional<GameProfile>> GAMEPROFILE = EntityDataManager.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE);
   public static final DataParameter<Integer> AGGRO = EntityDataManager.defineId(MiniMeEntity.class, DataSerializers.INT);
   public static final DataParameter<Byte> NOOB = EntityDataManager.defineId(MiniMeEntity.class, DataSerializers.BYTE);
@@ -159,7 +159,9 @@ public class MiniMeEntity extends MonsterEntity {
     // 3: Ghost
     // 4: Glow
     // 5: Charged
-    // 6: Prone
+    // 6: dexter
+    // 7: sinister
+    // 8: backwards
   }
 
   public int getNoobVariant() {
@@ -522,5 +524,10 @@ public class MiniMeEntity extends MonsterEntity {
   @Override
   public float getScale() {
     return 1.0f;
+  }
+
+  @Override
+  public boolean isPowered() {
+    return getNoobVariant() == 5;
   }
 }
