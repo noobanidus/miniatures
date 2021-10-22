@@ -1,6 +1,5 @@
-package noobanidus.mods.miniatures.client;
+package noobanidus.mods.miniatures.util;
 
-import mezz.jei.util.StringUtil;
 import net.minecraft.util.StringUtils;
 
 import javax.annotation.Nullable;

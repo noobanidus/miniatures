@@ -37,7 +37,7 @@ import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.common.util.Constants;
 import noobanidus.mods.miniatures.MiniTags;
 import noobanidus.mods.miniatures.Miniatures;
-import noobanidus.mods.miniatures.client.NullProfileCache;
+import noobanidus.mods.miniatures.util.NullProfileCache;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.ai.MiniBreakBlockGoal;
 import noobanidus.mods.miniatures.entity.ai.MiniMeleeAttackGoal;
@@ -82,12 +82,17 @@ public class MiniMeEntity extends MonsterEntity {
       } else if (profileCache != null && sessionService != null) {
         GameProfile gameprofile = profileCache.get(input.getName());
         if (gameprofile == null) {
+          NullProfileCache.cacheNull(input.getName(), input.getId());
           return input;
         } else {
           Property property = Iterables.getFirst(gameprofile.getProperties().get("textures"), null);
           if (property == null) {
             Miniatures.LOG.info("Refilling cache for gameprofile: " + gameprofile);
             gameprofile = sessionService.fillProfileProperties(gameprofile, true);
+          }
+
+          if (!gameprofile.isComplete()) {
+            NullProfileCache.cacheNull(gameprofile.getName(), gameprofile.getId());
           }
 
           return gameprofile;
@@ -161,7 +166,7 @@ public class MiniMeEntity extends MonsterEntity {
     if (!NoobUtil.isNoob(this)) {
       return -1;
     }
-    return (int) (byte) entityData.get(NOOB);
+    return entityData.get(NOOB);
   }
 
   public void setNoobVariant(int variant) {
@@ -383,14 +388,34 @@ public class MiniMeEntity extends MonsterEntity {
   public void load(CompoundNBT compound) {
     super.load(compound);
 
-    if (compound.contains("owner", Constants.NBT.TAG_STRING)) {
-      setGameProfile(compound.getString("owner"));
-      //setGameProfile(new GameProfile(null, compound.getString("owner")));
-    } else if (compound.hasUUID("OwnerUUID")) {
-      setGameProfile(compound.getUUID("OwnerUUID"));
-      //setGameProfile(new GameProfile(compound.getUUID("OwnerUUID"), null));
-    } else {
-      entityData.set(GAMEPROFILE, !compound.getBoolean("gameProfileExists") ? Optional.empty() : Optional.ofNullable(NBTUtil.readGameProfile(compound.getCompound("gameProfile"))));
+    // We only want to load the profile on the server, rely on the
+    // profile being transmitted as entity data for the client.
+    boolean hasProfile = false;
+
+    Optional<GameProfile> prof = getGameProfile();
+    if (prof.isPresent()) {
+      if (prof.get().isComplete()) {
+        hasProfile = true;
+      }
+    }
+
+    if (!hasProfile) {
+      if (!compound.getBoolean("gameProfileExists")) {
+        if (compound.contains("owner", Constants.NBT.TAG_STRING)) {
+          if (this.level.isClientSide()) {
+            Miniatures.LOG.info("Set a profile on the client side.");
+          }
+          setGameProfile(compound.getString("owner"));
+          //setGameProfile(new GameProfile(null, compound.getString("owner")));
+        } else if (compound.hasUUID("OwnerUUID")) {
+          setGameProfile(compound.getUUID("OwnerUUID"));
+          //setGameProfile(new GameProfile(compound.getUUID("OwnerUUID"), null));
+        } else {
+          entityData.set(GAMEPROFILE, Optional.empty());
+        }
+      } else {
+        entityData.set(GAMEPROFILE, Optional.ofNullable(NBTUtil.readGameProfile(compound.getCompound("gameProfile"))));
+      }
     }
 
     if (compound.contains("NameTag", Constants.NBT.TAG_STRING)) {
@@ -477,12 +502,14 @@ public class MiniMeEntity extends MonsterEntity {
   public void onSyncedDataUpdated(DataParameter<?> key) {
     if (GAMEPROFILE.equals(key) && this.level.isClientSide()) {
       this.getGameProfile().ifPresent(gameprofile -> {
-        Minecraft.getInstance().getSkinManager().registerSkins(gameprofile, (textureType, textureLocation, profileTexture) -> {
-          if (textureType.equals(MinecraftProfileTexture.Type.SKIN)) {
-            String metadata = profileTexture.getMetadata("model");
-            this.setSlim(metadata != null && metadata.equals("slim"));
-          }
-        }, true);
+        if (gameprofile.isComplete()) {
+          Minecraft.getInstance().getSkinManager().registerSkins(gameprofile, (textureType, textureLocation, profileTexture) -> {
+            if (textureType.equals(MinecraftProfileTexture.Type.SKIN)) {
+              String metadata = profileTexture.getMetadata("model");
+              this.setSlim(metadata != null && metadata.equals("slim"));
+            }
+          }, true);
+        }
       });
     }
   }
