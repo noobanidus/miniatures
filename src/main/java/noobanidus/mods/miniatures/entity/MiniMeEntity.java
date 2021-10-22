@@ -34,6 +34,8 @@ import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import noobanidus.mods.miniatures.MiniTags;
 import noobanidus.mods.miniatures.Miniatures;
@@ -51,6 +53,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
+@OnlyIn(
+    value = Dist.CLIENT,
+    _interface = IChargeableMob.class
+)
 public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   private static final DataParameter<Optional<GameProfile>> GAMEPROFILE = EntityDataManager.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE);
   public static final DataParameter<Integer> AGGRO = EntityDataManager.defineId(MiniMeEntity.class, DataSerializers.INT);
