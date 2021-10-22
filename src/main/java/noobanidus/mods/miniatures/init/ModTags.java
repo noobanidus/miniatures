@@ -10,7 +10,7 @@ import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
 public class ModTags {
   static {
     REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, (p) -> {
-      p.tag(MiniTags.Blocks.BREAK_BLOCKS).add(Blocks.TORCH);
+      p.tag(MiniTags.Blocks.BREAK_BLOCKS).add(Blocks.TORCH, ModBlocks.SENSOR_TORCH_BLOCK.get());
       p.tag(MiniTags.Blocks.BREAK_BLOCKS).addTag(BlockTags.FLOWERS);
     });
     REGISTRATE.addDataGenerator(ProviderType.ENTITY_TAGS, (p) -> {

@@ -4,7 +4,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -16,9 +15,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import noobanidus.libs.noobutil.registrate.CustomRegistrate;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
-import noobanidus.mods.miniatures.init.ModEntities;
-import noobanidus.mods.miniatures.init.ModSerializers;
-import noobanidus.mods.miniatures.init.ModTags;
+import noobanidus.mods.miniatures.init.*;
 import noobanidus.mods.miniatures.setup.ClientInit;
 import noobanidus.mods.miniatures.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
@@ -45,6 +42,7 @@ public class Miniatures {
     ModEntities.load();
     ModTags.load();
     ModSerializers.load();
+    ModBlocks.load();
   }
 
   public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
