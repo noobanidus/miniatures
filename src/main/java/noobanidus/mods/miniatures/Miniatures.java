@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import noobanidus.libs.noobutil.registrate.CustomRegistrate;
+import noobanidus.mods.miniatures.commands.CommandCache;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.init.*;
@@ -37,6 +39,7 @@ public class Miniatures {
     DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientInit::init);
 
     MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
+    MinecraftForge.EVENT_BUS.addListener(this::onCommandsLoad);
 
     REGISTRATE = CustomRegistrate.create(MODID);
     ModEntities.load();
@@ -50,5 +53,9 @@ public class Miniatures {
     MiniMeEntity.setProfileCache(server.getProfileCache());
     MiniMeEntity.setSessionService(server.getSessionService());
     PlayerProfileCache.setUsesAuthentication(server.usesAuthentication());
+  }
+
+  public void onCommandsLoad (RegisterCommandsEvent event) {
+    CommandCache.register(event.getDispatcher());
   }
 }
