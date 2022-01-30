@@ -1,12 +1,12 @@
 package noobanidus.mods.miniatures.init;
 
 import com.tterrag.registrate.util.entry.RegistryEntry;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.loot.LootTable;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,7 +21,7 @@ import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
 
 public class ModBlocks {
   public static final RegistryEntry<SensorTorchBlock> SENSOR_TORCH_BLOCK = REGISTRATE.block("sensor_torch", SensorTorchBlock::new)
-      .properties(o -> AbstractBlock.Properties.copy(Blocks.TORCH))
+      .properties(o -> BlockBehaviour.Properties.copy(Blocks.TORCH))
       .blockstate((ctx, p) -> p.getVariantBuilder(ctx.getEntry()).forAllStates(state -> ConfiguredModel.builder().modelFile(p.models().getExistingFile(new ResourceLocation("minecraft", "block/torch"))).build()))
       .register();
 

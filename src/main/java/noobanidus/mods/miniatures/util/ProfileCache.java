@@ -3,10 +3,10 @@ package noobanidus.mods.miniatures.util;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.nbt.*;
 import net.minecraft.util.StringUtils;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
@@ -14,7 +14,7 @@ import noobanidus.mods.miniatures.Miniatures;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class ProfileCache extends WorldSavedData {
+public class ProfileCache extends SavedData {
   private final Set<String> cached = new HashSet<>();
 
   private static ProfileCache INSTANCE = null;
@@ -25,18 +25,18 @@ public class ProfileCache extends WorldSavedData {
     super(IDENTIFIER);
   }
 
-  private static ServerWorld getServerWorld() {
-    return ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD);
+  private static ServerLevel getServerWorld() {
+    return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD);
   }
 
   private static void save () {
-    ServerWorld world = getServerWorld();
+    ServerLevel world = getServerWorld();
     world.getDataStorage().save();
   }
 
   public static ProfileCache getInstance() {
     if (INSTANCE == null) {
-      DimensionSavedDataManager manager = getServerWorld().getDataStorage();
+      DimensionDataStorage manager = getServerWorld().getDataStorage();
       INSTANCE = manager.computeIfAbsent(ProfileCache::new, IDENTIFIER);
     }
 
@@ -96,19 +96,19 @@ public class ProfileCache extends WorldSavedData {
   }
 
   @Override
-  public void load(CompoundNBT pCompound) {
+  public void load(CompoundTag pCompound) {
     cached.clear();
-    ListNBT names = pCompound.getList("names", Constants.NBT.TAG_STRING);
-    for (INBT nbt : names) {
+    ListTag names = pCompound.getList("names", Constants.NBT.TAG_STRING);
+    for (Tag nbt : names) {
       cached.add(nbt.getAsString());
     }
   }
 
   @Override
-  public CompoundNBT save(CompoundNBT pCompound) {
-    ListNBT names = new ListNBT();
+  public CompoundTag save(CompoundTag pCompound) {
+    ListTag names = new ListTag();
     for (String name : cached) {
-      names.add(StringNBT.valueOf(name));
+      names.add(StringTag.valueOf(name));
     }
     pCompound.put("names", names);
     return pCompound;

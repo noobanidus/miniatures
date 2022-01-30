@@ -1,22 +1,22 @@
 package noobanidus.mods.miniatures.entity.ai;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particles.ItemParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.Tags;
 import noobanidus.mods.miniatures.config.ConfigManager;
 
@@ -25,10 +25,10 @@ import java.util.Random;
 
 public class MiniBreakBlockGoal extends MoveToBlockGoal {
    private final Tags.IOptionalNamedTag<Block> block;
-   private final MobEntity entity;
+   private final Mob entity;
    private int breakingTime;
 
-   public MiniBreakBlockGoal(Tags.IOptionalNamedTag<Block> blockIn, CreatureEntity creature, double speed, int yMax) {
+   public MiniBreakBlockGoal(Tags.IOptionalNamedTag<Block> blockIn, PathfinderMob creature, double speed, int yMax) {
       super(creature, speed, 24, yMax);
       this.block = blockIn;
       this.entity = creature;
@@ -82,10 +82,10 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
       this.breakingTime = 0;
    }
 
-   public void playBreakingSound(IWorld worldIn, BlockPos pos) {
+   public void playBreakingSound(LevelAccessor worldIn, BlockPos pos) {
    }
 
-   public void playBrokenSound(World worldIn, BlockPos pos) {
+   public void playBrokenSound(Level worldIn, BlockPos pos) {
    }
 
    @Override
@@ -98,22 +98,22 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
     */
    public void tick() {
       super.tick();
-      World world = this.entity.level;
+      Level world = this.entity.level;
       BlockPos blockpos = this.entity.blockPosition();
       BlockPos blockpos1 = this.findTarget(blockpos, world);
       Random random = this.entity.getRandom();
       if (this.isReachedTarget() && blockpos1 != null) {
          if (this.breakingTime > 0) {
-            Vector3d vector3d = this.entity.getDeltaMovement();
+            Vec3 vector3d = this.entity.getDeltaMovement();
             this.entity.setDeltaMovement(vector3d.x, 0.3D, vector3d.z);
             if (!world.isClientSide) {
                double d0 = 0.08D;
-               ((ServerWorld)world).sendParticles(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(Items.EGG)), (double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.7D, (double)blockpos1.getZ() + 0.5D, 3, ((double)random.nextFloat() - 0.5D) * 0.08D, ((double)random.nextFloat() - 0.5D) * 0.08D, ((double)random.nextFloat() - 0.5D) * 0.08D, (double)0.15F);
+               ((ServerLevel)world).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.EGG)), (double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.7D, (double)blockpos1.getZ() + 0.5D, 3, ((double)random.nextFloat() - 0.5D) * 0.08D, ((double)random.nextFloat() - 0.5D) * 0.08D, ((double)random.nextFloat() - 0.5D) * 0.08D, (double)0.15F);
             }
          }
 
          if (this.breakingTime % 2 == 0) {
-            Vector3d vector3d1 = this.entity.getDeltaMovement();
+            Vec3 vector3d1 = this.entity.getDeltaMovement();
             this.entity.setDeltaMovement(vector3d1.x, -0.3D, vector3d1.z);
             if (this.breakingTime % 6 == 0) {
                this.playBreakingSound(world, this.blockPos);
@@ -127,7 +127,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
                   double d3 = random.nextGaussian() * 0.02D;
                   double d1 = random.nextGaussian() * 0.02D;
                   double d2 = random.nextGaussian() * 0.02D;
-                  ((ServerWorld)world).sendParticles(ParticleTypes.POOF, (double)blockpos1.getX() + 0.5D, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5D, 1, d3, d1, d2, (double)0.15F);
+                  ((ServerLevel)world).sendParticles(ParticleTypes.POOF, (double)blockpos1.getX() + 0.5D, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5D, 1, d3, d1, d2, (double)0.15F);
                }
 
                this.playBrokenSound(world, blockpos1);
@@ -140,7 +140,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
    }
 
    @Nullable
-   private BlockPos findTarget(BlockPos pos, IBlockReader worldIn) {
+   private BlockPos findTarget(BlockPos pos, BlockGetter worldIn) {
       if (worldIn.getBlockState(pos).is(this.block)) {
          return pos;
       } else {
@@ -159,8 +159,8 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
    /**
     * Return true to set given position as destination
     */
-   protected boolean isValidTarget(IWorldReader worldIn, BlockPos pos) {
-      IChunk ichunk = worldIn.getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.FULL, false);
+   protected boolean isValidTarget(LevelReader worldIn, BlockPos pos) {
+      ChunkAccess ichunk = worldIn.getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.FULL, false);
       if (ichunk == null) {
          return false;
       } else {
@@ -169,7 +169,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
    }
 
    @Override
-   protected int nextStartTick(CreatureEntity pCreature) {
+   protected int nextStartTick(PathfinderMob pCreature) {
       return ConfigManager.getBaseRunDelay() + pCreature.getRandom().nextInt(ConfigManager.getRandomRunDelay());
    }
 }

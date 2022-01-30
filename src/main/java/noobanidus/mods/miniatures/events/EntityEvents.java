@@ -1,8 +1,8 @@
 package noobanidus.mods.miniatures.events;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -26,8 +26,8 @@ public class EntityEvents {
     if (event.getEntity().isAddedToWorld()) {
       if (isMiniature(event.getEntity())) {
         MiniMeEntity mini = (MiniMeEntity) event.getEntity();
-        EntitySize oldSize = event.getOldSize();
-        event.setNewSize(EntitySize.scalable(oldSize.width * mini.getMiniScale(), oldSize.height * mini.getMiniScale()));
+        EntityDimensions oldSize = event.getOldSize();
+        event.setNewSize(EntityDimensions.scalable(oldSize.width * mini.getMiniScale(), oldSize.height * mini.getMiniScale()));
         event.setNewEyeHeight(event.getOldEyeHeight() * mini.getMiniScale());
       }
     }

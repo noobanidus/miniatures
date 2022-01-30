@@ -2,8 +2,8 @@ package noobanidus.mods.miniatures.client.model;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.resources.ResourceLocation;
 import noobanidus.mods.miniatures.client.AdditionalRenderTypes;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 
@@ -55,7 +55,7 @@ public class MiniMeModel<E extends MiniMeEntity> extends PlayerRenderModel<E> {
   }
 
   @Override
-  protected Iterable<ModelRenderer> headParts() {
+  protected Iterable<ModelPart> headParts() {
     return ImmutableList.of(this.head, this.hat);
   }
 

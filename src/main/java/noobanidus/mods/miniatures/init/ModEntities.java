@@ -1,10 +1,10 @@
 package noobanidus.mods.miniatures.init;
 
 import com.tterrag.registrate.util.entry.RegistryEntry;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,17 +17,17 @@ import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
 
 @Mod.EventBusSubscriber(modid= Miniatures.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class ModEntities {
-  public static RegistryEntry<EntityType<MiniMeEntity>> MINIME = REGISTRATE.<MiniMeEntity>entity("minime", MiniMeEntity::new, EntityClassification.CREATURE)
+  public static RegistryEntry<EntityType<MiniMeEntity>> MINIME = REGISTRATE.<MiniMeEntity>entity("minime", MiniMeEntity::new, MobCategory.CREATURE)
       .loot((p, e) -> p.add(e, LootTable.lootTable()))
       .properties(o -> o.sized(0.3f, 1.1F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4))
       .register();
 
-  public static RegistryEntry<EntityType<MeEntity>> ME = REGISTRATE.<MeEntity>entity("me", MeEntity::new, EntityClassification.CREATURE)
+  public static RegistryEntry<EntityType<MeEntity>> ME = REGISTRATE.<MeEntity>entity("me", MeEntity::new, MobCategory.CREATURE)
       .loot((p, e) -> p.add(e, LootTable.lootTable()))
       .properties(o -> o.sized(0.6F, 2F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4))
       .register();
 
-  public static RegistryEntry<EntityType<MaxiMeEntity>> MAXIME = REGISTRATE.<MaxiMeEntity>entity("maxime", MaxiMeEntity::new, EntityClassification.CREATURE)
+  public static RegistryEntry<EntityType<MaxiMeEntity>> MAXIME = REGISTRATE.<MaxiMeEntity>entity("maxime", MaxiMeEntity::new, MobCategory.CREATURE)
       .loot((p, e) -> p.add(e, LootTable.lootTable()))
       .properties(o -> o.sized(2.3f, 7).clientTrackingRange(16).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4))
       .register();

@@ -1,7 +1,7 @@
 package noobanidus.mods.miniatures;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerProfileCache;
+import net.minecraft.server.players.GameProfileCache;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -52,7 +52,7 @@ public class Miniatures {
     MinecraftServer server = event.getServer();
     MiniMeEntity.setProfileCache(server.getProfileCache());
     MiniMeEntity.setSessionService(server.getSessionService());
-    PlayerProfileCache.setUsesAuthentication(server.usesAuthentication());
+    GameProfileCache.setUsesAuthentication(server.usesAuthentication());
   }
 
   public void onCommandsLoad (RegisterCommandsEvent event) {

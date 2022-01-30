@@ -1,14 +1,14 @@
 package noobanidus.mods.miniatures.client;
 
-import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.resources.ResourceLocation;
 
-import net.minecraft.client.renderer.RenderState.OffsetTexturingState;
-import net.minecraft.client.renderer.RenderState.TextureState;
-import net.minecraft.client.renderer.RenderType.State;
+import net.minecraft.client.renderer.RenderStateShard.OffsetTexturingStateShard;
+import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
+import net.minecraft.client.renderer.RenderType.CompositeState;
 
 public class AdditionalRenderTypes extends RenderType {
   public AdditionalRenderTypes(String p_i225992_1_, VertexFormat p_i225992_2_, int p_i225992_3_, int p_i225992_4_, boolean p_i225992_5_, boolean p_i225992_6_, Runnable p_i225992_7_, Runnable p_i225992_8_) {
@@ -16,14 +16,14 @@ public class AdditionalRenderTypes extends RenderType {
   }
 
   public static RenderType getFullbrightLayer(ResourceLocation pLocation, float pU, float pV) {
-    return create("fullbright_entity", DefaultVertexFormats.NEW_ENTITY, 7, 256, false, true, State.builder().setTextureState(new TextureState(pLocation, false, false)).setTexturingState(new OffsetTexturingState(pU, pV)).setFogState(NO_FOG).setDiffuseLightingState(NO_DIFFUSE_LIGHTING).setAlphaState(DEFAULT_ALPHA).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setTransparencyState(RenderState.NO_TRANSPARENCY).setOverlayState(NO_OVERLAY).createCompositeState(false));
+    return create("fullbright_entity", DefaultVertexFormat.NEW_ENTITY, 7, 256, false, true, CompositeState.builder().setTextureState(new TextureStateShard(pLocation, false, false)).setTexturingState(new OffsetTexturingStateShard(pU, pV)).setFogState(NO_FOG).setDiffuseLightingState(NO_DIFFUSE_LIGHTING).setAlphaState(DEFAULT_ALPHA).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setTransparencyState(RenderStateShard.NO_TRANSPARENCY).setOverlayState(NO_OVERLAY).createCompositeState(false));
   }
 
   public static RenderType getGlowing(ResourceLocation pLocation) {
-    return create("spirit_entity", DefaultVertexFormats.NEW_ENTITY, 7, 256, false, true, State.builder().setTextureState(new TextureState(pLocation, false, false)).setFogState(NO_FOG).setDiffuseLightingState(NO_DIFFUSE_LIGHTING).setAlphaState(DEFAULT_ALPHA).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setTransparencyState(RenderState.GLINT_TRANSPARENCY).setOverlayState(NO_OVERLAY).createCompositeState(false));
+    return create("spirit_entity", DefaultVertexFormat.NEW_ENTITY, 7, 256, false, true, CompositeState.builder().setTextureState(new TextureStateShard(pLocation, false, false)).setFogState(NO_FOG).setDiffuseLightingState(NO_DIFFUSE_LIGHTING).setAlphaState(DEFAULT_ALPHA).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setTransparencyState(RenderStateShard.GLINT_TRANSPARENCY).setOverlayState(NO_OVERLAY).createCompositeState(false));
   }
 
   public static RenderType getLightning(ResourceLocation pLocation) {
-    return create("spirit_entity", DefaultVertexFormats.NEW_ENTITY, 7, 256, false, true, State.builder().setTextureState(new TextureState(pLocation, false, false)).setFogState(NO_FOG).setDiffuseLightingState(NO_DIFFUSE_LIGHTING).setAlphaState(DEFAULT_ALPHA).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setTransparencyState(RenderState.ADDITIVE_TRANSPARENCY).setOverlayState(NO_OVERLAY).createCompositeState(false));
+    return create("spirit_entity", DefaultVertexFormat.NEW_ENTITY, 7, 256, false, true, CompositeState.builder().setTextureState(new TextureStateShard(pLocation, false, false)).setFogState(NO_FOG).setDiffuseLightingState(NO_DIFFUSE_LIGHTING).setAlphaState(DEFAULT_ALPHA).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setTransparencyState(RenderStateShard.ADDITIVE_TRANSPARENCY).setOverlayState(NO_OVERLAY).createCompositeState(false));
   }
 }

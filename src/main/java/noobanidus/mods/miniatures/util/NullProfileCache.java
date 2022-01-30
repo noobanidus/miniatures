@@ -1,11 +1,11 @@
 package noobanidus.mods.miniatures.util;
 
 import net.minecraft.nbt.*;
-import net.minecraft.util.StringUtils;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class NullProfileCache extends WorldSavedData {
+public class NullProfileCache extends SavedData {
   private final Set<String> cachedNull = new HashSet<>();
   private final Set<UUID> cachedNullUUID = new HashSet<>();
 
@@ -27,18 +27,18 @@ public class NullProfileCache extends WorldSavedData {
     super(IDENTIFIER);
   }
 
-  private static ServerWorld getServerWorld() {
-    return ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD);
+  private static ServerLevel getServerWorld() {
+    return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD);
   }
 
   private static void save () {
-    ServerWorld world = getServerWorld();
+    ServerLevel world = getServerWorld();
     world.getDataStorage().save();
   }
 
   public static NullProfileCache getInstance() {
     if (INSTANCE == null) {
-      DimensionSavedDataManager manager = getServerWorld().getDataStorage();
+      DimensionDataStorage manager = getServerWorld().getDataStorage();
       INSTANCE = manager.computeIfAbsent(NullProfileCache::new, IDENTIFIER);
     }
 
@@ -64,11 +64,11 @@ public class NullProfileCache extends WorldSavedData {
   }
 
   protected boolean internalIsCachedNull(@Nullable String name, @Nullable UUID uuid) {
-    if (StringUtils.isNullOrEmpty(name) && uuid == null) {
+    if (StringUtil.isNullOrEmpty(name) && uuid == null) {
       throw new NullPointerException("Both name and uuid cannot be null in `isCachedNull` check");
     }
 
-    if (!StringUtils.isNullOrEmpty(name)) {
+    if (!StringUtil.isNullOrEmpty(name)) {
       if (internalIsCachedNull(name)) {
         return true;
       }
@@ -102,7 +102,7 @@ public class NullProfileCache extends WorldSavedData {
   }
 
   protected void internalCacheNull(@Nullable String name, @Nullable UUID id) {
-    if (!StringUtils.isNullOrEmpty(name)) {
+    if (!StringUtil.isNullOrEmpty(name)) {
       internalCacheNull(name);
     }
 
@@ -112,28 +112,28 @@ public class NullProfileCache extends WorldSavedData {
   }
 
   @Override
-  public void load(CompoundNBT pCompound) {
+  public void load(CompoundTag pCompound) {
     cachedNull.clear();
     cachedNullUUID.clear();
-    ListNBT uuids = pCompound.getList("uuids", Constants.NBT.TAG_INT_ARRAY);
-    for (INBT nbt : uuids) {
-      cachedNullUUID.add(NBTUtil.loadUUID(nbt));
+    ListTag uuids = pCompound.getList("uuids", Constants.NBT.TAG_INT_ARRAY);
+    for (Tag nbt : uuids) {
+      cachedNullUUID.add(NbtUtils.loadUUID(nbt));
     }
-    ListNBT names = pCompound.getList("names", Constants.NBT.TAG_STRING);
-    for (INBT nbt : names) {
+    ListTag names = pCompound.getList("names", Constants.NBT.TAG_STRING);
+    for (Tag nbt : names) {
       cachedNull.add(nbt.getAsString());
     }
   }
 
   @Override
-  public CompoundNBT save(CompoundNBT pCompound) {
-    ListNBT uuids = new ListNBT();
+  public CompoundTag save(CompoundTag pCompound) {
+    ListTag uuids = new ListTag();
     for (UUID uuid : cachedNullUUID) {
-      uuids.add(NBTUtil.createUUID(uuid));
+      uuids.add(NbtUtils.createUUID(uuid));
     }
-    ListNBT names = new ListNBT();
+    ListTag names = new ListTag();
     for (String name : cachedNull) {
-      names.add(StringNBT.valueOf(name));
+      names.add(StringTag.valueOf(name));
     }
     pCompound.put("uuids", uuids);
     pCompound.put("names", names);

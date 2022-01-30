@@ -1,7 +1,7 @@
 package noobanidus.mods.miniatures.init;
 
 import com.tterrag.registrate.providers.ProviderType;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.tags.BlockTags;
 import noobanidus.mods.miniatures.MiniTags;
 

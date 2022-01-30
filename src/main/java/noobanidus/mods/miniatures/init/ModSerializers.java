@@ -1,21 +1,21 @@
 package noobanidus.mods.miniatures.init;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.IDataSerializer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class ModSerializers {
-  public static final IDataSerializer<Optional<GameProfile>> OPTIONAL_GAME_PROFILE = new IDataSerializer<Optional<GameProfile>>() {
+  public static final EntityDataSerializer<Optional<GameProfile>> OPTIONAL_GAME_PROFILE = new EntityDataSerializer<Optional<GameProfile>>() {
     @Override
-    public void write(@Nonnull PacketBuffer packetBuffer, @Nonnull Optional<GameProfile> gameProfile) {
+    public void write(@Nonnull FriendlyByteBuf packetBuffer, @Nonnull Optional<GameProfile> gameProfile) {
       if (gameProfile.isPresent()) {
         packetBuffer.writeBoolean(true);
-        packetBuffer.writeNbt(NBTUtil.writeGameProfile(new CompoundNBT(), gameProfile.get()));
+        packetBuffer.writeNbt(NbtUtils.writeGameProfile(new CompoundTag(), gameProfile.get()));
       } else {
         packetBuffer.writeBoolean(false);
       }
@@ -23,11 +23,11 @@ public class ModSerializers {
 
     @Override
     @Nonnull
-    public Optional<GameProfile> read(@Nonnull PacketBuffer packetBuffer) {
+    public Optional<GameProfile> read(@Nonnull FriendlyByteBuf packetBuffer) {
       if (packetBuffer.readBoolean()) {
-        CompoundNBT tag = packetBuffer.readNbt();
+        CompoundTag tag = packetBuffer.readNbt();
         if (tag != null) {
-          GameProfile profile = NBTUtil.readGameProfile(tag);
+          GameProfile profile = NbtUtils.readGameProfile(tag);
           if (profile != null) {
             return Optional.of(profile);
           }

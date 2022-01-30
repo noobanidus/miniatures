@@ -1,10 +1,10 @@
 package noobanidus.mods.miniatures;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
 public class MiniTags {

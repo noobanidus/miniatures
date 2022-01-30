@@ -1,7 +1,7 @@
 package noobanidus.mods.miniatures.setup;
 
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -21,7 +21,7 @@ public class ClientSetup {
     RenderingRegistry.registerEntityRenderingHandler(ModEntities.ME.get(), new MiniMeRenderer.Factory());
     event.enqueueWork(() -> {
       RenderType rendertype = RenderType.cutoutMipped();
-      RenderTypeLookup.setRenderLayer(ModBlocks.SENSOR_TORCH_BLOCK.get(), rendertype);
+      ItemBlockRenderTypes.setRenderLayer(ModBlocks.SENSOR_TORCH_BLOCK.get(), rendertype);
     });
   }
 }

@@ -1,18 +1,20 @@
 package noobanidus.mods.miniatures.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.TorchBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.TorchBlock;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class SensorTorchBlock extends TorchBlock {
   public static final BooleanProperty TRIGGERED = BooleanProperty.create("trigger");
@@ -23,14 +25,14 @@ public class SensorTorchBlock extends TorchBlock {
   }
 
   @Override
-  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> pBuilder) {
+  protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
     pBuilder.add(TRIGGERED);
   }
 
   @Override
-  public void entityInside(BlockState pState, World pLevel, BlockPos pPos, Entity pEntity) {
+  public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
     if (!pLevel.isClientSide() && !pState.getValue(TRIGGERED)) {
-      ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastMessage(new StringTextComponent("First to cross the line was: ").append(pEntity.getName()), ChatType.CHAT, Util.NIL_UUID);
+      ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastMessage(new TextComponent("First to cross the line was: ").append(pEntity.getName()), ChatType.CHAT, Util.NIL_UUID);
       pLevel.setBlock(pPos, pState.setValue(TRIGGERED, true), 3);
     }
   }

@@ -4,12 +4,12 @@ import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
 public class GameProfileSerializer {
-  public static void write(GameProfile o, PacketBuffer output) {
+  public static void write(GameProfile o, FriendlyByteBuf output) {
     final UUID uuid = o.getId();
     if (uuid == null) {
       output.writeBoolean(false);
@@ -34,7 +34,7 @@ public class GameProfileSerializer {
     }
   }
 
-  public static GameProfile read(PacketBuffer input) {
+  public static GameProfile read(FriendlyByteBuf input) {
     boolean hasUuid = input.readBoolean();
     UUID uuid = hasUuid ? input.readUUID() : null;
     final String name = input.readUtf(Short.MAX_VALUE);

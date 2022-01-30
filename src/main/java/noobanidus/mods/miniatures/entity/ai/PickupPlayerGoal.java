@@ -1,9 +1,9 @@
 package noobanidus.mods.miniatures.entity.ai;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.pathfinding.Path;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.world.World;
 import noobanidus.mods.miniatures.config.ConfigManager;
@@ -16,7 +16,7 @@ public class PickupPlayerGoal extends Goal {
 
   private MiniMeEntity minime;
   private Path path;
-  private PlayerEntity targetPlayer;
+  private Player targetPlayer;
 
   public PickupPlayerGoal(MiniMeEntity entity) {
     this.minime = entity;
@@ -35,8 +35,8 @@ public class PickupPlayerGoal extends Goal {
       return false;
     }
     if (targetPlayer == null || targetPlayer.isAlive()) {
-      List<PlayerEntity> players = minime.level.getEntitiesOfClass(PlayerEntity.class, minime.getBoundingBox().inflate(10));
-      for (PlayerEntity player : players) {
+      List<Player> players = minime.level.getEntitiesOfClass(Player.class, minime.getBoundingBox().inflate(10));
+      for (Player player : players) {
         if (player.isPassenger()) {
           continue;
         }
@@ -77,7 +77,7 @@ public class PickupPlayerGoal extends Goal {
     }
   }
 
-  private boolean canRidePlayer(PlayerEntity player) {
+  private boolean canRidePlayer(Player player) {
     if (!ConfigManager.getOwnerRider()) {
       return true;
     }

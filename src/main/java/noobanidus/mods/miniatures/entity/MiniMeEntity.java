@@ -7,33 +7,33 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.server.management.PlayerProfileCache;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentUtils;
-import net.minecraft.world.BossInfo;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerBossInfo;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.server.players.GameProfileCache;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerBossEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
@@ -53,19 +53,31 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.PowerableMob;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+
 @OnlyIn(
     value = Dist.CLIENT,
-    _interface = IChargeableMob.class
+    _interface = PowerableMob.class
 )
-public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
-  private static final DataParameter<Optional<GameProfile>> GAMEPROFILE = EntityDataManager.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE);
-  public static final DataParameter<Integer> AGGRO = EntityDataManager.defineId(MiniMeEntity.class, DataSerializers.INT);
-  public static final DataParameter<Byte> NOOB = EntityDataManager.defineId(MiniMeEntity.class, DataSerializers.BYTE);
-  public static final DataParameter<Float> SCALE = EntityDataManager.defineId(MiniMeEntity.class, DataSerializers.FLOAT);
+public class MiniMeEntity extends Monster implements PowerableMob {
+  private static final EntityDataAccessor<Optional<GameProfile>> GAMEPROFILE = SynchedEntityData.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE);
+  public static final EntityDataAccessor<Integer> AGGRO = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.INT);
+  public static final EntityDataAccessor<Byte> NOOB = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.BYTE);
+  public static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.FLOAT);
 
-  private ServerBossInfo bossInfo;
+  private ServerBossEvent bossInfo;
 
-  private static PlayerProfileCache profileCache;
+  private static GameProfileCache profileCache;
   private static MinecraftSessionService sessionService;
   private int pickupCooldown = 0;
   private boolean wasRidden = false;
@@ -78,7 +90,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
 
   @Nullable
   public static GameProfile updateGameProfile(@Nullable GameProfile input) {
-    if (input != null && !StringUtils.isNullOrEmpty(input.getName())) {
+    if (input != null && !StringUtil.isNullOrEmpty(input.getName())) {
       if (NullProfileCache.isCachedNull(input.getName(), null)) {
         return input;
       }
@@ -111,7 +123,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
     }
   }
 
-  public static void setProfileCache(PlayerProfileCache profileCache) {
+  public static void setProfileCache(GameProfileCache profileCache) {
     MiniMeEntity.profileCache = profileCache;
   }
 
@@ -119,7 +131,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
     MiniMeEntity.sessionService = sessionService;
   }
 
-  public MiniMeEntity(EntityType<? extends MiniMeEntity> type, World world) {
+  public MiniMeEntity(EntityType<? extends MiniMeEntity> type, Level world) {
     super(type, world);
     setPersistenceRequired();
   }
@@ -139,7 +151,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public boolean isPreventingPlayerRest(PlayerEntity p_230292_1_) {
+  public boolean isPreventingPlayerRest(Player p_230292_1_) {
     return false;
   }
 
@@ -205,23 +217,23 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
     entityData.set(AGGRO, aggro);
   }
 
-  public static AttributeModifierMap.MutableAttribute attributes() {
-    return MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, ConfigManager.getMaxHealth()).add(Attributes.MOVEMENT_SPEED, ConfigManager.getMovementSpeed()).add(Attributes.ATTACK_DAMAGE, ConfigManager.getAttackDamage()).add(Attributes.ARMOR, ConfigManager.getArmorValue());
+  public static AttributeSupplier.Builder attributes() {
+    return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, ConfigManager.getMaxHealth()).add(Attributes.MOVEMENT_SPEED, ConfigManager.getMovementSpeed()).add(Attributes.ATTACK_DAMAGE, ConfigManager.getAttackDamage()).add(Attributes.ARMOR, ConfigManager.getArmorValue());
   }
 
   @Override
   protected void registerGoals() {
-    this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     this.goalSelector.addGoal(1, new MiniMeleeAttackGoal(this, 1.0d, false));
-    this.goalSelector.addGoal(2, new SwimGoal(this));
+    this.goalSelector.addGoal(2, new FloatGoal(this));
     this.goalSelector.addGoal(3, new MiniBreakBlockGoal(MiniTags.Blocks.BREAK_BLOCKS, this, 1, 3));
     this.goalSelector.addGoal(4, new PickupPlayerGoal(this));
-    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
-    this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-    this.goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+    this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+    this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+    this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
   }
 
-  public MiniMeEntity(EntityType<? extends MiniMeEntity> type, World world, GameProfile owner) {
+  public MiniMeEntity(EntityType<? extends MiniMeEntity> type, Level world, GameProfile owner) {
     this(type, world);
     if (owner != null) {
       entityData.set(GAMEPROFILE, Optional.of(owner));
@@ -254,16 +266,16 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  protected PathNavigator createNavigation(World worldIn) {
-    GroundPathNavigator navigator = new GroundPathNavigator(this, worldIn);
-    setPathfindingMalus(PathNodeType.WATER, -1.0F);
+  protected PathNavigation createNavigation(Level worldIn) {
+    GroundPathNavigation navigator = new GroundPathNavigation(this, worldIn);
+    setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
     navigator.setCanFloat(true);
     return navigator;
   }
 
   @Override
   public boolean hurt(DamageSource source, float amount) {
-    if (ConfigManager.getImmune() && !(source.getEntity() instanceof PlayerEntity) && source != DamageSource.OUT_OF_WORLD) {
+    if (ConfigManager.getImmune() && !(source.getEntity() instanceof Player) && source != DamageSource.OUT_OF_WORLD) {
       return false;
     }
     return super.hurt(source, amount);
@@ -301,8 +313,8 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public Vector3d getDismountLocationForPassenger(LivingEntity livingEntity) {
-    return new Vector3d(this.getX(), this.getBoundingBox().minY, this.getZ());
+  public Vec3 getDismountLocationForPassenger(LivingEntity livingEntity) {
+    return new Vec3(this.getX(), this.getBoundingBox().minY, this.getZ());
   }
 
   public int getPickupCooldown() {
@@ -314,7 +326,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public void setCustomName(@Nullable ITextComponent name) {
+  public void setCustomName(@Nullable Component name) {
     super.setCustomName(name);
 
     if (name != null) {
@@ -338,18 +350,18 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public void addAdditionalSaveData(CompoundNBT compound) {
+  public void addAdditionalSaveData(CompoundTag compound) {
     super.addAdditionalSaveData(compound);
 
     compound.putBoolean("gameProfileExists", entityData.get(GAMEPROFILE).isPresent());
-    getGameProfile().ifPresent(profile -> compound.put("gameProfile", NBTUtil.writeGameProfile(new CompoundNBT(), profile)));
+    getGameProfile().ifPresent(profile -> compound.put("gameProfile", NbtUtils.writeGameProfile(new CompoundTag(), profile)));
     /* compound.put("gameProfile", NBTUtil.writeGameProfile(new CompoundNBT(), entityData.get(GAMEPROFILE).get()));*/
     compound.putByte("Noob", (byte) getNoobVariant());
     compound.putFloat("Scale", getMiniScale());
 
     compound.putInt("pickupCooldown", pickupCooldown);
     if (healthBoosted) {
-      ModifiableAttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
+      AttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
       if (health != null) {
         AttributeModifier mod = health.getModifier(ModModifiers.HEALTH_INCREASE);
         if (mod != null) {
@@ -359,7 +371,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
       }
     }
     if (attackBoosted) {
-      ModifiableAttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
+      AttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
       if (attack != null) {
         AttributeModifier mod = attack.getModifier(ModModifiers.ATTACK_DAMAGE_INCREASE);
         if (mod != null) {
@@ -378,7 +390,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundNBT tag) {
+  public void readAdditionalSaveData(CompoundTag tag) {
     super.readAdditionalSaveData(tag);
     this.pickupCooldown = tag.getInt("pickupCooldown");
     if (tag.contains("Noob")) {
@@ -393,7 +405,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public void load(CompoundNBT compound) {
+  public void load(CompoundTag compound) {
     super.load(compound);
 
     // We only want to load the profile on the server, rely on the
@@ -422,15 +434,15 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
         }
       } else {
         // TODO: Should this be server only? IDK
-        entityData.set(GAMEPROFILE, Optional.ofNullable(NBTUtil.readGameProfile(compound.getCompound("gameProfile"))));
+        entityData.set(GAMEPROFILE, Optional.ofNullable(NbtUtils.readGameProfile(compound.getCompound("gameProfile"))));
       }
     }
 
     if (compound.contains("NameTag", Constants.NBT.TAG_STRING)) {
-      entityData.set(DATA_CUSTOM_NAME, Optional.of(new StringTextComponent(compound.getString("NameTag"))));
+      entityData.set(DATA_CUSTOM_NAME, Optional.of(new TextComponent(compound.getString("NameTag"))));
     }
     if (compound.contains("AttackAddition")) {
-      ModifiableAttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
+      AttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
       if (attack != null) {
         double value = 0.0;
         if (compound.contains("AttackAddition", Constants.NBT.TAG_FLOAT)) {
@@ -450,7 +462,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
       }
     }
     if (compound.contains("HealthAddition")) {
-      ModifiableAttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
+      AttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
       if (health != null) {
         double value = 0.0;
         if (compound.contains("HealthAddition", Constants.NBT.TAG_FLOAT)) {
@@ -473,25 +485,25 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
       }
     }
     if (compound.contains("BossBar", Constants.NBT.TAG_BYTE) && compound.getBoolean("BossBar")) {
-      BossInfo.Color bossInfoColor = BossInfo.Color.WHITE;
-      BossInfo.Overlay bossInfoOverlay = BossInfo.Overlay.PROGRESS;
+      BossEvent.BossBarColor bossInfoColor = BossEvent.BossBarColor.WHITE;
+      BossEvent.BossBarOverlay bossInfoOverlay = BossEvent.BossBarOverlay.PROGRESS;
       if (compound.contains("BossBarColor", Constants.NBT.TAG_STRING)) {
-        bossInfoColor = BossInfo.Color.byName(compound.getString("BossBarColor").toLowerCase());
+        bossInfoColor = BossEvent.BossBarColor.byName(compound.getString("BossBarColor").toLowerCase());
       }
       if (compound.contains("BossBarOverlay", Constants.NBT.TAG_STRING)) {
-        bossInfoOverlay = BossInfo.Overlay.byName(compound.getString("BossBarOverlay").toLowerCase());
+        bossInfoOverlay = BossEvent.BossBarOverlay.byName(compound.getString("BossBarOverlay").toLowerCase());
       }
-      ITextComponent name = new StringTextComponent("Unknown Mini");
+      Component name = new TextComponent("Unknown Mini");
       if (getGameProfile().isPresent()) {
-        name = TextComponentUtils.getDisplayName(getGameProfile().get());
+        name = ComponentUtils.getDisplayName(getGameProfile().get());
       }
 
-      bossInfo = new ServerBossInfo(name, bossInfoColor, bossInfoOverlay);
+      bossInfo = new ServerBossEvent(name, bossInfoColor, bossInfoOverlay);
     }
   }
 
   @Override
-  public void startSeenByPlayer(ServerPlayerEntity player) {
+  public void startSeenByPlayer(ServerPlayer player) {
     super.startSeenByPlayer(player);
     if (bossInfo != null) {
       this.bossInfo.addPlayer(player);
@@ -499,7 +511,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public void stopSeenByPlayer(ServerPlayerEntity player) {
+  public void stopSeenByPlayer(ServerPlayer player) {
     super.stopSeenByPlayer(player);
     if (bossInfo != null) {
       this.bossInfo.removePlayer(player);
@@ -507,7 +519,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  public void onSyncedDataUpdated(DataParameter<?> key) {
+  public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
     if (GAMEPROFILE.equals(key) && this.level.isClientSide()) {
       this.getGameProfile().ifPresent(gameprofile -> {
         if (gameprofile.isComplete()) {
@@ -523,7 +535,7 @@ public class MiniMeEntity extends MonsterEntity implements IChargeableMob {
   }
 
   @Override
-  protected float getStandingEyeHeight(Pose pPose, EntitySize pSize) {
+  protected float getStandingEyeHeight(Pose pPose, EntityDimensions pSize) {
     return pSize.height * 0.93f;
   }
 
