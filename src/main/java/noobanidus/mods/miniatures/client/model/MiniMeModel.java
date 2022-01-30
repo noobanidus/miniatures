@@ -11,23 +11,16 @@ import java.util.function.Function;
 
 public class MiniMeModel<E extends MiniMeEntity> extends PlayerRenderModel<E> {
 
-  private final boolean arms;
-
-  public MiniMeModel(float modelSize, boolean arms) {
-    this(AdditionalRenderTypes::entityTranslucent, modelSize, arms);
+  public MiniMeModel(ModelPart root, boolean slim) {
+    super(AdditionalRenderTypes::entityTranslucent, root, slim);
   }
 
-  public MiniMeModel(Function<ResourceLocation, RenderType> renderTypeIn, float modelSize, boolean smallArmsIn) {
-    this(renderTypeIn, modelSize, 0.0F, 64, 64, smallArmsIn);
+  public MiniMeModel(Function<ResourceLocation, RenderType> renderTypeIn, ModelPart root, boolean slim) {
+    super(renderTypeIn, root, slim);
   }
 
-  public MiniMeModel(Function<ResourceLocation, RenderType> renderTypeIn, float modelSize, float yOffsetIn, int textureWidthIn, int textureHeightIn, boolean smallArmsIn) {
-    super(renderTypeIn, modelSize, yOffsetIn, textureWidthIn, textureHeightIn, smallArmsIn);
-    this.arms = smallArmsIn;
-  }
-
-  public boolean isArms() {
-    return arms;
+  public boolean isSlim() {
+    return slim;
   }
 
   @Override
@@ -47,11 +40,11 @@ public class MiniMeModel<E extends MiniMeEntity> extends PlayerRenderModel<E> {
       this.rightArm.zRot = -0.3f;
     }
     this.hat.copyFrom(this.head);
-    this.bipedBodyWear.copyFrom(this.body);
-    this.bipedLeftArmwear.copyFrom(this.leftArm);
-    this.bipedRightArmwear.copyFrom(this.rightArm);
-    this.bipedLeftLegwear.copyFrom(this.leftLeg);
-    this.bipedRightLegwear.copyFrom(this.rightLeg);
+    this.jacket.copyFrom(this.body);
+    this.leftSleeve.copyFrom(this.leftArm);
+    this.rightSleeve.copyFrom(this.rightArm);
+    this.leftPants.copyFrom(this.leftLeg);
+    this.rightPants.copyFrom(this.rightLeg);
   }
 
   @Override

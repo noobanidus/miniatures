@@ -97,22 +97,23 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       if (input.isComplete() && input.getProperties().containsKey("textures")) {
         return input;
       } else if (profileCache != null && sessionService != null) {
-        GameProfile gameprofile = profileCache.get(input.getName());
-        if (gameprofile == null) {
+        Optional<GameProfile> gameprofile = profileCache.get(input.getName());
+        if (!gameprofile.isPresent()) {
           NullProfileCache.cacheNull(input.getName(), input.getId());
           return input;
         } else {
-          Property property = Iterables.getFirst(gameprofile.getProperties().get("textures"), null);
+          GameProfile profile = gameprofile.get();
+          Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
           if (property == null) {
-            Miniatures.LOG.info("Refilling cache for gameprofile: " + gameprofile);
-            gameprofile = sessionService.fillProfileProperties(gameprofile, true);
+            Miniatures.LOG.info("Refilling cache for gameprofile: " + profile);
+            profile = sessionService.fillProfileProperties(profile, true);
           }
 
-          if (!gameprofile.isComplete()) {
-            NullProfileCache.cacheNull(gameprofile.getName(), gameprofile.getId());
+          if (!profile.isComplete()) {
+            NullProfileCache.cacheNull(profile.getName(), profile.getId());
           }
 
-          return gameprofile;
+          return profile;
         }
       } else {
         return input;

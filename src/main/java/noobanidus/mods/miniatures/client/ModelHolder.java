@@ -1,8 +1,10 @@
 package noobanidus.mods.miniatures.client;
 
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import noobanidus.mods.miniatures.client.model.GhostlyMiniMeModel;
 import noobanidus.mods.miniatures.client.model.GlowingMiniMeModel;
 import noobanidus.mods.miniatures.client.model.MiniMeModel;
+import noobanidus.mods.miniatures.setup.ClientSetup;
 
 public class ModelHolder {
   public static MiniMeModel miniMe;
@@ -13,13 +15,13 @@ public class ModelHolder {
   public static MiniMeModel miniMeGlowSlim;
   public static MiniMeModel chargedMiniMe;
 
-  public static void init () {
-    miniMe = new MiniMeModel(0.5f, false);
-    miniMeSlim = new MiniMeModel(0.5f, true);
-    miniMeGhost = new GhostlyMiniMeModel(0.5f, false);
-    miniMeGhostSlim = new GhostlyMiniMeModel(0.5f, true);
-    miniMeGlow = new GlowingMiniMeModel(0.5f, false);
-    miniMeGlowSlim = new GlowingMiniMeModel(0.5f, true);
-    chargedMiniMe = new MiniMeModel(1.0f, false);
+  public static void init (EntityRendererProvider.Context context) {
+    miniMe = new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME), false);
+    miniMeSlim = new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME_SLIM), true);
+    miniMeGhost = new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME), false);
+    miniMeGhostSlim =new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME_SLIM), true);
+    miniMeGlow = new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME), false);
+    miniMeGlowSlim = new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME_SLIM), true);
+    chargedMiniMe =new MiniMeModel(context.bakeLayer(ClientSetup.CHARGED_MINI_ME), false);
   }
 }

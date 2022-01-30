@@ -21,27 +21,27 @@ public abstract class StuckInBodyRenderTypeLayer<T extends LivingEntity, M exten
 
   protected abstract void renderStuckItem(PoseStack p_225632_1_, MultiBufferSource p_225632_2_, int p_225632_3_, Entity p_225632_4_, float p_225632_5_, float p_225632_6_, float p_225632_7_, float p_225632_8_);
 
-  public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+  public void render(PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     int i = this.numStuck(entitylivingbaseIn);
     Random random = new Random((long) entitylivingbaseIn.getId());
     if (i > 0) {
       for (int j = 0; j < i; ++j) {
-        matrixStackIn.pushPose();
-        ModelPart modelrenderer = this.getParentModel().getRandomModelRenderer(random);
-        ModelPart.Cube modelrenderer$modelbox = modelrenderer.getRandomCube(random);
-        modelrenderer.translateAndRotate(matrixStackIn);
+        poseStack.pushPose();
+        ModelPart modelpart = this.getParentModel().getRandomModelRenderer(random);
+        ModelPart.Cube modelpart$cube = modelpart.getRandomCube(random);
+        modelpart.translateAndRotate(poseStack);
         float f = random.nextFloat();
         float f1 = random.nextFloat();
         float f2 = random.nextFloat();
-        float f3 = Mth.lerp(f, modelrenderer$modelbox.minX, modelrenderer$modelbox.maxX) / 16.0F;
-        float f4 = Mth.lerp(f1, modelrenderer$modelbox.minY, modelrenderer$modelbox.maxY) / 16.0F;
-        float f5 = Mth.lerp(f2, modelrenderer$modelbox.minZ, modelrenderer$modelbox.maxZ) / 16.0F;
-        matrixStackIn.translate((double) f3, (double) f4, (double) f5);
+        float f3 = Mth.lerp(f, modelpart$cube.minX, modelpart$cube.maxX) / 16.0F;
+        float f4 = Mth.lerp(f1, modelpart$cube.minY, modelpart$cube.maxY) / 16.0F;
+        float f5 = Mth.lerp(f2, modelpart$cube.minZ, modelpart$cube.maxZ) / 16.0F;
+        poseStack.translate((double) f3, (double) f4, (double) f5);
         f = -1.0F * (f * 2.0F - 1.0F);
         f1 = -1.0F * (f1 * 2.0F - 1.0F);
         f2 = -1.0F * (f2 * 2.0F - 1.0F);
-        this.renderStuckItem(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, f, f1, f2, partialTicks);
-        matrixStackIn.popPose();
+        this.renderStuckItem(poseStack, bufferIn, packedLightIn, entitylivingbaseIn, f, f1, f2, partialTicks);
+        poseStack.popPose();
       }
 
     }
