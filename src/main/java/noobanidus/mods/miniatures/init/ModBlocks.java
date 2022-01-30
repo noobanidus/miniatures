@@ -1,19 +1,11 @@
 package noobanidus.mods.miniatures.init;
 
 import com.tterrag.registrate.util.entry.BlockEntry;
-import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.block.SensorTorchBlock;
-import noobanidus.mods.miniatures.entity.MaxiMeEntity;
-import noobanidus.mods.miniatures.entity.MeEntity;
-import noobanidus.mods.miniatures.entity.MiniMeEntity;
 
 import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
 

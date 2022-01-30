@@ -41,17 +41,17 @@ public class BeeStingerRenderTypeLayer<T extends LivingEntity, M extends PlayerR
     p_225632_1_.mulPose(Vector3f.XP.rotationDegrees(45.0F));
     p_225632_1_.scale(0.03125F, 0.03125F, 0.03125F);
     p_225632_1_.translate(2.5D, 0.0D, 0.0D);
-    VertexConsumer ivertexbuilder = p_225632_2_.getBuffer(RenderType.entityCutoutNoCull(BEE_STINGER_LOCATION));
+    VertexConsumer vertexconsumer = p_225632_2_.getBuffer(RenderType.entityCutoutNoCull(BEE_STINGER_LOCATION));
 
     for (int i = 0; i < 4; ++i) {
       p_225632_1_.mulPose(Vector3f.XP.rotationDegrees(90.0F));
-      PoseStack.Pose matrixstack$entry = p_225632_1_.last();
-      Matrix4f matrix4f = matrixstack$entry.pose();
-      Matrix3f matrix3f = matrixstack$entry.normal();
-      vertex(ivertexbuilder, matrix4f, matrix3f, -4.5F, -1, 0.0F, 0.0F, p_225632_3_);
-      vertex(ivertexbuilder, matrix4f, matrix3f, 4.5F, -1, 0.125F, 0.0F, p_225632_3_);
-      vertex(ivertexbuilder, matrix4f, matrix3f, 4.5F, 1, 0.125F, 0.0625F, p_225632_3_);
-      vertex(ivertexbuilder, matrix4f, matrix3f, -4.5F, 1, 0.0F, 0.0625F, p_225632_3_);
+      PoseStack.Pose posestack$entry = p_225632_1_.last();
+      Matrix4f matrix4f = posestack$entry.pose();
+      Matrix3f matrix3f = posestack$entry.normal();
+      vertex(vertexconsumer, matrix4f, matrix3f, -4.5F, -1, 0.0F, 0.0F, p_225632_3_);
+      vertex(vertexconsumer, matrix4f, matrix3f, 4.5F, -1, 0.125F, 0.0F, p_225632_3_);
+      vertex(vertexconsumer, matrix4f, matrix3f, 4.5F, 1, 0.125F, 0.0625F, p_225632_3_);
+      vertex(vertexconsumer, matrix4f, matrix3f, -4.5F, 1, 0.0F, 0.0625F, p_225632_3_);
     }
 
   }

@@ -5,6 +5,7 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.layers.*;
@@ -17,6 +18,7 @@ import noobanidus.mods.miniatures.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.client.renderer.layers.ArrowRenderTypeLayer;
 import noobanidus.mods.miniatures.client.renderer.layers.BeeStingerRenderTypeLayer;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
+import noobanidus.mods.miniatures.setup.ClientSetup;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -25,14 +27,15 @@ import java.util.Map;
 public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeModel<MiniMeEntity>> {
   private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/steve.png");
 
-  public MaxiMeRenderer(EntityRenderDispatcher renderManager, MiniMeModel model, float shadow) {
-    super(renderManager, model, shadow);
+  public MaxiMeRenderer(EntityRendererProvider.Context context) {
+    super(context, new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME), false), 0.5f);
+    ModelHolder.init(context);
     this.addLayer(new ItemInHandLayer<>(this));
-    this.addLayer(new ArrowRenderTypeLayer<>(this));
-    this.addLayer(new CustomHeadLayer<>(this));
-    this.addLayer(new ElytraLayer<>(this));
+    this.addLayer(new ArrowRenderTypeLayer<>(context, this));
+    this.addLayer(new CustomHeadLayer<>(this, context.getModelSet()));
+    this.addLayer(new ElytraLayer<>(this, context.getModelSet()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this));
-    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel(1.02F), new HumanoidModel(1.02F)));
+    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel(context.bakeLayer(ClientSetup.MINI_ME_ARMOR))));
     //this.addLayer(new BipedArmorLayer<>(this, new MiniMeModel(5.0f, model.isArms()), new MiniMeModel(5.0f, model.isArms())));
   }
 
@@ -59,37 +62,29 @@ public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   }
 
   @Override
-  public void render(MiniMeEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+  public void render(MiniMeEntity miniMeEntity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
     this.model = ModelHolder.miniMe;
-    if (entityIn.isSlim() && this.model != ModelHolder.miniMeSlim) {
+    if (miniMeEntity.isSlim() && this.model != ModelHolder.miniMeSlim) {
       this.model = ModelHolder.miniMeSlim;
     }
-    int noob = entityIn.getNoobVariant();
+    int noob = miniMeEntity.getNoobVariant();
     if (noob == 3) {
       packedLightIn = 15728880;
       this.model = ModelHolder.miniMeGhost;
-      if (entityIn.isSlim() && this.model != ModelHolder.miniMeGhostSlim) {
+      if (miniMeEntity.isSlim() && this.model != ModelHolder.miniMeGhostSlim) {
         this.model = ModelHolder.miniMeGhostSlim;
       }
     } else if (noob == 4) {
       packedLightIn = 15728880;
       this.model = ModelHolder.miniMeGlow;
-      if (entityIn.isSlim() && this.model != ModelHolder.miniMeGlowSlim) {
+      if (miniMeEntity.isSlim() && this.model != ModelHolder.miniMeGlowSlim) {
         this.model = ModelHolder.miniMeGlowSlim;
       }
     }
-    super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+    super.render(miniMeEntity, entityYaw, partialTicks, poseStack, bufferIn, packedLightIn);
   }
 
-  protected void scale(MiniMeEntity entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
-    matrixStackIn.scale(3.5375F, 3.5375F, 3.5375F);
-  }
-
-  public static class Factory implements IRenderFactory<MiniMeEntity> {
-    @Override
-    @Nonnull
-    public MaxiMeRenderer createRenderFor(@Nonnull EntityRenderDispatcher manager) {
-      return new MaxiMeRenderer(manager, ModelHolder.miniMe, 0.5f);
-    }
+  protected void scale(MiniMeEntity miniMeEntity, PoseStack poseStack, float partialTickTime) {
+    poseStack.scale(3.5375F, 3.5375F, 3.5375F);
   }
 }

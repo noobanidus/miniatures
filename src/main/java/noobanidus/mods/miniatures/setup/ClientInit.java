@@ -7,5 +7,7 @@ public class ClientInit {
   public static void init() {
     IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
     modBus.addListener(ClientSetup::init);
+    modBus.addListener(ClientSetup::registerEntityRenders);
+    modBus.addListener(ClientSetup::registerLayerDefinitions);
   }
 }
