@@ -4,8 +4,6 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.world.World;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 

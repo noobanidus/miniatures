@@ -13,7 +13,6 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Vector3f;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 import noobanidus.mods.miniatures.client.ModelHolder;
 import noobanidus.mods.miniatures.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.client.renderer.layers.ArrowRenderTypeLayer;
@@ -25,6 +24,7 @@ import noobanidus.mods.miniatures.util.NoobUtil;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
+// TODO:
 public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeModel<MiniMeEntity>> {
   private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/steve.png");
 

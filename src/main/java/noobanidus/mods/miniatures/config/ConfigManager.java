@@ -6,6 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import noobanidus.mods.miniatures.Miniatures;
 
 import java.nio.file.Path;
@@ -56,7 +57,7 @@ public class ConfigManager {
   }
 
   @SubscribeEvent
-  public static void onConfigEvent (ModConfig.ModConfigEvent event) {
+  public static void onConfigEvent (ModConfigEvent event) {
     Miniatures.LOG.info("Config reload for [Miniatures]!");
     COMMON_CONFIG.setConfig(event.getConfig().getConfigData());
   }

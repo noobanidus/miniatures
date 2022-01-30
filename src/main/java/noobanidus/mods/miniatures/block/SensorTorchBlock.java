@@ -12,9 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class SensorTorchBlock extends TorchBlock {
   public static final BooleanProperty TRIGGERED = BooleanProperty.create("trigger");
@@ -30,6 +28,7 @@ public class SensorTorchBlock extends TorchBlock {
   }
 
   @Override
+  @SuppressWarnings("deprecated")
   public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
     if (!pLevel.isClientSide() && !pState.getValue(TRIGGERED)) {
       ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastMessage(new TextComponent("First to cross the line was: ").append(pEntity.getName()), ChatType.CHAT, Util.NIL_UUID);

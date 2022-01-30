@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import noobanidus.mods.miniatures.client.ModelHolder;
 import noobanidus.mods.miniatures.client.renderer.entity.MaxiMeRenderer;
@@ -16,6 +15,7 @@ import noobanidus.mods.miniatures.init.ModEntities;
 public class ClientSetup {
   public static void init(FMLClientSetupEvent event) {
     ModelHolder.init();
+    // TODO:
     RenderingRegistry.registerEntityRenderingHandler(ModEntities.MINIME.get(), new MiniMeRenderer.Factory());
     RenderingRegistry.registerEntityRenderingHandler(ModEntities.MAXIME.get(), new MaxiMeRenderer.Factory());
     RenderingRegistry.registerEntityRenderingHandler(ModEntities.ME.get(), new MiniMeRenderer.Factory());

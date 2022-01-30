@@ -3,7 +3,6 @@ package noobanidus.mods.miniatures.init;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

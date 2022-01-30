@@ -119,39 +119,41 @@ public class MiniMeleeAttackGoal extends Goal {
    */
   public void tick() {
     LivingEntity livingentity = this.attacker.getTarget();
-    this.attacker.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
-    double d0 = this.attacker.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
-    this.delayCounter = Math.max(this.delayCounter - 1, 0);
-    if ((this.longMemory || this.attacker.getSensing().canSee(livingentity)) && this.delayCounter <= 0 && (this.targetX == 0.0D && this.targetY == 0.0D && this.targetZ == 0.0D || livingentity.distanceToSqr(this.targetX, this.targetY, this.targetZ) >= 1.0D || this.attacker.getRandom().nextFloat() < 0.05F)) {
-      this.targetX = livingentity.getX();
-      this.targetY = livingentity.getY();
-      this.targetZ = livingentity.getZ();
-      this.delayCounter = 4 + this.attacker.getRandom().nextInt(7);
-      if (this.canPenalize) {
-        this.delayCounter += failedPathFindingPenalty;
-        if (this.attacker.getNavigation().getPath() != null) {
-          net.minecraft.world.level.pathfinder.Node finalPathPoint = this.attacker.getNavigation().getPath().getEndNode();
-          if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
-            failedPathFindingPenalty = 0;
-          else
+    if (livingentity != null) {
+      this.attacker.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+      double d0 = this.attacker.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+      this.delayCounter = Math.max(this.delayCounter - 1, 0);
+      if ((this.longMemory || this.attacker.getSensing().hasLineOfSight(livingentity)) && this.delayCounter <= 0 && (this.targetX == 0.0D && this.targetY == 0.0D && this.targetZ == 0.0D || livingentity.distanceToSqr(this.targetX, this.targetY, this.targetZ) >= 1.0D || this.attacker.getRandom().nextFloat() < 0.05F)) {
+        this.targetX = livingentity.getX();
+        this.targetY = livingentity.getY();
+        this.targetZ = livingentity.getZ();
+        this.delayCounter = 4 + this.attacker.getRandom().nextInt(7);
+        if (this.canPenalize) {
+          this.delayCounter += failedPathFindingPenalty;
+          if (this.attacker.getNavigation().getPath() != null) {
+            net.minecraft.world.level.pathfinder.Node finalPathPoint = this.attacker.getNavigation().getPath().getEndNode();
+            if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
+              failedPathFindingPenalty = 0;
+            else
+              failedPathFindingPenalty += 10;
+          } else {
             failedPathFindingPenalty += 10;
-        } else {
-          failedPathFindingPenalty += 10;
+          }
+        }
+        if (d0 > 1024.0D) {
+          this.delayCounter += 10;
+        } else if (d0 > 256.0D) {
+          this.delayCounter += 5;
+        }
+
+        if (!this.attacker.getNavigation().moveTo(livingentity, this.speedTowardsTarget)) {
+          this.delayCounter += 15;
         }
       }
-      if (d0 > 1024.0D) {
-        this.delayCounter += 10;
-      } else if (d0 > 256.0D) {
-        this.delayCounter += 5;
-      }
 
-      if (!this.attacker.getNavigation().moveTo(livingentity, this.speedTowardsTarget)) {
-        this.delayCounter += 15;
-      }
+      this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+      this.checkAndPerformAttack(livingentity, d0);
     }
-
-    this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-    this.checkAndPerformAttack(livingentity, d0);
   }
 
   protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {

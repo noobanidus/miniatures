@@ -6,12 +6,11 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.*;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.entity.ai.goal.*;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +35,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
 import noobanidus.mods.miniatures.MiniTags;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.config.ConfigManager;
@@ -88,6 +86,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   private int scaleChanged = -1;
   private boolean isSlim;
 
+  // TODO:
   @Nullable
   public static GameProfile updateGameProfile(@Nullable GameProfile input) {
     if (input != null && !StringUtil.isNullOrEmpty(input.getName())) {
@@ -303,7 +302,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       scaleChanged = 0;
     }
     if (bossInfo != null) {
-      this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+      this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
     }
   }
 
@@ -424,7 +423,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
         if (this.level.isClientSide()) {
           Miniatures.LOG.info("Set a profile on the client side.");
         } else {
-          if (compound.contains("owner", Constants.NBT.TAG_STRING)) {
+          if (compound.contains("owner", Tag.TAG_STRING)) {
             setGameProfile(compound.getString("owner"));
           } else if (compound.hasUUID("OwnerUUID")) {
             setGameProfile(compound.getUUID("OwnerUUID"));
@@ -438,18 +437,18 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       }
     }
 
-    if (compound.contains("NameTag", Constants.NBT.TAG_STRING)) {
+    if (compound.contains("NameTag", Tag.TAG_STRING)) {
       entityData.set(DATA_CUSTOM_NAME, Optional.of(new TextComponent(compound.getString("NameTag"))));
     }
     if (compound.contains("AttackAddition")) {
       AttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
       if (attack != null) {
         double value = 0.0;
-        if (compound.contains("AttackAddition", Constants.NBT.TAG_FLOAT)) {
+        if (compound.contains("AttackAddition", Tag.TAG_FLOAT)) {
           value = (double) compound.getFloat("AttackAddition");
-        } else if (compound.contains("AttackAddition", Constants.NBT.TAG_INT)) {
+        } else if (compound.contains("AttackAddition", Tag.TAG_INT)) {
           value = (double) compound.getInt("AttackAddition");
-        } else if (compound.contains("AttackAddition", Constants.NBT.TAG_DOUBLE)) {
+        } else if (compound.contains("AttackAddition", Tag.TAG_DOUBLE)) {
           value = compound.getDouble("AttackAddition");
         }
         if (value != 0.0) {
@@ -465,11 +464,11 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       AttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
       if (health != null) {
         double value = 0.0;
-        if (compound.contains("HealthAddition", Constants.NBT.TAG_FLOAT)) {
+        if (compound.contains("HealthAddition", Tag.TAG_FLOAT)) {
           value = compound.getFloat("HealthAddition");
-        } else if (compound.contains("HealthAddition", Constants.NBT.TAG_INT)) {
+        } else if (compound.contains("HealthAddition", Tag.TAG_INT)) {
           value = compound.getInt("HealthAddition");
-        } else if (compound.contains("HealthAddition", Constants.NBT.TAG_DOUBLE)) {
+        } else if (compound.contains("HealthAddition", Tag.TAG_DOUBLE)) {
           value = compound.getDouble("HealthAddition");
         }
         if (value != 0.0) {
@@ -484,13 +483,13 @@ public class MiniMeEntity extends Monster implements PowerableMob {
         }
       }
     }
-    if (compound.contains("BossBar", Constants.NBT.TAG_BYTE) && compound.getBoolean("BossBar")) {
+    if (compound.contains("BossBar", Tag.TAG_BYTE) && compound.getBoolean("BossBar")) {
       BossEvent.BossBarColor bossInfoColor = BossEvent.BossBarColor.WHITE;
       BossEvent.BossBarOverlay bossInfoOverlay = BossEvent.BossBarOverlay.PROGRESS;
-      if (compound.contains("BossBarColor", Constants.NBT.TAG_STRING)) {
+      if (compound.contains("BossBarColor", Tag.TAG_STRING)) {
         bossInfoColor = BossEvent.BossBarColor.byName(compound.getString("BossBarColor").toLowerCase());
       }
-      if (compound.contains("BossBarOverlay", Constants.NBT.TAG_STRING)) {
+      if (compound.contains("BossBarOverlay", Tag.TAG_STRING)) {
         bossInfoOverlay = BossEvent.BossBarOverlay.byName(compound.getString("BossBarOverlay").toLowerCase());
       }
       Component name = new TextComponent("Unknown Mini");

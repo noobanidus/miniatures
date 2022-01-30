@@ -6,8 +6,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
 
 import javax.annotation.Nullable;
@@ -24,7 +23,6 @@ public class NullProfileCache extends SavedData {
   private static final String IDENTIFIER = "MiniaturesNullProfileCache";
 
   public NullProfileCache() {
-    super(IDENTIFIER);
   }
 
   private static ServerLevel getServerWorld() {
@@ -39,7 +37,7 @@ public class NullProfileCache extends SavedData {
   public static NullProfileCache getInstance() {
     if (INSTANCE == null) {
       DimensionDataStorage manager = getServerWorld().getDataStorage();
-      INSTANCE = manager.computeIfAbsent(NullProfileCache::new, IDENTIFIER);
+      INSTANCE = manager.computeIfAbsent(NullProfileCache::new, NullProfileCache::new, IDENTIFIER);
     }
 
     return INSTANCE;
@@ -111,15 +109,14 @@ public class NullProfileCache extends SavedData {
     }
   }
 
-  @Override
-  public void load(CompoundTag pCompound) {
+  public NullProfileCache (CompoundTag pCompound) {
     cachedNull.clear();
     cachedNullUUID.clear();
-    ListTag uuids = pCompound.getList("uuids", Constants.NBT.TAG_INT_ARRAY);
+    ListTag uuids = pCompound.getList("uuids", Tag.TAG_INT_ARRAY);
     for (Tag nbt : uuids) {
       cachedNullUUID.add(NbtUtils.loadUUID(nbt));
     }
-    ListTag names = pCompound.getList("names", Constants.NBT.TAG_STRING);
+    ListTag names = pCompound.getList("names", Tag.TAG_STRING);
     for (Tag nbt : names) {
       cachedNull.add(nbt.getAsString());
     }

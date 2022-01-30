@@ -1,18 +1,22 @@
 package noobanidus.mods.miniatures.util;
 
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.nbt.*;
-import net.minecraft.util.StringUtils;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ProfileCache extends SavedData {
   private final Set<String> cached = new HashSet<>();
@@ -22,14 +26,13 @@ public class ProfileCache extends SavedData {
   private static final String IDENTIFIER = "MiniaturesProfileCache";
 
   public ProfileCache() {
-    super(IDENTIFIER);
   }
 
   private static ServerLevel getServerWorld() {
     return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD);
   }
 
-  private static void save () {
+  private static void save() {
     ServerLevel world = getServerWorld();
     world.getDataStorage().save();
   }
@@ -37,13 +40,15 @@ public class ProfileCache extends SavedData {
   public static ProfileCache getInstance() {
     if (INSTANCE == null) {
       DimensionDataStorage manager = getServerWorld().getDataStorage();
-      INSTANCE = manager.computeIfAbsent(ProfileCache::new, IDENTIFIER);
+      INSTANCE = manager.computeIfAbsent(ProfileCache::new, ProfileCache::new, IDENTIFIER);
     }
 
     return INSTANCE;
   }
 
-  protected void internalCache (String name) { cached.add(name); }
+  protected void internalCache(String name) {
+    cached.add(name);
+  }
 
   public static void cache(@Nullable String name) {
     ProfileCache instance = getInstance();
@@ -57,7 +62,7 @@ public class ProfileCache extends SavedData {
     save();
   }
 
-  public static void cache (Collection<String> names) {
+  public static void cache(Collection<String> names) {
     ProfileCache instance = getInstance();
     if (instance == null) {
       Miniatures.LOG.error("Could not acquire ProfileCache. Miniature loading may become laggy.");
@@ -69,11 +74,11 @@ public class ProfileCache extends SavedData {
     save();
   }
 
-  protected void internalClear () {
+  protected void internalClear() {
     cached.clear();
   }
 
-  public static void clear () {
+  public static void clear() {
     ProfileCache instance = getInstance();
     if (instance == null) {
       Miniatures.LOG.error("Could not acquire ProfileCache. Unable to clear it.");
@@ -85,7 +90,7 @@ public class ProfileCache extends SavedData {
     save();
   }
 
-  public static Set<String> cache () {
+  public static Set<String> cache() {
     ProfileCache instance = getInstance();
     if (instance == null) {
       Miniatures.LOG.error("Could not acquire ProfileCache. Miniature loading may become laggy.");
@@ -95,10 +100,9 @@ public class ProfileCache extends SavedData {
     return ImmutableSet.copyOf(instance.cached);
   }
 
-  @Override
-  public void load(CompoundTag pCompound) {
+  public ProfileCache(CompoundTag pCompound) {
     cached.clear();
-    ListTag names = pCompound.getList("names", Constants.NBT.TAG_STRING);
+    ListTag names = pCompound.getList("names", Tag.TAG_STRING);
     for (Tag nbt : names) {
       cached.add(nbt.getAsString());
     }

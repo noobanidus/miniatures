@@ -12,7 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import noobanidus.mods.miniatures.client.model.PlayerRenderModel;
 
-@OnlyIn(Dist.CLIENT)
+// TODO:?
 public class ArrowRenderTypeLayer<T extends LivingEntity, M extends PlayerRenderModel<T>> extends StuckInBodyRenderTypeLayer<T, M> {
   private final EntityRenderDispatcher dispatcher;
   private Arrow arrow;
