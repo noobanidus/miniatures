@@ -422,7 +422,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     if (!hasProfile) {
       if (!compound.getBoolean("gameProfileExists")) {
         if (this.level.isClientSide()) {
-          Miniatures.LOG.info("Set a profile on the client side.");
+          //Miniatures.LOG.info("Set a profile on the client side.");
         } else {
           if (compound.contains("owner", Tag.TAG_STRING)) {
             setGameProfile(compound.getString("owner"));
