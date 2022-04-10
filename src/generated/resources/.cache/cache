@@ -2,7 +2,7 @@
 98becf8e90bb41a6043a7704df4c21624bec0e20 assets/miniatures/lang/en_ud.json
 1dd0cf94f2abb000df2a798054978c193540e962 assets/miniatures/lang/en_us.json
 e5e9c65a7e7393e4bb00398f8c522061c146ddd8 data/minecolonies/tags/entity_types/mob_attack_blacklist.json
-205f5899101262f31f5c1a88bb7d954918d08d04 data/miniatures/loot_tables/blocks/sensor_torch.json
+5c1df8443043b3fe3b665dba348e2ff188bcbe31 data/miniatures/loot_tables/blocks/sensor_torch.json
 f0266b86d509baafb030ddb9915394ea06d372cd data/miniatures/loot_tables/entities/maxime.json
 f0266b86d509baafb030ddb9915394ea06d372cd data/miniatures/loot_tables/entities/me.json
 f0266b86d509baafb030ddb9915394ea06d372cd data/miniatures/loot_tables/entities/minime.json

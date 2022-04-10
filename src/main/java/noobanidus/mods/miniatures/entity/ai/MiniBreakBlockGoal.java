@@ -1,5 +1,6 @@
 package noobanidus.mods.miniatures.entity.ai;
 
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Mob;
@@ -24,11 +25,11 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 public class MiniBreakBlockGoal extends MoveToBlockGoal {
-   private final Tags.IOptionalNamedTag<Block> block;
+   private final TagKey<Block> block;
    private final Mob entity;
    private int breakingTime;
 
-   public MiniBreakBlockGoal(Tags.IOptionalNamedTag<Block> blockIn, PathfinderMob creature, double speed, int yMax) {
+   public MiniBreakBlockGoal(TagKey<Block> blockIn, PathfinderMob creature, double speed, int yMax) {
       super(creature, speed, 24, yMax);
       this.block = blockIn;
       this.entity = creature;
