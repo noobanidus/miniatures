@@ -12,7 +12,7 @@ import java.util.List;
 
 public class PickupPlayerGoal extends Goal {
 
-  private MiniMeEntity minime;
+  private final MiniMeEntity minime;
   private Path path;
   private Player targetPlayer;
 

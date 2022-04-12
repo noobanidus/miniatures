@@ -1,9 +1,9 @@
 package noobanidus.mods.miniatures.init;
 
 import com.tterrag.registrate.util.entry.BlockEntry;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import noobanidus.mods.miniatures.block.SensorTorchBlock;
 

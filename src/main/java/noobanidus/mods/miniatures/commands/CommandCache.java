@@ -6,8 +6,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.util.StringUtil;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.StringUtil;
 import net.minecraftforge.fml.loading.FMLPaths;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
@@ -69,7 +69,7 @@ public class CommandCache {
         buffer.close();
         c.getSource().sendSuccess(new TextComponent("Saved cache to " + filename), false);
       } catch (IOException e) {
-        c.getSource().sendFailure(new TextComponent("Failed to write to file named " + filename +". See log for error."));
+        c.getSource().sendFailure(new TextComponent("Failed to write to file named " + filename + ". See log for error."));
         Miniatures.LOG.error("Failed to write to file named " + filename, e);
         return -1;
       }

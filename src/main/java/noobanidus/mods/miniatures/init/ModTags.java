@@ -1,8 +1,8 @@
 package noobanidus.mods.miniatures.init;
 
 import com.tterrag.registrate.providers.ProviderType;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Blocks;
 import noobanidus.mods.miniatures.MiniTags;
 
 import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
@@ -18,6 +18,6 @@ public class ModTags {
     });
   }
 
-  public static void load () {
+  public static void load() {
   }
 }

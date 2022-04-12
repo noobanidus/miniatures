@@ -1,14 +1,10 @@
 package noobanidus.mods.miniatures.client;
 
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-
-import net.minecraft.client.renderer.RenderStateShard.OffsetTexturingStateShard;
-import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
-import net.minecraft.client.renderer.RenderType.CompositeState;
 
 // TODO?
 public class AdditionalRenderTypes extends RenderType {

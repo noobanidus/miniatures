@@ -1,11 +1,11 @@
 package noobanidus.mods.miniatures.entity.ai;
 
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.InteractionHand;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 
 import java.util.EnumSet;
@@ -23,7 +23,7 @@ public class MiniMeleeAttackGoal extends Goal {
   private final int attackInterval = 20;
   private long lastCanUseCheck;
   private int failedPathFindingPenalty = 0;
-  private boolean canPenalize = false;
+  private final boolean canPenalize = false;
 
   public MiniMeleeAttackGoal(MiniMeEntity creature, double speedIn, boolean useLongMemory) {
     this.attacker = creature;
@@ -171,7 +171,7 @@ public class MiniMeleeAttackGoal extends Goal {
   }
 
   protected double getAttackReachSqr(LivingEntity attackTarget) {
-    return (double) (this.attacker.getBbWidth() * 2.0F * this.attacker.getBbWidth() * 2.0F + attackTarget.getBbWidth());
+    return this.attacker.getBbWidth() * 2.0F * this.attacker.getBbWidth() * 2.0F + attackTarget.getBbWidth();
   }
 }
 

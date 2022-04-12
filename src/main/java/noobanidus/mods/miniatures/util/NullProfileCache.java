@@ -1,11 +1,11 @@
 package noobanidus.mods.miniatures.util;
 
 import net.minecraft.nbt.*;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
 
@@ -29,7 +29,7 @@ public class NullProfileCache extends SavedData {
     return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD);
   }
 
-  private static void save () {
+  private static void save() {
     ServerLevel world = getServerWorld();
     world.getDataStorage().save();
   }
@@ -51,7 +51,7 @@ public class NullProfileCache extends SavedData {
     return cachedNullUUID.contains(uuid);
   }
 
-  public static boolean isCachedNull (@Nullable String name, @Nullable UUID uuid) {
+  public static boolean isCachedNull(@Nullable String name, @Nullable UUID uuid) {
     NullProfileCache instance = getInstance();
     if (instance == null) {
       Miniatures.LOG.error("Could not acquire NullProfileCache. Miniature loading may become laggy.");
@@ -109,7 +109,7 @@ public class NullProfileCache extends SavedData {
     }
   }
 
-  public NullProfileCache (CompoundTag pCompound) {
+  public NullProfileCache(CompoundTag pCompound) {
     cachedNull.clear();
     cachedNullUUID.clear();
     ListTag uuids = pCompound.getList("uuids", Tag.TAG_INT_ARRAY);

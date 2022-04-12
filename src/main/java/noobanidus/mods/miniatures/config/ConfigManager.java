@@ -10,7 +10,7 @@ import noobanidus.mods.miniatures.Miniatures;
 
 import java.nio.file.Path;
 
-@Mod.EventBusSubscriber(bus= Mod.EventBusSubscriber.Bus.MOD, modid= Miniatures.MODID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Miniatures.MODID)
 public class ConfigManager {
   private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 
@@ -56,7 +56,7 @@ public class ConfigManager {
   }
 
   @SubscribeEvent
-  public static void onConfigEvent (ModConfigEvent event) {
+  public static void onConfigEvent(ModConfigEvent event) {
     Miniatures.LOG.info("Config reload for [Miniatures]!");
     COMMON_CONFIG.setConfig(event.getConfig().getConfigData());
   }
@@ -85,31 +85,31 @@ public class ConfigManager {
     return IMMUNE.get();
   }
 
-  public static boolean getDestroysBlocks () {
+  public static boolean getDestroysBlocks() {
     return DESTROYS_BLOCKS.get();
   }
 
-  public static boolean getBreaksBlocks () {
+  public static boolean getBreaksBlocks() {
     return BREAKS_BLOCKS.get();
   }
 
-  public static boolean getDoesPickup () {
+  public static boolean getDoesPickup() {
     return PICKUP_GOAL.get();
   }
 
-  public static boolean getOwnerRider ()  {
+  public static boolean getOwnerRider() {
     return OWNER_RIDER.get();
   }
 
-  public static int getRandomRunDelay () {
+  public static int getRandomRunDelay() {
     return RANDOM_RUN_DELAY.get();
   }
 
-  public static int getBaseRunDelay () {
+  public static int getBaseRunDelay() {
     return BASE_RUN_DELAY.get();
   }
 
-  public static double getDistractionValue () {
+  public static double getDistractionValue() {
     return DISTRACTION_CHANCE.get();
   }
 }

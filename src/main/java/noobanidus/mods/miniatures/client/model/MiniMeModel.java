@@ -1,8 +1,8 @@
 package noobanidus.mods.miniatures.client.model;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import noobanidus.mods.miniatures.client.AdditionalRenderTypes;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;

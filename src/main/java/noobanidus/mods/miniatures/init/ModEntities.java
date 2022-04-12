@@ -1,8 +1,8 @@
 package noobanidus.mods.miniatures.init;
 
 import com.tterrag.registrate.util.entry.RegistryEntry;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,7 +14,7 @@ import noobanidus.mods.miniatures.entity.MiniMeEntity;
 
 import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
 
-@Mod.EventBusSubscriber(modid= Miniatures.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Miniatures.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEntities {
   public static RegistryEntry<EntityType<MiniMeEntity>> MINIME = REGISTRATE.<MiniMeEntity>entity("minime", MiniMeEntity::new, MobCategory.CREATURE)
       .loot((p, e) -> p.add(e, LootTable.lootTable()))

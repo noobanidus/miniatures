@@ -3,18 +3,19 @@ package noobanidus.mods.miniatures.client.renderer.entity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.layers.*;
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
+import net.minecraft.client.renderer.entity.layers.ElytraLayer;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
 import noobanidus.mods.miniatures.client.ModelHolder;
 import noobanidus.mods.miniatures.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.client.renderer.layers.ArrowRenderTypeLayer;
@@ -24,7 +25,6 @@ import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.setup.ClientSetup;
 import noobanidus.mods.miniatures.util.NoobUtil;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 // TODO:
@@ -33,14 +33,14 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
 
   @SuppressWarnings("unchecked")
   public MiniMeRenderer(EntityRendererProvider.Context context) {
-    super(context, new MiniMeModel(context.bakeLayer(ClientSetup.MINI_ME), false), 0.5f);
+    super(context, new MiniMeModel<>(context.bakeLayer(ClientSetup.MINI_ME), false), 0.5f);
     ModelHolder.init(context);
     this.addLayer(new ItemInHandLayer<>(this));
     this.addLayer(new ArrowRenderTypeLayer<>(context, this));
     this.addLayer(new CustomHeadLayer<>(this, context.getModelSet()));
     this.addLayer(new ElytraLayer<>(this, context.getModelSet()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this));
-    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel(context.bakeLayer(ClientSetup.MINI_ME_ARMOR))));
+    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR))));
     this.addLayer(new ChargedLayer<>(this));
   }
 
@@ -73,7 +73,7 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
       this.model = ModelHolder.miniMeSlim;
     }
     int noob = miniMeEntity.getNoobVariant();
-    if (noob == 3) {
+/*    if (noob == 3) {
       packedLightIn = 15728880;
       this.model = ModelHolder.miniMeGhost;
       if (miniMeEntity.isSlim() && this.model != ModelHolder.miniMeGhostSlim) {
@@ -85,10 +85,9 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
       if (miniMeEntity.isSlim() && this.model != ModelHolder.miniMeGlowSlim) {
         this.model = ModelHolder.miniMeGlowSlim;
       }
-    }
+    }*/
     super.render(miniMeEntity, entityYaw, partialTicks, poseStack, bufferIn, packedLightIn);
   }
-
 
 
   protected void scale(MiniMeEntity miniMeEntity, PoseStack poseStack, float partialTickTime) {

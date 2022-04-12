@@ -1,21 +1,17 @@
 package noobanidus.mods.miniatures.setup;
 
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.model.geom.LayerDefinitions;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import noobanidus.mods.miniatures.Miniatures;
-import noobanidus.mods.miniatures.client.ModelHolder;
-import noobanidus.mods.miniatures.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.client.model.PlayerRenderModel;
 import noobanidus.mods.miniatures.client.renderer.entity.MaxiMeRenderer;
 import noobanidus.mods.miniatures.client.renderer.entity.MiniMeRenderer;
@@ -41,7 +37,7 @@ public class ClientSetup {
   public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
     event.registerEntityRenderer(ModEntities.MINIME.get(), MiniMeRenderer::new);
     event.registerEntityRenderer(ModEntities.MAXIME.get(), MaxiMeRenderer::new);
-    event.registerEntityRenderer(ModEntities.ME.get(), MaxiMeRenderer::new);
+    event.registerEntityRenderer(ModEntities.ME.get(), MiniMeRenderer::new);
   }
 
   public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
