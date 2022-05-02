@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
@@ -18,17 +17,18 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags;
 import noobanidus.mods.miniatures.config.ConfigManager;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
 public class MiniBreakBlockGoal extends MoveToBlockGoal {
-  private final TagKey<Block> block;
+  private final Tags.IOptionalNamedTag<Block> block;
   private final Mob entity;
   private int breakingTime;
 
-  public MiniBreakBlockGoal(TagKey<Block> blockIn, PathfinderMob creature, double speed, int yMax) {
+  public MiniBreakBlockGoal(Tags.IOptionalNamedTag<Block> blockIn, PathfinderMob creature, double speed, int yMax) {
     super(creature, speed, 24, yMax);
     this.block = blockIn;
     this.entity = creature;
