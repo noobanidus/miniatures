@@ -80,6 +80,8 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   private int scaleChanged = -1;
   private boolean isSlim;
 
+  private Component lastName = null;
+
   // TODO:
   @Nullable
   public static GameProfile updateGameProfile(@Nullable GameProfile input) {
@@ -324,13 +326,15 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     super.setCustomName(name);
 
     if (name != null) {
-      if (!entityData.get(GAMEPROFILE).isPresent() && !level.isClientSide()) {
+      if (((lastName != null && name != lastName) || entityData.get(GAMEPROFILE).isEmpty())&& !level.isClientSide()) {
         this.setGameProfile(new GameProfile(null, name.getContents().toLowerCase(Locale.ROOT)));
       }
       if (bossInfo != null) {
         this.bossInfo.setName(name);
       }
     }
+
+    lastName = name;
   }
 
   @Override
@@ -402,14 +406,19 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   public void load(CompoundTag compound) {
     super.load(compound);
 
+    if (lastName == null) {
+      lastName = getName();
+    }
     // We only want to load the profile on the server, rely on the
     // profile being transmitted as entity data for the client.
     boolean hasProfile = false;
 
-    Optional<GameProfile> prof = getGameProfile();
-    if (prof.isPresent()) {
-      if (prof.get().isComplete()) {
-        hasProfile = true;
+    if (lastName == getName()) {
+      Optional<GameProfile> prof = getGameProfile();
+      if (prof.isPresent()) {
+        if (prof.get().isComplete()) {
+          hasProfile = true;
+        }
       }
     }
 
@@ -426,6 +435,8 @@ public class MiniMeEntity extends Monster implements PowerableMob {
             entityData.set(GAMEPROFILE, Optional.empty());
           }
         }
+      } else if (lastName != getName()) {
+        setGameProfile(new GameProfile(null, getName().getContents().toLowerCase(Locale.ROOT)));
       } else {
         // TODO: Should this be server only? IDK
         entityData.set(GAMEPROFILE, Optional.ofNullable(NbtUtils.readGameProfile(compound.getCompound("gameProfile"))));
