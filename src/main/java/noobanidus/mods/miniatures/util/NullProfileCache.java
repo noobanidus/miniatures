@@ -94,6 +94,8 @@ public class NullProfileCache extends SavedData {
       return;
     }
 
+    Miniatures.LOG.info("Null profile detected! Name {}, UUID {}", name == null ? "<null>" : name, id == null ? "<null>" : id.toString());
+
     instance.internalCacheNull(name, id);
     instance.setDirty();
     save();
