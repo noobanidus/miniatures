@@ -7,7 +7,6 @@ import noobanidus.mods.miniatures.init.ModSerializers;
 public class CommonSetup {
   public static void init(FMLCommonSetupEvent event) {
     event.enqueueWork(() -> {
-      EntityDataSerializers.registerSerializer(ModSerializers.OPTIONAL_GAME_PROFILE);
     });
   }
 }

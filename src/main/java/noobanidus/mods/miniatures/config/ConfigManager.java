@@ -29,6 +29,7 @@ public class ConfigManager {
   private static final ForgeConfigSpec.DoubleValue DISTRACTION_CHANCE;
   private static final ForgeConfigSpec.IntValue BASE_RUN_DELAY;
   private static final ForgeConfigSpec.IntValue RANDOM_RUN_DELAY;
+  private static final ForgeConfigSpec.BooleanValue SKIP_NULL_CHECK;
 
   static {
     COMMON_BUILDER.comment("options relating to miniatures").push("miniatures");
@@ -45,6 +46,7 @@ public class ConfigManager {
     DESTROYS_BLOCKS = COMMON_BUILDER.comment("whether blocks in the default tag (miniatures:break_blocks) will be destroyed (true) or instead dropped when broken (false)").define("destroys_blocks", false);
     PICKUP_GOAL = COMMON_BUILDER.comment("whether or not non-hostile miniatures will try to pick up players").define("pickup_goal", true);
     OWNER_RIDER = COMMON_BUILDER.comment("whether or not only the owner entity of the miniature will attempt to pick up a player, or whether it will pick up any player").define("owner_rider", false);
+    SKIP_NULL_CHECK = COMMON_BUILDER.comment("whether or the null profile cache should be consulted; setting this to false may cause lag when miniatures with non-existent skins are spawned").define("skip_null_check", false);
     COMMON_BUILDER.pop();
     COMMON_CONFIG = COMMON_BUILDER.build();
   }
@@ -57,7 +59,7 @@ public class ConfigManager {
 
   @SubscribeEvent
   public static void onConfigEvent(ModConfigEvent event) {
-    Miniatures.LOG.info("Config reload for [Miniatures]!");
+    //Miniatures.LOG.info("Config reload for [Miniatures]!");
     COMMON_CONFIG.setConfig(event.getConfig().getConfigData());
   }
 
@@ -111,5 +113,9 @@ public class ConfigManager {
 
   public static double getDistractionValue() {
     return DISTRACTION_CHANCE.get();
+  }
+
+  public static boolean shouldSkipNullCheck () {
+    return SKIP_NULL_CHECK.get();
   }
 }

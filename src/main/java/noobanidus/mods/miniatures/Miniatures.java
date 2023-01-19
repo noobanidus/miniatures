@@ -14,7 +14,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import noobanidus.libs.noobutil.registrate.CustomRegistrate;
-import noobanidus.mods.miniatures.commands.CommandCache;
+import noobanidus.mods.miniatures.commands.CommandMiniatures;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.init.ModBlocks;
@@ -39,6 +39,8 @@ public class Miniatures {
     IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
     modBus.addListener(CommonSetup::init);
 
+    ModSerializers.load(modBus);
+
     DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientInit::init);
 
     MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
@@ -47,7 +49,6 @@ public class Miniatures {
     REGISTRATE = CustomRegistrate.create(MODID);
     ModEntities.load();
     ModTags.load();
-    ModSerializers.load();
     ModBlocks.load();
   }
 
@@ -59,6 +60,6 @@ public class Miniatures {
   }
 
   public void onCommandsLoad(RegisterCommandsEvent event) {
-    CommandCache.register(event.getDispatcher());
+    CommandMiniatures.register(event.getDispatcher());
   }
 }

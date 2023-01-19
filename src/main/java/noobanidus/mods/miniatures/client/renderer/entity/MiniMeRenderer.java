@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
+import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.client.ModelHolder;
 import noobanidus.mods.miniatures.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.client.renderer.layers.ArrowRenderTypeLayer;
@@ -48,11 +49,15 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   public ResourceLocation getTextureLocation(MiniMeEntity entity) {
     return entity.getGameProfile()
         .map(this::getSkin)
-        .orElse(TEXTURE_STEVE);
+        .orElseGet(() -> {
+          //Miniatures.LOG.error("STEVE: Couldn't find skin for " + entity);
+          return TEXTURE_STEVE;
+        });
   }
 
   private ResourceLocation getSkin(GameProfile gameProfile) {
     if (!gameProfile.isComplete()) {
+      //Miniatures.LOG.error("STEVE: GameProfile incomplete for " + gameProfile);
       return TEXTURE_STEVE;
     } else {
       final Minecraft minecraft = Minecraft.getInstance();
@@ -61,6 +66,7 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
       if (loadSkinFromCache.containsKey(MinecraftProfileTexture.Type.SKIN)) {
         return skinManager.registerTexture(loadSkinFromCache.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
       } else {
+        //Miniatures.LOG.error("STEVE: Returning default skin for " + gameProfile);
         return DefaultPlayerSkin.getDefaultSkin(gameProfile.getId());
       }
     }

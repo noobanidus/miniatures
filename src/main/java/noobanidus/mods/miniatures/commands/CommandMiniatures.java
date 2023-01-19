@@ -20,14 +20,28 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CommandCache {
+public class CommandMiniatures {
   public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-    dispatcher.register(builder(Commands.literal("cache").requires(p -> p.hasPermission(2))));
+    dispatcher.register(Commands.literal("minis").requires(p -> p.hasPermission(2))
+        .executes(c -> {
+          c.getSource().sendSuccess(new TextComponent("minis cache | minis validate"), false);
+          return 1;
+        })
+        .then(cacheBuilder(Commands.literal("cache")))
+        .then(validateBuilder(Commands.literal("validate"))));
   }
 
-  public static LiteralArgumentBuilder<CommandSourceStack> builder(LiteralArgumentBuilder<CommandSourceStack> builder) {
+  public static LiteralArgumentBuilder<CommandSourceStack> validateBuilder(LiteralArgumentBuilder<CommandSourceStack> builder) {
     builder.executes(c -> {
-      c.getSource().sendSuccess(new TextComponent("cache add <username> (add a user to the cache) | cache preload (preloads cached usernames that don't exist) | cache save <filename> (saves cache to filename) | cache load <filename> (loads cache from filename, root directory) | cache reset (resets cache)"), false);
+
+      return 1;
+    });
+    return builder;
+  }
+
+  public static LiteralArgumentBuilder<CommandSourceStack> cacheBuilder(LiteralArgumentBuilder<CommandSourceStack> builder) {
+    builder.executes(c -> {
+      c.getSource().sendSuccess(new TextComponent("minis cache add <username> (add a user to the cache) | minis cache preload (preloads cached usernames that don't exist) | cache save <filename> (saves cache to filename) | minis cache load <filename> (loads cache from filename, root directory) | minis cache reset (resets cache)"), false);
       return 1;
     });
     builder.then(Commands.literal("add").then(Commands.argument("username", StringArgumentType.word()).executes(c -> {

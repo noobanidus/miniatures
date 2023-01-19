@@ -8,6 +8,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
+import noobanidus.mods.miniatures.config.ConfigManager;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -52,6 +53,10 @@ public class NullProfileCache extends SavedData {
   }
 
   public static boolean isCachedNull(@Nullable String name, @Nullable UUID uuid) {
+    if (ConfigManager.shouldSkipNullCheck()) {
+      return false;
+    }
+
     NullProfileCache instance = getInstance();
     if (instance == null) {
       Miniatures.LOG.error("Could not acquire NullProfileCache. Miniature loading may become laggy.");
@@ -94,7 +99,7 @@ public class NullProfileCache extends SavedData {
       return;
     }
 
-    Miniatures.LOG.info("Null profile detected! Name {}, UUID {}", name == null ? "<null>" : name, id == null ? "<null>" : id.toString());
+    //Miniatures.LOG.info("Null profile detected! Name {}, UUID {}", name == null ? "<null>" : name, id == null ? "<null>" : id.toString());
 
     instance.internalCacheNull(name, id);
     instance.setDirty();

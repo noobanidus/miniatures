@@ -5,13 +5,24 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DataSerializerEntry;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import noobanidus.mods.miniatures.Miniatures;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ModSerializers {
-  public static final EntityDataSerializer<Optional<GameProfile>> OPTIONAL_GAME_PROFILE = new EntityDataSerializer<Optional<GameProfile>>() {
-    @Override
+  private static final DeferredRegister<DataSerializerEntry> REGISTRY = DeferredRegister.create(ForgeRegistries.Keys.DATA_SERIALIZERS, Miniatures.MODID);
+
+  public static final RegistryObject<DataSerializerEntry> OPTIONAL_GAME_PROFILE = REGISTRY.register("game_profile", () -> new DataSerializerEntry(new GameProfileSerializer()));
+
+  public static class GameProfileSerializer implements EntityDataSerializer<Optional<GameProfile>> {
+     @Override
     public void write(@Nonnull FriendlyByteBuf packetBuffer, @Nonnull Optional<GameProfile> gameProfile) {
       if (gameProfile.isPresent()) {
         packetBuffer.writeBoolean(true);
@@ -41,8 +52,9 @@ public class ModSerializers {
     public Optional<GameProfile> copy(@Nonnull Optional<GameProfile> gameProfile) {
       return gameProfile;
     }
-  };
+  }
 
-  public static void load() {
+  public static void load(IEventBus bus) {
+    REGISTRY.register(bus);
   }
 }
