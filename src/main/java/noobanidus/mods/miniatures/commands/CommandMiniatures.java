@@ -7,10 +7,13 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraftforge.fml.loading.FMLPaths;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
+import noobanidus.mods.miniatures.network.Networking;
 import noobanidus.mods.miniatures.util.NullProfileCache;
 import noobanidus.mods.miniatures.util.ProfileCache;
 
@@ -18,6 +21,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class CommandMiniatures {
@@ -33,9 +37,29 @@ public class CommandMiniatures {
 
   public static LiteralArgumentBuilder<CommandSourceStack> validateBuilder(LiteralArgumentBuilder<CommandSourceStack> builder) {
     builder.executes(c -> {
-
+      c.getSource().getLevel().getEntities(EntityTypeTest.forClass(MiniMeEntity.class), e -> true).forEach(e -> {
+        Optional<GameProfile> profile = e.getGameProfile();
+        if (profile.isPresent()) {
+          GameProfile prof = profile.get();
+          if (!prof.isComplete()) {
+            Miniatures.LOG.warn("Incomplete profile for " + e + ": " + prof);
+          }
+        } else {
+          Miniatures.LOG.warn("No profile for " + e);
+        }
+      });
+      c.getSource().sendSuccess(new TextComponent("Please check server console for information about incomplete profiles."), false);
       return 1;
     });
+    builder.then(Commands.literal("client").executes(c -> {
+      if (c.getSource().getEntity() instanceof ServerPlayer player) {
+        Networking.send(player);
+        c.getSource().sendSuccess(new TextComponent("Sent player validation packet! Please check client console for information about incomplete profiles."), false);
+      } else {
+        c.getSource().sendFailure(new TextComponent("Not a valid player to send a validation packet to."));
+      }
+      return 1;
+    }));
     return builder;
   }
 
