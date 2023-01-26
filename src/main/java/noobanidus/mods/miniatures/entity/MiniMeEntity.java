@@ -43,7 +43,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import noobanidus.libs.noobutil.type.LazySupplier;
 import noobanidus.mods.miniatures.MiniTags;
-import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.ai.MiniBreakBlockGoal;
 import noobanidus.mods.miniatures.entity.ai.MiniMeleeAttackGoal;
@@ -54,7 +53,6 @@ import noobanidus.mods.miniatures.util.NoobUtil;
 import noobanidus.mods.miniatures.util.NullProfileCache;
 
 import javax.annotation.Nullable;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -82,7 +80,8 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   private int scaleChanged = -1;
   private boolean isSlim;
 
-  private Component lastName = null;
+  private String owner;
+  private UUID ownerId;
 
   // TODO:
   @Nullable
@@ -231,13 +230,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
   }
 
-  public MiniMeEntity(EntityType<? extends MiniMeEntity> type, Level world, GameProfile owner) {
-    this(type, world);
-    if (owner != null) {
-      entityData.set(GAMEPROFILE.get(), Optional.of(owner));
-    }
-  }
-
   public Optional<GameProfile> getGameProfile() {
     return entityData.get(GAMEPROFILE.get());
   }
@@ -257,9 +249,20 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
     GameProfile profile = updateGameProfile(playerProfile);
     if (profile != null) {
-      entityData.set(GAMEPROFILE.get(), Optional.of(profile));
+      setGameProfileInternal(profile);
     } else {
+      setGameProfileInternal(null);
       NullProfileCache.cacheNull(playerProfile.getName(), playerProfile.getId());
+    }
+  }
+
+  protected void setGameProfileInternal(GameProfile playerProfile) {
+    if (playerProfile != null) {
+      owner = playerProfile.getName();
+      ownerId = playerProfile.getId();
+      entityData.set(GAMEPROFILE.get(), Optional.of(playerProfile));
+    } else {
+      entityData.set(GAMEPROFILE.get(), Optional.empty());
     }
   }
 
@@ -327,16 +330,9 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   public void setCustomName(@Nullable Component name) {
     super.setCustomName(name);
 
-    if (name != null) {
-      if (((lastName != null && name != lastName) || entityData.get(GAMEPROFILE.get()).isEmpty())&& !level.isClientSide()) {
-        this.setGameProfile(new GameProfile(null, name.getContents().toLowerCase(Locale.ROOT)));
-      }
-      if (bossInfo != null) {
-        this.bossInfo.setName(name);
-      }
+    if (name != null && this.bossInfo != null) {
+      this.bossInfo.setName(name);
     }
-
-    lastName = name;
   }
 
   @Override
@@ -353,13 +349,24 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   public void addAdditionalSaveData(CompoundTag compound) {
     super.addAdditionalSaveData(compound);
 
-    boolean profileFound = entityData.get(GAMEPROFILE.get()).isPresent();
-
-    compound.putBoolean("gameProfileExists", profileFound);
-    getGameProfile().ifPresent(profile -> compound.put("gameProfile", NbtUtils.writeGameProfile(new CompoundTag(), profile)));
-    if (!profileFound) {
-      //Miniatures.LOG.info("STEVE: No profile found for " + this);
+    if (owner != null) {
+      compound.putString("owner", owner);
     }
+    if (ownerId != null) {
+      compound.putUUID("OwnerUUID", ownerId);
+    }
+
+    getGameProfile().ifPresent(profile -> {
+      compound.put("gameProfile", NbtUtils.writeGameProfile(new CompoundTag(), profile));
+      // TODO: Are these necessary?
+      if (owner == null) {
+        compound.putString("owner", profile.getName());
+      }
+      if (ownerId == null) {
+        compound.putUUID("OwnerUUID", profile.getId());
+      }
+    });
+
     compound.putByte("Noob", (byte) getNoobVariant());
     compound.putFloat("Scale", getMiniScale());
 
@@ -412,41 +419,28 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   public void load(CompoundTag compound) {
     super.load(compound);
 
-    if (lastName == null) {
-      lastName = getName();
-    }
-    // We only want to load the profile on the server, rely on the
-    // profile being transmitted as entity data for the client.
-    boolean hasProfile = false;
+    GameProfile incomingProfile = null;
+    String incomingOwner = null;
+    UUID incomingUuid = null;
 
-    if (lastName == getName()) {
-      Optional<GameProfile> prof = getGameProfile();
-      if (prof.isPresent()) {
-        if (prof.get().isComplete()) {
-          hasProfile = true;
-        }
+    if (compound.contains("gameProfile")) {
+      incomingProfile = NbtUtils.readGameProfile(compound.getCompound("gameProfile"));
+    } else {
+      if (compound.contains("owner", Tag.TAG_STRING)) {
+        incomingOwner = compound.getString("owner");
+        incomingProfile = new GameProfile(null, incomingOwner);
+      } else if (compound.hasUUID("OwnerUUID")) {
+        incomingUuid = compound.getUUID("OwnerUUID");
+        incomingProfile = new GameProfile(incomingUuid, null);
       }
     }
 
-    if (!hasProfile) {
-      if (!compound.getBoolean("gameProfileExists")) {
-        if (this.level.isClientSide()) {
-          //Miniatures.LOG.info("Set a profile on the client side.");
-        } else {
-          if (compound.contains("owner", Tag.TAG_STRING)) {
-            setGameProfile(compound.getString("owner"));
-          } else if (compound.hasUUID("OwnerUUID")) {
-            setGameProfile(compound.getUUID("OwnerUUID"));
-          } else {
-            entityData.set(GAMEPROFILE.get(), Optional.empty());
-          }
-        }
-      } else if (lastName != getName()) {
-        setGameProfile(new GameProfile(null, getName().getContents().toLowerCase(Locale.ROOT)));
-      } else {
-        // TODO: Should this be server only? IDK
-        entityData.set(GAMEPROFILE.get(), Optional.ofNullable(NbtUtils.readGameProfile(compound.getCompound("gameProfile"))));
-      }
+    GameProfile currentProfile = getGameProfile().orElse(null);
+
+    if (incomingProfile != null && currentProfile != null && ((incomingProfile.getId() != null && !incomingProfile.getId().equals(currentProfile.getId())) || (incomingProfile.getName() != null && !incomingProfile.getName().equals(currentProfile.getName())))) {
+      setGameProfile(incomingProfile);
+    } else if (incomingProfile != null && currentProfile == null) {
+      setGameProfile(incomingProfile);
     }
 
     if (compound.contains("NameTag", Tag.TAG_STRING)) {
@@ -531,7 +525,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
   @Override
   public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-    if (GAMEPROFILE.equals(key) && this.level.isClientSide()) {
+    if (GAMEPROFILE.get().equals(key) && this.level.isClientSide()) {
       this.getGameProfile().ifPresent(gameprofile -> {
         if (gameprofile.isComplete()) {
           Minecraft.getInstance().getSkinManager().registerSkins(gameprofile, (textureType, textureLocation, profileTexture) -> {

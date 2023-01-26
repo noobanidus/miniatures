@@ -20,10 +20,6 @@ public class MaxiMeEntity extends MiniMeEntity {
     return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, ConfigManager.getMaxHealth()).add(Attributes.MOVEMENT_SPEED, ConfigManager.getMovementSpeed()).add(Attributes.ATTACK_DAMAGE, ConfigManager.getAttackDamage()).add(Attributes.ARMOR, ConfigManager.getArmorValue());
   }
 
-  public MaxiMeEntity(EntityType<? extends MiniMeEntity> type, Level world, GameProfile owner) {
-    super(type, world, owner);
-  }
-
   @Override
   public double getMyRidingOffset() {
     return 0;
