@@ -425,7 +425,9 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
     if (compound.contains("gameProfile")) {
       incomingProfile = NbtUtils.readGameProfile(compound.getCompound("gameProfile"));
-    } else {
+    }
+
+    if (incomingProfile == null) {
       if (compound.contains("owner", Tag.TAG_STRING)) {
         incomingOwner = compound.getString("owner");
         incomingProfile = new GameProfile(null, incomingOwner);
