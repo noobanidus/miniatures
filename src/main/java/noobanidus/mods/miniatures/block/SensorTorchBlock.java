@@ -1,10 +1,8 @@
 package noobanidus.mods.miniatures.block;
 
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +29,7 @@ public class SensorTorchBlock extends TorchBlock {
   @SuppressWarnings("deprecated")
   public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
     if (!pLevel.isClientSide() && !pState.getValue(TRIGGERED)) {
-      ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastMessage(new TextComponent("First to cross the line was: ").append(pEntity.getName()), ChatType.CHAT, Util.NIL_UUID);
+      ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastSystemMessage(Component.literal("First to cross the line was: ").append(pEntity.getName()), false);
       pLevel.setBlock(pPos, pState.setValue(TRIGGERED, true), 3);
     }
   }
