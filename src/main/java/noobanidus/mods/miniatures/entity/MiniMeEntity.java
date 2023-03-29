@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -62,7 +61,7 @@ import java.util.UUID;
 )
 public class MiniMeEntity extends Monster implements PowerableMob {
   @SuppressWarnings("unchecked")
-  private static final LazySupplier<EntityDataAccessor<Optional<GameProfile>>> GAMEPROFILE = new LazySupplier<>(() -> (EntityDataAccessor<Optional<GameProfile>>) SynchedEntityData.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE.get().getSerializer()));
+  private static final LazySupplier<EntityDataAccessor<Optional<GameProfile>>> GAMEPROFILE = new LazySupplier<>(() -> (EntityDataAccessor<Optional<GameProfile>>) SynchedEntityData.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE.get()));
   public static final EntityDataAccessor<Integer> AGGRO = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.INT);
   public static final EntityDataAccessor<Byte> NOOB = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.BYTE);
   public static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.FLOAT);
@@ -446,7 +445,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     }
 
     if (compound.contains("NameTag", Tag.TAG_STRING)) {
-      entityData.set(DATA_CUSTOM_NAME, Optional.of(new TextComponent(compound.getString("NameTag"))));
+      entityData.set(DATA_CUSTOM_NAME, Optional.of(Component.literal(compound.getString("NameTag"))));
     }
     if (compound.contains("AttackAddition")) {
       AttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
@@ -500,7 +499,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       if (compound.contains("BossBarOverlay", Tag.TAG_STRING)) {
         bossInfoOverlay = BossEvent.BossBarOverlay.byName(compound.getString("BossBarOverlay").toLowerCase());
       }
-      Component name = new TextComponent("Unknown Mini");
+      Component name = Component.literal("Unknown Mini");
       if (getGameProfile().isPresent()) {
         name = ComponentUtils.getDisplayName(getGameProfile().get());
       }

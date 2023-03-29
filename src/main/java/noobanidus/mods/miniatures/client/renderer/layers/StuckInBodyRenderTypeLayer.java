@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import noobanidus.mods.miniatures.client.model.PlayerRenderModel;
@@ -23,7 +24,8 @@ public abstract class StuckInBodyRenderTypeLayer<T extends LivingEntity, M exten
 
   public void render(PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     int i = this.numStuck(entitylivingbaseIn);
-    Random random = new Random(entitylivingbaseIn.getId());
+
+    RandomSource random = RandomSource.create(entitylivingbaseIn.getId());
     if (i > 0) {
       for (int j = 0; j < i; ++j) {
         poseStack.pushPose();

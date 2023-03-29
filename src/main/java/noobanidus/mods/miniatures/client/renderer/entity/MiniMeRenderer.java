@@ -36,9 +36,9 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   public MiniMeRenderer(EntityRendererProvider.Context context) {
     super(context, new MiniMeModel<>(context.bakeLayer(ClientSetup.MINI_ME), false), 0.5f);
     ModelHolder.init(context);
-    this.addLayer(new ItemInHandLayer<>(this));
+    this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     this.addLayer(new ArrowRenderTypeLayer<>(context, this));
-    this.addLayer(new CustomHeadLayer<>(this, context.getModelSet()));
+    this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getItemInHandRenderer()));
     this.addLayer(new ElytraLayer<>(this, context.getModelSet()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this));
     this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR))));

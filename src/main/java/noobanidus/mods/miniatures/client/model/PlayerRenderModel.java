@@ -13,6 +13,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -144,7 +145,7 @@ public class PlayerRenderModel<T extends LivingEntity> extends HumanoidModel<T> 
 
   }
 
-  public ModelPart getRandomModelRenderer(Random randomIn) {
+  public ModelPart getRandomModelRenderer(RandomSource randomIn) {
     return this.parts.get(randomIn.nextInt(this.parts.size()));
   }
 }
