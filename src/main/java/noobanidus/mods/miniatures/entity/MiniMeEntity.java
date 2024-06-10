@@ -359,10 +359,14 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       compound.put("gameProfile", NbtUtils.writeGameProfile(new CompoundTag(), profile));
       // TODO: Are these necessary?
       if (owner == null) {
-        compound.putString("owner", profile.getName());
+        if (profile.getName() != null) {
+          compound.putString("owner", profile.getName());
+        }
       }
       if (ownerId == null) {
-        compound.putUUID("OwnerUUID", profile.getId());
+        if (profile.getId() != null) {
+          compound.putUUID("OwnerUUID", profile.getId());
+        }
       }
     });
 
