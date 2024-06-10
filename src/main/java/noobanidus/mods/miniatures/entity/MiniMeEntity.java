@@ -42,6 +42,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import noobanidus.libs.noobutil.type.LazySupplier;
 import noobanidus.mods.miniatures.MiniTags;
+import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.ai.MiniBreakBlockGoal;
 import noobanidus.mods.miniatures.entity.ai.MiniMeleeAttackGoal;
@@ -366,6 +367,8 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       if (ownerId == null) {
         if (profile.getId() != null) {
           compound.putUUID("OwnerUUID", profile.getId());
+        } else {
+          Miniatures.LOG.error("GameProfile has no UUID: " + profile);
         }
       }
     });
