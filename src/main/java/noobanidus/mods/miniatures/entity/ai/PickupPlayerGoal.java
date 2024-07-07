@@ -33,7 +33,7 @@ public class PickupPlayerGoal extends Goal {
       return false;
     }
     if (targetPlayer == null || targetPlayer.isAlive()) {
-      List<Player> players = minime.level.getEntitiesOfClass(Player.class, minime.getBoundingBox().inflate(10));
+      List<Player> players = minime.level().getEntitiesOfClass(Player.class, minime.getBoundingBox().inflate(10));
       for (Player player : players) {
         if (player.isPassenger()) {
           continue;
@@ -68,7 +68,7 @@ public class PickupPlayerGoal extends Goal {
   @Override
   public void tick() {
     super.tick();
-    if (!minime.level.isClientSide && (!ConfigManager.getOwnerRider() || canRidePlayer(targetPlayer))) {
+    if (!minime.level().isClientSide && (!ConfigManager.getOwnerRider() || canRidePlayer(targetPlayer))) {
       if (minime.distanceTo(targetPlayer) < 1.5) {
         targetPlayer.startRiding(minime);
       }

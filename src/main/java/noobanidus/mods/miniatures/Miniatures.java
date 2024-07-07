@@ -13,14 +13,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import noobanidus.libs.noobutil.registrate.CustomRegistrate;
 import noobanidus.mods.miniatures.commands.CommandMiniatures;
 import noobanidus.mods.miniatures.config.ConfigManager;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.init.ModBlocks;
 import noobanidus.mods.miniatures.init.ModEntities;
 import noobanidus.mods.miniatures.init.ModSerializers;
-import noobanidus.mods.miniatures.init.ModTags;
 import noobanidus.mods.miniatures.setup.ClientInit;
 import noobanidus.mods.miniatures.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
@@ -31,13 +29,14 @@ public class Miniatures {
   public static final Logger LOG = LogManager.getLogger();
   public static final String MODID = "miniatures";
 
-  public static CustomRegistrate REGISTRATE;
-
   public Miniatures() {
     ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigManager.COMMON_CONFIG);
     ConfigManager.loadConfig(ConfigManager.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(Miniatures.MODID + "-common.toml"));
     IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
     modBus.addListener(CommonSetup::init);
+
+    ModEntities.load(modBus);
+    ModBlocks.load(modBus);
 
     ModSerializers.load(modBus);
 
@@ -45,11 +44,6 @@ public class Miniatures {
 
     MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
     MinecraftForge.EVENT_BUS.addListener(this::onCommandsLoad);
-
-    REGISTRATE = CustomRegistrate.create(MODID);
-    ModEntities.load();
-    ModTags.load();
-    ModBlocks.load();
   }
 
   public void onServerAboutToStart(ServerAboutToStartEvent event) {

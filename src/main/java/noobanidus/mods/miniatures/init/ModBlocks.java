@@ -1,20 +1,21 @@
 package noobanidus.mods.miniatures.init;
 
-import com.tterrag.registrate.util.entry.BlockEntry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.block.SensorTorchBlock;
 
-import static noobanidus.mods.miniatures.Miniatures.REGISTRATE;
-
 public class ModBlocks {
-  public static final BlockEntry<SensorTorchBlock> SENSOR_TORCH_BLOCK = REGISTRATE.block("sensor_torch", SensorTorchBlock::new)
-      .properties(o -> BlockBehaviour.Properties.copy(Blocks.TORCH))
-      .blockstate((ctx, p) -> p.getVariantBuilder(ctx.getEntry()).forAllStates(state -> ConfiguredModel.builder().modelFile(p.models().getExistingFile(new ResourceLocation("minecraft", "block/torch"))).build()))
-      .register();
+  public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Miniatures.MODID);
+  public static final RegistryObject<SensorTorchBlock> SENSOR_TORCH_BLOCK = BLOCKS.register("sensor_torch", () ->
+          new SensorTorchBlock(BlockBehaviour.Properties.copy(Blocks.TORCH)));
 
-  public static void load() {
+  public static void load(IEventBus eventBus) {
+    BLOCKS.register(eventBus);
   }
 }

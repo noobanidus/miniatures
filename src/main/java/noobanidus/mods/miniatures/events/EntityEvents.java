@@ -36,7 +36,7 @@ public class EntityEvents {
       Entity mounted = event.getEntityBeingMounted();
       if (isMiniature(event.getEntityBeingMounted())) {
         MiniMeEntity mini = (MiniMeEntity) mounted;
-        mini.setPickupCooldown(mini.level.random.nextInt(800) + 600);
+        mini.setPickupCooldown(mini.level().random.nextInt(800) + 600);
       }
     }
   }
