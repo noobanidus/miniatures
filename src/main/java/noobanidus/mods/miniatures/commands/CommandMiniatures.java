@@ -47,10 +47,10 @@ public class CommandMiniatures {
         if (profile.isPresent()) {
           GameProfile prof = profile.get();
           if (prof.getId() == null || !StringUtils.isNotBlank(prof.getName())) {
-            Miniatures.LOG.warn("Incomplete profile for " + e + ": " + prof);
+            Miniatures.LOG.warn("Incomplete profile for {}: {}", e, prof);
           }
         } else {
-          Miniatures.LOG.warn("No profile for " + e);
+          Miniatures.LOG.warn("No profile for {}", e);
         }
       });
       c.getSource().sendSuccess(() -> Component.literal("Please check server console for information about incomplete profiles."), false);
@@ -113,7 +113,7 @@ public class CommandMiniatures {
         c.getSource().sendSuccess(() -> Component.literal("Saved cache to " + filename), false);
       } catch (IOException e) {
         c.getSource().sendFailure(Component.literal("Failed to write to file named " + filename + ". See log for error."));
-        Miniatures.LOG.error("Failed to write to file named " + filename, e);
+        Miniatures.LOG.error("Failed to write to file named {}", filename, e);
         return -1;
       }
       return 1;

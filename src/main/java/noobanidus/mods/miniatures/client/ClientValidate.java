@@ -24,10 +24,10 @@ public class ClientValidate {
         if (profile.isPresent()) {
           GameProfile prof = profile.get();
           if (prof.getId() == null || !StringUtils.isNotBlank(prof.getName())) {
-            Miniatures.LOG.warn("Incomplete profile for " + e + ": " + prof);
+            Miniatures.LOG.warn("Incomplete profile for {}: {}", e, prof);
           }
         } else {
-          Miniatures.LOG.warn("No profile for " + e);
+          Miniatures.LOG.warn("No profile for {}", e);
         }
         return AbortableIterationConsumer.Continuation.CONTINUE;
       });

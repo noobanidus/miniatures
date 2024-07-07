@@ -359,7 +359,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
         if (profile.getId() != null) {
           compound.putUUID("OwnerUUID", profile.getId());
         } else {
-          Miniatures.LOG.error("GameProfile has no UUID: " + profile);
+          Miniatures.LOG.error("GameProfile has no UUID: {}", profile);
         }
       }
     });
