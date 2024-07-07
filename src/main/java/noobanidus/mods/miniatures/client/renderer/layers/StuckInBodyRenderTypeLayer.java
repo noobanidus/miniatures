@@ -11,8 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import noobanidus.mods.miniatures.client.model.PlayerRenderModel;
 
-import java.util.Random;
-
 public abstract class StuckInBodyRenderTypeLayer<T extends LivingEntity, M extends PlayerRenderModel<T>> extends RenderLayer<T, M> {
   public StuckInBodyRenderTypeLayer(LivingEntityRenderer<T, M> p_i226041_1_) {
     super(p_i226041_1_);
@@ -22,7 +20,7 @@ public abstract class StuckInBodyRenderTypeLayer<T extends LivingEntity, M exten
 
   protected abstract void renderStuckItem(PoseStack p_225632_1_, MultiBufferSource p_225632_2_, int p_225632_3_, Entity p_225632_4_, float p_225632_5_, float p_225632_6_, float p_225632_7_, float p_225632_8_);
 
-  public void render(PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+  public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     int i = this.numStuck(entitylivingbaseIn);
 
     RandomSource random = RandomSource.create(entitylivingbaseIn.getId());
@@ -42,7 +40,7 @@ public abstract class StuckInBodyRenderTypeLayer<T extends LivingEntity, M exten
         f = -1.0F * (f * 2.0F - 1.0F);
         f1 = -1.0F * (f1 * 2.0F - 1.0F);
         f2 = -1.0F * (f2 * 2.0F - 1.0F);
-        this.renderStuckItem(poseStack, bufferIn, packedLightIn, entitylivingbaseIn, f, f1, f2, partialTicks);
+        this.renderStuckItem(poseStack, bufferSource, packedLightIn, entitylivingbaseIn, f, f1, f2, partialTicks);
         poseStack.popPose();
       }
 

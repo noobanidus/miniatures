@@ -19,7 +19,6 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
 
 public class PlayerRenderModel<T extends LivingEntity> extends HumanoidModel<T> {

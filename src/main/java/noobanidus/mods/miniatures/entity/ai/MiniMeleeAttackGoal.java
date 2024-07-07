@@ -40,7 +40,7 @@ public class MiniMeleeAttackGoal extends Goal {
     if (!this.attacker.getHostile()) {
       return false;
     }
-    long i = this.attacker.level.getGameTime();
+    long i = this.attacker.level().getGameTime();
     if (i - this.lastCanUseCheck < 20L) {
       return false;
     } else {

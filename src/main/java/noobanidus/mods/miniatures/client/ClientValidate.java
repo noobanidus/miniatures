@@ -3,7 +3,7 @@ package noobanidus.mods.miniatures.client;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.AbortableIterationConsumer;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
@@ -17,7 +17,7 @@ public class ClientValidate {
       Miniatures.LOG.error("Invalid instance or no player instance found.");
       return;
     }
-    if (instance.player.getLevel() instanceof ClientLevel level) {
+    if (instance.player.level() instanceof ClientLevel level) {
       level.entityStorage.getEntityGetter().get(EntityTypeTest.forClass(MiniMeEntity.class), e -> {
         Optional<GameProfile> profile = e.getGameProfile();
         if (profile.isPresent()) {
@@ -28,6 +28,7 @@ public class ClientValidate {
         } else {
           Miniatures.LOG.warn("No profile for " + e);
         }
+        return AbortableIterationConsumer.Continuation.CONTINUE;
       });
     }
   }

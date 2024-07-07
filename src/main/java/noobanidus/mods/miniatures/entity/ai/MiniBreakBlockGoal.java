@@ -22,7 +22,6 @@ import net.minecraft.world.phys.Vec3;
 import noobanidus.mods.miniatures.config.ConfigManager;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class MiniBreakBlockGoal extends MoveToBlockGoal {
   private final TagKey<Block> block;
@@ -44,7 +43,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
     if (!ConfigManager.getBreaksBlocks()) {
       return false;
     }
-    if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.entity.level, this.blockPos, this.entity)) {
+    if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.entity.level(), this.blockPos, this.entity)) {
       return false;
     } else if (this.nextStartTick > 0) {
       --this.nextStartTick;
@@ -64,7 +63,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
   }
 
   private boolean tryFindBlock() {
-    return this.blockPos != null && this.isValidTarget(this.mob.level, this.blockPos) || this.findNearestBlock();
+    return this.blockPos != null && this.isValidTarget(this.mob.level(), this.blockPos) || this.findNearestBlock();
   }
 
   /**
@@ -99,7 +98,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
    */
   public void tick() {
     super.tick();
-    Level world = this.entity.level;
+    Level world = this.entity.level();
     BlockPos blockpos = this.entity.blockPosition();
     BlockPos blockpos1 = this.findTarget(blockpos, world);
     RandomSource random = this.entity.getRandom();

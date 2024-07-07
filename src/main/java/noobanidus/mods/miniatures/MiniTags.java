@@ -1,6 +1,6 @@
 package noobanidus.mods.miniatures;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -12,11 +12,11 @@ public class MiniTags {
     public static TagKey<EntityType<?>> MOB_ATTACK_BLACKLIST = compatTag("minecolonies", "mob_attack_blacklist");
 
     static TagKey<EntityType<?>> modTag(String name) {
-      return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(Miniatures.MODID, name));
+      return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(Miniatures.MODID, name));
     }
 
     static TagKey<EntityType<?>> compatTag(String namespace, String name) {
-      return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(namespace, name));
+      return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(namespace, name));
     }
   }
 

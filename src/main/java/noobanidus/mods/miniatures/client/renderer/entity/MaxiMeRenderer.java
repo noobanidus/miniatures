@@ -25,7 +25,7 @@ import noobanidus.mods.miniatures.setup.ClientSetup;
 import java.util.Map;
 
 public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeModel<MiniMeEntity>> {
-  private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/steve.png");
+  private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/player/wide/steve.png");
 
   public MaxiMeRenderer(EntityRendererProvider.Context context) {
     super(context, new MiniMeModel<>(context.bakeLayer(ClientSetup.MINI_ME), false), 0.5f);
@@ -35,14 +35,14 @@ public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getItemInHandRenderer()));
     this.addLayer(new ElytraLayer<>(this, context.getModelSet()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this));
-    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR))));
+    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), context.getModelManager()));
   }
 
   @Override
   public ResourceLocation getTextureLocation(MiniMeEntity entity) {
     return entity.getGameProfile()
-        .map(this::getSkin)
-        .orElse(TEXTURE_STEVE);
+            .map(this::getSkin)
+            .orElse(TEXTURE_STEVE);
   }
 
   private ResourceLocation getSkin(GameProfile gameProfile) {

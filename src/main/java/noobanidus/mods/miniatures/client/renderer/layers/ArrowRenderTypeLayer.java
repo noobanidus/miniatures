@@ -24,13 +24,13 @@ public class ArrowRenderTypeLayer<T extends LivingEntity, M extends PlayerRender
     return p_225631_1_.getArrowCount();
   }
 
-  protected void renderStuckItem(PoseStack p_225632_1_, MultiBufferSource p_225632_2_, int p_225632_3_, Entity p_225632_4_, float p_225632_5_, float p_225632_6_, float p_225632_7_, float p_225632_8_) {
+  protected void renderStuckItem(PoseStack poseStack, MultiBufferSource bufferSource, int p_225632_3_, Entity entity, float p_225632_5_, float p_225632_6_, float p_225632_7_, float p_225632_8_) {
     float f = Mth.sqrt(p_225632_5_ * p_225632_5_ + p_225632_7_ * p_225632_7_);
-    Arrow arrow = new Arrow(p_225632_4_.level, p_225632_4_.getX(), p_225632_4_.getY(), p_225632_4_.getZ());
+    Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ());
     arrow.setYRot((float) (Math.atan2(p_225632_5_, p_225632_7_) * (double) (180F / (float) Math.PI)));
     arrow.setXRot((float) (Math.atan2(p_225632_6_, f) * (double) (180F / (float) Math.PI)));
     arrow.yRotO = arrow.getYRot();
     arrow.xRotO = arrow.getXRot();
-    this.dispatcher.render(arrow, 0.0D, 0.0D, 0.0D, 0.0F, p_225632_8_, p_225632_1_, p_225632_2_, p_225632_3_);
+    this.dispatcher.render(arrow, 0.0D, 0.0D, 0.0D, 0.0F, p_225632_8_, poseStack, bufferSource, p_225632_3_);
   }
 }

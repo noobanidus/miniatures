@@ -115,7 +115,7 @@ public class ConfigManager {
     return DISTRACTION_CHANCE.get();
   }
 
-  public static boolean shouldSkipNullCheck () {
+  public static boolean shouldSkipNullCheck() {
     return SKIP_NULL_CHECK.get();
   }
 }

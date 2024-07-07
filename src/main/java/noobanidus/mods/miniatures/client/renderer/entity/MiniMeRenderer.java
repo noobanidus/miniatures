@@ -3,7 +3,7 @@ package noobanidus.mods.miniatures.client.renderer.entity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
-import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.client.ModelHolder;
 import noobanidus.mods.miniatures.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.client.renderer.layers.ArrowRenderTypeLayer;
@@ -30,7 +29,7 @@ import java.util.Map;
 
 // TODO:
 public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeModel<MiniMeEntity>> {
-  private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/steve.png");
+  private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/player/wide/steve.png");
 
   @SuppressWarnings("unchecked")
   public MiniMeRenderer(EntityRendererProvider.Context context) {
@@ -41,18 +40,18 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getItemInHandRenderer()));
     this.addLayer(new ElytraLayer<>(this, context.getModelSet()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this));
-    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR))));
+    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), new HumanoidModel<>(context.bakeLayer(ClientSetup.MINI_ME_ARMOR)), context.getModelManager()));
     this.addLayer(new ChargedLayer<>(this));
   }
 
   @Override
   public ResourceLocation getTextureLocation(MiniMeEntity entity) {
     return entity.getGameProfile()
-        .map(this::getSkin)
-        .orElseGet(() -> {
-          //Miniatures.LOG.error("STEVE: Couldn't find skin for " + entity);
-          return TEXTURE_STEVE;
-        });
+            .map(this::getSkin)
+            .orElseGet(() -> {
+              //Miniatures.LOG.error("STEVE: Couldn't find skin for " + entity);
+              return TEXTURE_STEVE;
+            });
   }
 
   private ResourceLocation getSkin(GameProfile gameProfile) {
@@ -111,15 +110,15 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     int noob = miniMeEntity.getNoobVariant();
     if (noob == 0) {
       poseStack.translate(0.0D, miniMeEntity.getBbHeight() + 0.3F, 0.0D);
-      poseStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
+      poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
     } else if (noob == 1) {
       poseStack.translate(0.0D, 0.5F, 0.0D);
     } else if (noob == 6) {
-      poseStack.mulPose(Vector3f.YP.rotationDegrees(90.0f));
+      poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
     } else if (noob == 7) {
-      poseStack.mulPose(Vector3f.YP.rotationDegrees(-90.0f));
+      poseStack.mulPose(Axis.YP.rotationDegrees(-90.0f));
     } else if (noob == 8) {
-      poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0f));
+      poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
     }
   }
 }

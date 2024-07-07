@@ -21,7 +21,12 @@ import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.PowerableMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -38,9 +43,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import noobanidus.libs.noobutil.type.LazySupplier;
 import noobanidus.mods.miniatures.MiniTags;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.config.ConfigManager;
@@ -56,13 +58,8 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-@OnlyIn(
-    value = Dist.CLIENT,
-    _interface = PowerableMob.class
-)
 public class MiniMeEntity extends Monster implements PowerableMob {
-  @SuppressWarnings("unchecked")
-  private static final LazySupplier<EntityDataAccessor<Optional<GameProfile>>> GAMEPROFILE = new LazySupplier<>(() -> (EntityDataAccessor<Optional<GameProfile>>) SynchedEntityData.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE.get()));
+  private static final EntityDataAccessor<Optional<GameProfile>> GAMEPROFILE = SynchedEntityData.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE.get());
   public static final EntityDataAccessor<Integer> AGGRO = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.INT);
   public static final EntityDataAccessor<Byte> NOOB = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.BYTE);
   public static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.FLOAT);
@@ -163,7 +160,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   @Override
   protected void defineSynchedData() {
     super.defineSynchedData();
-    this.entityData.define(GAMEPROFILE.get(), Optional.empty());
+    this.entityData.define(GAMEPROFILE, Optional.empty());
     this.entityData.define(AGGRO, -1);
     this.entityData.define(NOOB, (byte) random.nextInt(20));
     this.entityData.define(SCALE, 1f);
@@ -231,7 +228,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   }
 
   public Optional<GameProfile> getGameProfile() {
-    return entityData.get(GAMEPROFILE.get());
+    return entityData.get(GAMEPROFILE);
   }
 
   public void setGameProfile(String name) {
@@ -260,9 +257,9 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     if (playerProfile != null) {
       owner = playerProfile.getName();
       ownerId = playerProfile.getId();
-      entityData.set(GAMEPROFILE.get(), Optional.of(playerProfile));
+      entityData.set(GAMEPROFILE, Optional.of(playerProfile));
     } else {
-      entityData.set(GAMEPROFILE.get(), Optional.empty());
+      entityData.set(GAMEPROFILE, Optional.empty());
     }
   }
 
@@ -276,7 +273,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
   @Override
   public boolean hurt(DamageSource source, float amount) {
-    if (ConfigManager.getImmune() && !(source.getEntity() instanceof Player) && source != DamageSource.OUT_OF_WORLD) {
+    if (ConfigManager.getImmune() && !(source.getEntity() instanceof Player) && source != damageSources().fellOutOfWorld()) {
       return false;
     }
     return super.hurt(source, amount);
@@ -291,10 +288,10 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     } else if (isVehicle()) {
       wasRidden = true;
     }
-    if (level.isClientSide) {
+    if (level().isClientSide) {
       int noob = getNoobVariant();
       if (tickCount % 4 == 0 && noob == 1) {
-        level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 0.3, getZ(), 0, 0, 0);
+        level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 0.3, getZ(), 0, 0, 0);
       }
     }
     if (scaleChanged == -1) {
@@ -533,7 +530,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
   @Override
   public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-    if (GAMEPROFILE.get().equals(key) && this.level.isClientSide()) {
+    if (GAMEPROFILE.equals(key) && this.level().isClientSide()) {
       this.getGameProfile().ifPresent(gameprofile -> {
         if (gameprofile.isComplete()) {
           Minecraft.getInstance().getSkinManager().registerSkins(gameprofile, (textureType, textureLocation, profileTexture) -> {

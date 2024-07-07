@@ -11,44 +11,28 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import noobanidus.mods.miniatures.Miniatures;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class ModSerializers {
   private static final DeferredRegister<EntityDataSerializer<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, Miniatures.MODID);
 
-  public static final RegistryObject<EntityDataSerializer<?>> OPTIONAL_GAME_PROFILE = REGISTRY.register("game_profile", () -> new GameProfileSerializer());
+  public static final RegistryObject<EntityDataSerializer<Optional<GameProfile>>> OPTIONAL_GAME_PROFILE = REGISTRY.register("game_profile",
+          GameProfileSerializer::new);
 
   public static class GameProfileSerializer implements EntityDataSerializer<Optional<GameProfile>> {
-     @Override
-    public void write(@Nonnull FriendlyByteBuf packetBuffer, @Nonnull Optional<GameProfile> gameProfile) {
-      if (gameProfile.isPresent()) {
-        packetBuffer.writeBoolean(true);
-        packetBuffer.writeNbt(NbtUtils.writeGameProfile(new CompoundTag(), gameProfile.get()));
-      } else {
-        packetBuffer.writeBoolean(false);
+    public void write(FriendlyByteBuf friendlyByteBuf, Optional<GameProfile> optionalGameProfile) {
+      friendlyByteBuf.writeBoolean(optionalGameProfile.isPresent());
+      if (optionalGameProfile.isPresent()) {
+        friendlyByteBuf.writeNbt(NbtUtils.writeGameProfile(new CompoundTag(), optionalGameProfile.get()));
       }
     }
 
-    @Override
-    @Nonnull
-    public Optional<GameProfile> read(@Nonnull FriendlyByteBuf packetBuffer) {
-      if (packetBuffer.readBoolean()) {
-        CompoundTag tag = packetBuffer.readNbt();
-        if (tag != null) {
-          GameProfile profile = NbtUtils.readGameProfile(tag);
-          if (profile != null) {
-            return Optional.of(profile);
-          }
-        }
-      }
-      return Optional.empty();
+    public Optional<GameProfile> read(FriendlyByteBuf friendlyByteBuf) {
+      return !friendlyByteBuf.readBoolean() ? Optional.empty() : Optional.of(NbtUtils.readGameProfile(friendlyByteBuf.readNbt()));
     }
 
-    @Override
-    @Nonnull
-    public Optional<GameProfile> copy(@Nonnull Optional<GameProfile> gameProfile) {
-      return gameProfile;
+    public Optional<GameProfile> copy(Optional<GameProfile> optionalGameProfile) {
+      return optionalGameProfile;
     }
   }
 
