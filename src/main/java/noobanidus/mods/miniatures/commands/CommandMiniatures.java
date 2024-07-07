@@ -4,18 +4,20 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.network.Networking;
 import noobanidus.mods.miniatures.util.NullProfileCache;
 import noobanidus.mods.miniatures.util.ProfileCache;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -45,7 +47,7 @@ public class CommandMiniatures {
         Optional<GameProfile> profile = e.getGameProfile();
         if (profile.isPresent()) {
           GameProfile prof = profile.get();
-          if (!prof.isComplete()) {
+          if (prof.getId() == null || !StringUtils.isNotBlank(prof.getName())) {
             Miniatures.LOG.warn("Incomplete profile for " + e + ": " + prof);
           }
         } else {

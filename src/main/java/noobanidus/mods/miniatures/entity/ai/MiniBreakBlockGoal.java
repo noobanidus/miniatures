@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.CommonHooks;
 import noobanidus.mods.miniatures.config.ConfigManager;
 
 import javax.annotation.Nullable;
@@ -43,7 +44,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
     if (!ConfigManager.getBreaksBlocks()) {
       return false;
     }
-    if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.entity.level(), this.blockPos, this.entity)) {
+    if (!CommonHooks.canEntityDestroy(this.entity.level(), this.blockPos, this.entity)) {
       return false;
     } else if (this.nextStartTick > 0) {
       --this.nextStartTick;

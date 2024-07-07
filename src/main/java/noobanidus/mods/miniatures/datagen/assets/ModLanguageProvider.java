@@ -1,7 +1,7 @@
 package noobanidus.mods.miniatures.datagen.assets;
 
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.init.ModBlocks;
 import noobanidus.mods.miniatures.init.ModEntities;
@@ -20,6 +20,8 @@ public class ModLanguageProvider extends LanguageProvider {
     addEntityType(ModEntities.MAXIME, "Maxime");
     addEntityType(ModEntities.ME, "Me");
     addEntityType(ModEntities.MINIME, "Minime");
+
+    add("miniatures.networking.client_validate.failed", "Failed to validate client data: %s");
   }
 
   // Generate upside-down if the locale is en_ud

@@ -5,18 +5,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import noobanidus.mods.miniatures.Miniatures;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ModSerializers {
-  private static final DeferredRegister<EntityDataSerializer<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, Miniatures.MODID);
+  private static final DeferredRegister<EntityDataSerializer<?>> REGISTRY = DeferredRegister.create(NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, Miniatures.MODID);
 
-  public static final RegistryObject<EntityDataSerializer<Optional<GameProfile>>> OPTIONAL_GAME_PROFILE = REGISTRY.register("game_profile",
+  public static final Supplier<EntityDataSerializer<Optional<GameProfile>>> OPTIONAL_GAME_PROFILE = REGISTRY.register("game_profile",
           GameProfileSerializer::new);
 
   public static class GameProfileSerializer implements EntityDataSerializer<Optional<GameProfile>> {

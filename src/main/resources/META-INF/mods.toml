@@ -1,5 +1,5 @@
 modLoader="javafml" 
-loaderVersion="[47,)"
+loaderVersion="[2,)"
 issueTrackerURL="https://github.com/Noobanidus/Miniatures/issues"
 license="https://github.com/Noobanidus/Miniatures/blob/master/LICENSE"
 [[mods]] 
@@ -13,14 +13,14 @@ description='''
 A port of Mini-Me entities from Miniatures 1.12.2.
 '''
 [[dependencies.miniatures]]
-    modId="forge"
-    mandatory=true
-    versionRange="[47,)"
+    modId="neoforge"
+    type="required"
+    versionRange="[20.4.167,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.miniatures]]
     modId="minecraft"
-    mandatory=true
-    versionRange="[1.20.1,)"
+    type="required"
+    versionRange="[1.20.4,)"
     ordering="NONE"
     side="BOTH"

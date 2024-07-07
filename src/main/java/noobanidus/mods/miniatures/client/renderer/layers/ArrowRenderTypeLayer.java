@@ -9,6 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.Items;
 import noobanidus.mods.miniatures.client.model.PlayerRenderModel;
 
 // TODO:?
@@ -26,7 +27,7 @@ public class ArrowRenderTypeLayer<T extends LivingEntity, M extends PlayerRender
 
   protected void renderStuckItem(PoseStack poseStack, MultiBufferSource bufferSource, int p_225632_3_, Entity entity, float p_225632_5_, float p_225632_6_, float p_225632_7_, float p_225632_8_) {
     float f = Mth.sqrt(p_225632_5_ * p_225632_5_ + p_225632_7_ * p_225632_7_);
-    Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ());
+    Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ(), Items.ARROW.getDefaultInstance());
     arrow.setYRot((float) (Math.atan2(p_225632_5_, p_225632_7_) * (double) (180F / (float) Math.PI)));
     arrow.setXRot((float) (Math.atan2(p_225632_6_, f) * (double) (180F / (float) Math.PI)));
     arrow.yRotO = arrow.getYRot();

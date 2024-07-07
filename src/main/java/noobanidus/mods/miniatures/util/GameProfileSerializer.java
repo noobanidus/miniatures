@@ -21,10 +21,10 @@ public class GameProfileSerializer {
     final PropertyMap properties = o.getProperties();
     output.writeVarInt(properties.size());
     for (Property p : properties.values()) {
-      output.writeUtf(p.getName());
-      output.writeUtf(p.getValue());
+      output.writeUtf(p.name());
+      output.writeUtf(p.value());
 
-      final String signature = p.getSignature();
+      final String signature = p.signature();
       if (signature != null) {
         output.writeBoolean(true);
         output.writeUtf(signature);

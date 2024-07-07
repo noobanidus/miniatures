@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
 
 import javax.annotation.Nullable;
@@ -40,7 +40,7 @@ public class ProfileCache extends SavedData {
   public static ProfileCache getInstance() {
     if (INSTANCE == null) {
       DimensionDataStorage manager = getServerWorld().getDataStorage();
-      INSTANCE = manager.computeIfAbsent(ProfileCache::new, ProfileCache::new, IDENTIFIER);
+      INSTANCE = manager.computeIfAbsent(new SavedData.Factory<>(ProfileCache::new, ProfileCache::new), IDENTIFIER);
     }
 
     return INSTANCE;

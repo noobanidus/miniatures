@@ -10,13 +10,13 @@ import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class SensorTorchBlock extends TorchBlock {
   public static final BooleanProperty TRIGGERED = BooleanProperty.create("trigger");
 
-  public SensorTorchBlock(Properties pProperties) {
-    super(pProperties, ParticleTypes.FLAME);
+  public SensorTorchBlock(Properties properties) {
+    super(ParticleTypes.FLAME, properties);
     this.registerDefaultState(this.defaultBlockState().setValue(TRIGGERED, false));
   }
 

@@ -1,5 +1,6 @@
 package noobanidus.mods.miniatures.entity;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -20,7 +21,7 @@ public class MaxiMeEntity extends MiniMeEntity {
   }
 
   @Override
-  public double getMyRidingOffset() {
+  protected float ridingOffset(Entity entity) {
     return 0;
   }
 

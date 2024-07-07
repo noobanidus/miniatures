@@ -3,7 +3,7 @@ package noobanidus.mods.miniatures.datagen.data;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import noobanidus.mods.miniatures.MiniTags;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.init.ModEntities;

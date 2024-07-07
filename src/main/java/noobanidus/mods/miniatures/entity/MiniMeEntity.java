@@ -2,16 +2,14 @@ package noobanidus.mods.miniatures.entity;
 
 import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
-import net.minecraft.client.Minecraft;
+import net.minecraft.Util;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -53,6 +51,7 @@ import noobanidus.mods.miniatures.init.ModModifiers;
 import noobanidus.mods.miniatures.init.ModSerializers;
 import noobanidus.mods.miniatures.util.NoobUtil;
 import noobanidus.mods.miniatures.util.NullProfileCache;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -88,7 +87,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
         return input;
       }
 
-      if (input.isComplete() && input.getProperties().containsKey("textures")) {
+      if (!(input.getId() == null || !StringUtils.isNotBlank(input.getName())) && input.getProperties().containsKey("textures")) {
         return input;
       } else if (profileCache != null && sessionService != null) {
         Optional<GameProfile> gameprofile = profileCache.get(input.getName());
@@ -100,10 +99,10 @@ public class MiniMeEntity extends Monster implements PowerableMob {
           Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
           if (property == null) {
             //Miniatures.LOG.info("Refilling cache for gameprofile: " + profile);
-            profile = sessionService.fillProfileProperties(profile, true);
+            profile = sessionService.fetchProfile(profile.getId(), true).profile();
           }
 
-          if (!profile.isComplete()) {
+          if (input.getId() == null || !StringUtils.isNotBlank(input.getName())) {
             NullProfileCache.cacheNull(profile.getName(), profile.getId());
           }
 
@@ -136,12 +135,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       return ConfigManager.getHostile();
     }
     return aggro == 1;
-  }
-
-  // TODO: Properly handle the relative offset for huge entities? And tiny.
-  @Override
-  public double getPassengersRidingOffset() {
-    return super.getPassengersRidingOffset();
   }
 
   @Override
@@ -232,7 +225,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   }
 
   public void setGameProfile(String name) {
-    setGameProfile(new GameProfile(null, name));
+    setGameProfile(new GameProfile(Util.NIL_UUID, name));
   }
 
   public void setGameProfile(UUID id) {
@@ -303,11 +296,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     if (bossInfo != null) {
       this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
     }
-  }
-
-  @Override
-  public double getMyRidingOffset() {
-    return super.getMyRidingOffset();
   }
 
   @Override
@@ -433,7 +421,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     if (incomingProfile == null) {
       if (compound.contains("owner", Tag.TAG_STRING)) {
         incomingOwner = compound.getString("owner");
-        incomingProfile = new GameProfile(null, incomingOwner);
+        incomingProfile = new GameProfile(Util.NIL_UUID, incomingOwner);
       } else if (compound.hasUUID("OwnerUUID")) {
         incomingUuid = compound.getUUID("OwnerUUID");
         incomingProfile = new GameProfile(incomingUuid, null);
@@ -505,10 +493,18 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       }
       Component name = Component.literal("Unknown Mini");
       if (getGameProfile().isPresent()) {
-        name = ComponentUtils.getDisplayName(getGameProfile().get());
+        name = getDisplayName(getGameProfile().get());
       }
 
       bossInfo = new ServerBossEvent(name, bossInfoColor, bossInfoOverlay);
+    }
+  }
+
+  public static Component getDisplayName(GameProfile profile) {
+    if (profile.getName() != null) {
+      return Component.literal(profile.getName());
+    } else {
+      return profile.getId() != null ? Component.literal(profile.getId().toString()) : Component.literal("(unknown)");
     }
   }
 
@@ -525,22 +521,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     super.stopSeenByPlayer(player);
     if (bossInfo != null) {
       this.bossInfo.removePlayer(player);
-    }
-  }
-
-  @Override
-  public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-    if (GAMEPROFILE.equals(key) && this.level().isClientSide()) {
-      this.getGameProfile().ifPresent(gameprofile -> {
-        if (gameprofile.isComplete()) {
-          Minecraft.getInstance().getSkinManager().registerSkins(gameprofile, (textureType, textureLocation, profileTexture) -> {
-            if (textureType.equals(MinecraftProfileTexture.Type.SKIN)) {
-              String metadata = profileTexture.getMetadata("model");
-              this.setSlim(metadata != null && metadata.equals("slim"));
-            }
-          }, true);
-        }
-      });
     }
   }
 
