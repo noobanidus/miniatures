@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.Util;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +17,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.GameProfileCache;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
@@ -52,10 +52,12 @@ import noobanidus.mods.miniatures.init.ModSerializers;
 import noobanidus.mods.miniatures.util.NoobUtil;
 import noobanidus.mods.miniatures.util.NullProfileCache;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class MiniMeEntity extends Monster implements PowerableMob {
   private static final EntityDataAccessor<Optional<GameProfile>> GAMEPROFILE = SynchedEntityData.defineId(MiniMeEntity.class, ModSerializers.OPTIONAL_GAME_PROFILE.get());
@@ -65,8 +67,18 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
   private ServerBossEvent bossInfo;
 
+  @Nullable
   private static GameProfileCache profileCache;
+  @Nullable
   private static MinecraftSessionService sessionService;
+  @Nullable
+  private static Executor mainThreadExecutor;
+  private static final Executor CHECKED_MAIN_THREAD_EXECUTOR = runnable -> {
+    Executor executor = mainThreadExecutor;
+    if (executor != null) {
+      executor.execute(runnable);
+    }
+  };
   private int pickupCooldown = 0;
   private boolean wasRidden = false;
   protected boolean adult = false;
@@ -79,49 +91,49 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   private String owner;
   private UUID ownerId;
 
-  // TODO:
   @Nullable
-  public static GameProfile updateGameProfile(@Nullable GameProfile input) {
-    if (input != null && !StringUtil.isNullOrEmpty(input.getName())) {
+  public void updateGameProfile(@Nullable GameProfile input) {
+    if (input != null && !Util.isBlank(input.getName())) {
       if (NullProfileCache.isCachedNull(input.getName(), null)) {
-        return input;
+        setGameProfileInternal(input);
       }
 
-      if (!(input.getId() == null || !StringUtils.isNotBlank(input.getName())) && input.getProperties().containsKey("textures")) {
-        return input;
+      if (!(input.getId() == null || !StringUtils.isNotBlank(input.getName())) && hasTextures(input)) {
+        setGameProfileInternal(input);
       } else if (profileCache != null && sessionService != null) {
-        Optional<GameProfile> gameprofile = profileCache.get(input.getName());
-        if (!gameprofile.isPresent()) {
-          NullProfileCache.cacheNull(input.getName(), input.getId());
-          return input;
-        } else {
-          GameProfile profile = gameprofile.get();
-          Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
-          if (property == null) {
-            //Miniatures.LOG.info("Refilling cache for gameprofile: " + profile);
-            profile = sessionService.fetchProfile(profile.getId(), true).profile();
-          }
+        fetchGameProfile(input.getName())
+                .thenAccept(
+                        optionalProfile -> {
+                          if (!optionalProfile.isPresent()) {
+                            NullProfileCache.cacheNull(input.getName(), input.getId());
+                            setGameProfileInternal(input);
+                          } else {
+                            GameProfile profile = optionalProfile.get();
+                            Property property = Iterables.getFirst(profile.getProperties().get("textures"), null);
+                            if (property == null) {
+                              //Miniatures.LOG.info("Refilling cache for gameprofile: " + profile);
+                              profile = sessionService.fetchProfile(profile.getId(), true).profile();
+                            }
 
-          if (input.getId() == null || !StringUtils.isNotBlank(input.getName())) {
-            NullProfileCache.cacheNull(profile.getName(), profile.getId());
-          }
-
-          return profile;
-        }
+                            if (input.getId() == null || !StringUtils.isNotBlank(input.getName())) {
+                              NullProfileCache.cacheNull(profile.getName(), profile.getId());
+                            }
+                            this.setGameProfileInternal(profile);
+                          }
+                        }
+                );
       } else {
-        return input;
+        setGameProfileInternal(input);
       }
     } else {
-      return input;
+      setGameProfileInternal(input);
     }
   }
 
-  public static void setProfileCache(GameProfileCache profileCache) {
-    MiniMeEntity.profileCache = profileCache;
-  }
-
-  public static void setSessionService(MinecraftSessionService sessionService) {
-    MiniMeEntity.sessionService = sessionService;
+  public static void setup(GameProfileCache gameProfileCache, MinecraftSessionService service, Executor executor) {
+    MiniMeEntity.profileCache = gameProfileCache;
+    MiniMeEntity.sessionService = service;
+    MiniMeEntity.mainThreadExecutor = executor;
   }
 
   public MiniMeEntity(EntityType<? extends MiniMeEntity> type, Level world) {
@@ -237,13 +249,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       return;
     }
 
-    GameProfile profile = updateGameProfile(playerProfile);
-    if (profile != null) {
-      setGameProfileInternal(profile);
-    } else {
-      setGameProfileInternal(null);
-      NullProfileCache.cacheNull(playerProfile.getName(), playerProfile.getId());
-    }
+    updateGameProfile(playerProfile);
   }
 
   protected void setGameProfileInternal(GameProfile playerProfile) {
@@ -537,5 +543,38 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   @Override
   public boolean isPowered() {
     return getNoobVariant() == 5;
+  }
+
+  public static CompletableFuture<Optional<GameProfile>> fetchGameProfile(String username) {
+    GameProfileCache gameprofilecache = profileCache;
+    return gameprofilecache == null
+            ? CompletableFuture.completedFuture(Optional.empty())
+            : gameprofilecache.getAsync(username)
+            .thenCompose(profile -> profile.isPresent() ? fillProfileTextures(profile.get()) : CompletableFuture.completedFuture(Optional.empty()))
+            .thenApplyAsync((profile -> {
+              GameProfileCache cache = profileCache;
+              if (cache != null) {
+                profile.ifPresent(cache::add);
+                return profile;
+              } else {
+                return Optional.empty();
+              }
+            }), CHECKED_MAIN_THREAD_EXECUTOR);
+  }
+
+  private static CompletableFuture<Optional<GameProfile>> fillProfileTextures(GameProfile profile) {
+    return hasTextures(profile) ? CompletableFuture.completedFuture(Optional.of(profile)) : CompletableFuture.supplyAsync(() -> {
+      MinecraftSessionService minecraftsessionservice = sessionService;
+      if (minecraftsessionservice != null) {
+        ProfileResult profileresult = minecraftsessionservice.fetchProfile(profile.getId(), true);
+        return profileresult == null ? Optional.of(profile) : Optional.of(profileresult.profile());
+      } else {
+        return Optional.empty();
+      }
+    }, Util.backgroundExecutor());
+  }
+
+  private static boolean hasTextures(GameProfile profile) {
+    return profile.getProperties().containsKey("textures");
   }
 }

@@ -9,7 +9,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.neoforged.fml.loading.FMLPaths;
 import noobanidus.mods.miniatures.Miniatures;
@@ -84,15 +83,14 @@ public class CommandMiniatures {
       c.getSource().sendSuccess(() -> Component.literal("Beginning pre-load, this could take some time..."), false);
       int counter = 0;
       for (String name : ProfileCache.cache()) {
-        if (StringUtil.isNullOrEmpty(name)) {
+        if (Util.isBlank(name)) {
           continue;
         }
         if (NullProfileCache.isCachedNull(name, null)) {
           continue;
         }
 
-        GameProfile profile = new GameProfile(null, name);
-        MiniMeEntity.updateGameProfile(profile);
+        MiniMeEntity.fetchGameProfile(name);
         counter++;
       }
       int finalCounter = counter;
@@ -132,7 +130,7 @@ public class CommandMiniatures {
         BufferedReader buffer = new BufferedReader(new FileReader(savefile.toFile()));
         Set<String> cache = new HashSet<>();
         buffer.lines().forEach(o -> {
-          if (!StringUtil.isNullOrEmpty(o.trim())) {
+          if (!Util.isBlank(o.trim())) {
             cache.add(o.trim());
           }
         });

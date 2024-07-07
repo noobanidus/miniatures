@@ -49,9 +49,7 @@ public class Miniatures {
 
   public void onServerAboutToStart(ServerAboutToStartEvent event) {
     MinecraftServer server = event.getServer();
-    MiniMeEntity.setMainThreadExecutor(server);
-    MiniMeEntity.setProfileCache(server.getProfileCache());
-    MiniMeEntity.setSessionService(server.getSessionService());
+    MiniMeEntity.setup(server.getProfileCache(), server.getSessionService(), server);
     GameProfileCache.setUsesAuthentication(server.usesAuthentication());
   }
 

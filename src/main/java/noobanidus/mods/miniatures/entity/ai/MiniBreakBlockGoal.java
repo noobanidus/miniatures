@@ -21,8 +21,7 @@ import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
 import noobanidus.mods.miniatures.config.ConfigManager;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class MiniBreakBlockGoal extends MoveToBlockGoal {
   private final TagKey<Block> block;

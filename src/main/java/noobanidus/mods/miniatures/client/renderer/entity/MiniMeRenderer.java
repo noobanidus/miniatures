@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 // TODO:
 public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeModel<MiniMeEntity>> {
   private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/player/wide/steve.png");
+  public boolean isSlim = false;
 
   @SuppressWarnings("unchecked")
   public MiniMeRenderer(EntityRendererProvider.Context context) {
@@ -64,9 +65,12 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   @Override
   public void render(MiniMeEntity miniMeEntity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
     this.model = ModelHolder.miniMe;
-    if (miniMeEntity.isSlim() && this.model != ModelHolder.miniMeSlim) {
-      this.model = ModelHolder.miniMeSlim;
+    SkinManager skinmanager = Minecraft.getInstance().getSkinManager();
+    if (miniMeEntity.getGameProfile().isPresent()) {
+      if (isSlim != skinmanager.getInsecureSkin(miniMeEntity.getGameProfile().get()).model().id().equals("slim"))
+        isSlim = !isSlim;
     }
+    this.model = isSlim ? ModelHolder.miniMeSlim : ModelHolder.miniMe;
     int noob = miniMeEntity.getNoobVariant();
 /*    if (noob == 3) {
       packedLightIn = 15728880;
