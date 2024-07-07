@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import noobanidus.mods.miniatures.init.ModBlocks;
 import noobanidus.mods.miniatures.init.ModEntities;
 
@@ -48,7 +48,7 @@ public class ModLootTableProvider extends LootTableProvider {
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-      return (Iterable<Block>) ModBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+      return (Iterable<Block>) ModBlocks.BLOCKS.getEntries().stream().map((holder) -> (Block) holder.value())::iterator;
     }
   }
 
@@ -66,7 +66,7 @@ public class ModLootTableProvider extends LootTableProvider {
 
     @Override
     protected Stream<EntityType<?>> getKnownEntityTypes() {
-      return ModEntities.ENTITY_TYPES.getEntries().stream().map(RegistryObject::get);
+      return ModEntities.ENTITY_TYPES.getEntries().stream().map(DeferredHolder::value);
     }
   }
 }

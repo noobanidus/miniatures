@@ -1,7 +1,6 @@
 package noobanidus.mods.miniatures.client.renderer.entity;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -12,7 +11,6 @@ import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
-import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
 import noobanidus.mods.miniatures.client.ModelHolder;
@@ -21,11 +19,11 @@ import noobanidus.mods.miniatures.client.renderer.layers.ArrowRenderTypeLayer;
 import noobanidus.mods.miniatures.client.renderer.layers.BeeStingerRenderTypeLayer;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.setup.ClientSetup;
-
-import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeModel<MiniMeEntity>> {
   private static final ResourceLocation TEXTURE_STEVE = new ResourceLocation("textures/entity/player/wide/steve.png");
+  public boolean isSlim = false;
 
   public MaxiMeRenderer(EntityRendererProvider.Context context) {
     super(context, new MiniMeModel<>(context.bakeLayer(ClientSetup.MINI_ME), false), 0.5f);
@@ -46,26 +44,23 @@ public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   }
 
   private ResourceLocation getSkin(GameProfile gameProfile) {
-    if (!gameProfile.isComplete()) {
+    if (gameProfile.getId() == null || !StringUtils.isNotBlank(gameProfile.getName())) {
+      //Miniatures.LOG.error("STEVE: GameProfile incomplete for " + gameProfile);
       return TEXTURE_STEVE;
     } else {
-      final Minecraft minecraft = Minecraft.getInstance();
-      SkinManager skinManager = minecraft.getSkinManager();
-      final Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> loadSkinFromCache = skinManager.getInsecureSkinInformation(gameProfile); // returned map may or may not be typed
-      if (loadSkinFromCache.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-        return skinManager.registerTexture(loadSkinFromCache.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
-      } else {
-        return DefaultPlayerSkin.getDefaultSkin(gameProfile.getId());
-      }
+      SkinManager skinmanager = Minecraft.getInstance().getSkinManager();
+      return skinmanager.getInsecureSkin(gameProfile).texture();
     }
   }
 
   @Override
   public void render(MiniMeEntity miniMeEntity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
-    this.model = ModelHolder.miniMe;
-    if (miniMeEntity.isSlim() && this.model != ModelHolder.miniMeSlim) {
-      this.model = ModelHolder.miniMeSlim;
+    SkinManager skinmanager = Minecraft.getInstance().getSkinManager();
+    if (miniMeEntity.getGameProfile().isPresent()) {
+      if (isSlim != skinmanager.getInsecureSkin(miniMeEntity.getGameProfile().get()).model().id().equals("slim"))
+        isSlim = !isSlim;
     }
+    this.model = isSlim ? ModelHolder.miniMeSlim : ModelHolder.miniMe;
     int noob = miniMeEntity.getNoobVariant();
 /*    if (noob == 3) {
       packedLightIn = 15728880;

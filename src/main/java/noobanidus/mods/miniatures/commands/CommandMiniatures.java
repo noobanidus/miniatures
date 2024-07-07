@@ -4,18 +4,19 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.network.Networking;
 import noobanidus.mods.miniatures.util.NullProfileCache;
 import noobanidus.mods.miniatures.util.ProfileCache;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -45,11 +46,11 @@ public class CommandMiniatures {
         Optional<GameProfile> profile = e.getGameProfile();
         if (profile.isPresent()) {
           GameProfile prof = profile.get();
-          if (!prof.isComplete()) {
-            Miniatures.LOG.warn("Incomplete profile for " + e + ": " + prof);
+          if (prof.getId() == null || !StringUtils.isNotBlank(prof.getName())) {
+            Miniatures.LOG.warn("Incomplete profile for {}: {}", e, prof);
           }
         } else {
-          Miniatures.LOG.warn("No profile for " + e);
+          Miniatures.LOG.warn("No profile for {}", e);
         }
       });
       c.getSource().sendSuccess(() -> Component.literal("Please check server console for information about incomplete profiles."), false);
@@ -82,15 +83,14 @@ public class CommandMiniatures {
       c.getSource().sendSuccess(() -> Component.literal("Beginning pre-load, this could take some time..."), false);
       int counter = 0;
       for (String name : ProfileCache.cache()) {
-        if (StringUtil.isNullOrEmpty(name)) {
+        if (Util.isBlank(name)) {
           continue;
         }
         if (NullProfileCache.isCachedNull(name, null)) {
           continue;
         }
 
-        GameProfile profile = new GameProfile(null, name);
-        MiniMeEntity.updateGameProfile(profile);
+        MiniMeEntity.fetchGameProfile(name);
         counter++;
       }
       int finalCounter = counter;
@@ -113,7 +113,7 @@ public class CommandMiniatures {
         c.getSource().sendSuccess(() -> Component.literal("Saved cache to " + filename), false);
       } catch (IOException e) {
         c.getSource().sendFailure(Component.literal("Failed to write to file named " + filename + ". See log for error."));
-        Miniatures.LOG.error("Failed to write to file named " + filename, e);
+        Miniatures.LOG.error("Failed to write to file named {}", filename, e);
         return -1;
       }
       return 1;
@@ -130,7 +130,7 @@ public class CommandMiniatures {
         BufferedReader buffer = new BufferedReader(new FileReader(savefile.toFile()));
         Set<String> cache = new HashSet<>();
         buffer.lines().forEach(o -> {
-          if (!StringUtil.isNullOrEmpty(o.trim())) {
+          if (!Util.isBlank(o.trim())) {
             cache.add(o.trim());
           }
         });

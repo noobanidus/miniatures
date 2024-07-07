@@ -1,12 +1,11 @@
 package noobanidus.mods.miniatures.setup;
 
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import noobanidus.mods.miniatures.network.Networking;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class CommonSetup {
   public static void init(FMLCommonSetupEvent event) {
     event.enqueueWork(() -> {
-      Networking.init();
+
     });
   }
 }

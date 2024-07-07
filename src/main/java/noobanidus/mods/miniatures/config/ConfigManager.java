@@ -2,34 +2,34 @@ package noobanidus.mods.miniatures.config;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import noobanidus.mods.miniatures.Miniatures;
 
 import java.nio.file.Path;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Miniatures.MODID)
 public class ConfigManager {
-  private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+  private static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 
-  public static final ForgeConfigSpec COMMON_CONFIG;
+  public static final ModConfigSpec COMMON_CONFIG;
 
-  private static final ForgeConfigSpec.DoubleValue MAX_HEALTH;
-  private static final ForgeConfigSpec.DoubleValue MOVEMENT_SPEED;
-  private static final ForgeConfigSpec.DoubleValue ATTACK_DAMAGE;
-  private static final ForgeConfigSpec.DoubleValue ARMOR_VALUE;
-  private static final ForgeConfigSpec.BooleanValue HOSTILE;
-  private static final ForgeConfigSpec.BooleanValue IMMUNE;
-  private static final ForgeConfigSpec.BooleanValue DESTROYS_BLOCKS;
-  private static final ForgeConfigSpec.BooleanValue BREAKS_BLOCKS;
-  private static final ForgeConfigSpec.BooleanValue PICKUP_GOAL;
-  private static final ForgeConfigSpec.BooleanValue OWNER_RIDER;
-  private static final ForgeConfigSpec.DoubleValue DISTRACTION_CHANCE;
-  private static final ForgeConfigSpec.IntValue BASE_RUN_DELAY;
-  private static final ForgeConfigSpec.IntValue RANDOM_RUN_DELAY;
-  private static final ForgeConfigSpec.BooleanValue SKIP_NULL_CHECK;
+  private static final ModConfigSpec.DoubleValue MAX_HEALTH;
+  private static final ModConfigSpec.DoubleValue MOVEMENT_SPEED;
+  private static final ModConfigSpec.DoubleValue ATTACK_DAMAGE;
+  private static final ModConfigSpec.DoubleValue ARMOR_VALUE;
+  private static final ModConfigSpec.BooleanValue HOSTILE;
+  private static final ModConfigSpec.BooleanValue IMMUNE;
+  private static final ModConfigSpec.BooleanValue DESTROYS_BLOCKS;
+  private static final ModConfigSpec.BooleanValue BREAKS_BLOCKS;
+  private static final ModConfigSpec.BooleanValue PICKUP_GOAL;
+  private static final ModConfigSpec.BooleanValue OWNER_RIDER;
+  private static final ModConfigSpec.DoubleValue DISTRACTION_CHANCE;
+  private static final ModConfigSpec.IntValue BASE_RUN_DELAY;
+  private static final ModConfigSpec.IntValue RANDOM_RUN_DELAY;
+  private static final ModConfigSpec.BooleanValue SKIP_NULL_CHECK;
 
   static {
     COMMON_BUILDER.comment("options relating to miniatures").push("miniatures");
@@ -51,7 +51,7 @@ public class ConfigManager {
     COMMON_CONFIG = COMMON_BUILDER.build();
   }
 
-  public static void loadConfig(ForgeConfigSpec spec, Path path) {
+  public static void loadConfig(ModConfigSpec spec, Path path) {
     CommentedFileConfig configData = CommentedFileConfig.builder(path).sync().autosave().writingMode(WritingMode.REPLACE).build();
     configData.load();
     spec.setConfig(configData);

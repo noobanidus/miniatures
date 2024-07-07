@@ -7,6 +7,7 @@ import net.minecraft.util.AbortableIterationConsumer;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -22,11 +23,11 @@ public class ClientValidate {
         Optional<GameProfile> profile = e.getGameProfile();
         if (profile.isPresent()) {
           GameProfile prof = profile.get();
-          if (!prof.isComplete()) {
-            Miniatures.LOG.warn("Incomplete profile for " + e + ": " + prof);
+          if (prof.getId() == null || !StringUtils.isNotBlank(prof.getName())) {
+            Miniatures.LOG.warn("Incomplete profile for {}: {}", e, prof);
           }
         } else {
-          Miniatures.LOG.warn("No profile for " + e);
+          Miniatures.LOG.warn("No profile for {}", e);
         }
         return AbortableIterationConsumer.Continuation.CONTINUE;
       });

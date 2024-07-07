@@ -1,11 +1,9 @@
 package noobanidus.mods.miniatures.setup;
 
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
 
 public class ClientInit {
-  public static void init() {
-    IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+  public static void init(IEventBus modBus) {
     modBus.addListener(ClientSetup::init);
     modBus.addListener(ClientSetup::registerEntityRenders);
     modBus.addListener(ClientSetup::registerLayerDefinitions);

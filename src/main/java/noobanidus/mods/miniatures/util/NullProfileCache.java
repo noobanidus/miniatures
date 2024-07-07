@@ -1,20 +1,20 @@
 package noobanidus.mods.miniatures.util;
 
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.config.ConfigManager;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -42,7 +42,7 @@ public class NullProfileCache extends SavedData {
   public static NullProfileCache getInstance() {
     if (INSTANCE == null) {
       DimensionDataStorage manager = getServerWorld().getDataStorage();
-      INSTANCE = manager.computeIfAbsent(NullProfileCache::new, NullProfileCache::new, IDENTIFIER);
+      INSTANCE = manager.computeIfAbsent(new SavedData.Factory<>(NullProfileCache::new, NullProfileCache::new), IDENTIFIER);
     }
 
     return INSTANCE;
@@ -71,17 +71,17 @@ public class NullProfileCache extends SavedData {
   }
 
   protected boolean internalIsCachedNull(@Nullable String name, @Nullable UUID uuid) {
-    if (StringUtil.isNullOrEmpty(name) && uuid == null) {
+    if (Util.isBlank(name) && uuid == null) {
       throw new NullPointerException("Both name and uuid cannot be null in `isCachedNull` check");
     }
 
-    if (!StringUtil.isNullOrEmpty(name)) {
+    if (!Util.isBlank(name)) {
       if (internalIsCachedNull(name)) {
         return true;
       }
     }
 
-    if (uuid != null) {
+    if (uuid != null && !uuid.equals(Util.NIL_UUID)) {
       return internalIsCachedNull(uuid);
     }
 
@@ -111,11 +111,11 @@ public class NullProfileCache extends SavedData {
   }
 
   protected void internalCacheNull(@Nullable String name, @Nullable UUID id) {
-    if (!StringUtil.isNullOrEmpty(name)) {
+    if (!Util.isBlank(name)) {
       internalCacheNull(name);
     }
 
-    if (id != null) {
+    if (id != null && !id.equals(Util.NIL_UUID)) {
       internalCacheNull(id);
     }
   }
