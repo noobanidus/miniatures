@@ -10,6 +10,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MaxiMeEntity;
+import noobanidus.mods.miniatures.entity.MeEntity;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 
 import java.util.function.Supplier;
@@ -20,16 +21,16 @@ public class ModEntities {
 
   public static final Supplier<EntityType<MiniMeEntity>> MINIME = ENTITY_TYPES.register("minime",
           () -> EntityType.Builder.<MiniMeEntity>of(MiniMeEntity::new, MobCategory.CREATURE)
-                  .sized(0.3f, 1.4F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
+                  .sized(0.3f, 1.1F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("minime"));
 
-  public static final Supplier<EntityType<MiniMeEntity>> ME = ENTITY_TYPES.register("me",
-          () -> EntityType.Builder.<MiniMeEntity>of(MiniMeEntity::new, MobCategory.CREATURE)
-                  .sized(0.6F, 1.4F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
+  public static final Supplier<EntityType<MeEntity>> ME = ENTITY_TYPES.register("me",
+          () -> EntityType.Builder.<MeEntity>of(MeEntity::new, MobCategory.CREATURE)
+                  .sized(0.6F, 2F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("me"));
 
-  public static final Supplier<EntityType<MiniMeEntity>> MAXIME = ENTITY_TYPES.register("maxime",
-          () -> EntityType.Builder.<MiniMeEntity>of(MiniMeEntity::new, MobCategory.CREATURE)
+  public static final Supplier<EntityType<MaxiMeEntity>> MAXIME = ENTITY_TYPES.register("maxime",
+          () -> EntityType.Builder.<MaxiMeEntity>of(MaxiMeEntity::new, MobCategory.CREATURE)
                   .sized(2.3f, 7).clientTrackingRange(16).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("maxime"));
 
