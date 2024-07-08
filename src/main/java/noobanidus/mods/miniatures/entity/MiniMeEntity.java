@@ -17,6 +17,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.GameProfileCache;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
@@ -272,7 +273,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
   @Override
   public boolean hurt(DamageSource source, float amount) {
-    if (ConfigManager.getImmune() && !(source.getEntity() instanceof Player) && source != damageSources().fellOutOfWorld()) {
+    if (ConfigManager.getImmune() && !(source.getEntity() instanceof Player) && !source.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
       return false;
     }
     return super.hurt(source, amount);
