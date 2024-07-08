@@ -11,6 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import noobanidus.mods.miniatures.Miniatures;
 import noobanidus.mods.miniatures.entity.MaxiMeEntity;
+import noobanidus.mods.miniatures.entity.MeEntity;
 import noobanidus.mods.miniatures.entity.MiniMeEntity;
 
 @Mod.EventBusSubscriber(modid = Miniatures.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -22,13 +23,13 @@ public class ModEntities {
                   .sized(0.3f, 1.1F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("minime"));
 
-  public static final RegistryObject<EntityType<MiniMeEntity>> ME = ENTITY_TYPES.register("me",
-          () -> EntityType.Builder.<MiniMeEntity>of(MiniMeEntity::new, MobCategory.CREATURE)
+  public static final RegistryObject<EntityType<MeEntity>> ME = ENTITY_TYPES.register("me",
+          () -> EntityType.Builder.<MeEntity>of(MeEntity::new, MobCategory.CREATURE)
                   .sized(0.6F, 2F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("me"));
 
-  public static final RegistryObject<EntityType<MiniMeEntity>> MAXIME = ENTITY_TYPES.register("maxime",
-          () -> EntityType.Builder.<MiniMeEntity>of(MiniMeEntity::new, MobCategory.CREATURE)
+  public static final RegistryObject<EntityType<MaxiMeEntity>> MAXIME = ENTITY_TYPES.register("maxime",
+          () -> EntityType.Builder.<MaxiMeEntity>of(MaxiMeEntity::new, MobCategory.CREATURE)
                   .sized(2.3f, 7).clientTrackingRange(16).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("maxime"));
 
