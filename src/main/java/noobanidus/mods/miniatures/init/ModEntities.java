@@ -21,12 +21,12 @@ public class ModEntities {
 
   public static final Supplier<EntityType<MiniMeEntity>> MINIME = ENTITY_TYPES.register("minime",
           () -> EntityType.Builder.<MiniMeEntity>of(MiniMeEntity::new, MobCategory.CREATURE)
-                  .sized(0.3f, 1.4F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
+                  .sized(0.3f, 1.1F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("minime"));
 
   public static final Supplier<EntityType<MeEntity>> ME = ENTITY_TYPES.register("me",
           () -> EntityType.Builder.<MeEntity>of(MeEntity::new, MobCategory.CREATURE)
-                  .sized(0.6F, 1.4F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
+                  .sized(0.6F, 2F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("me"));
 
   public static final Supplier<EntityType<MaxiMeEntity>> MAXIME = ENTITY_TYPES.register("maxime",
