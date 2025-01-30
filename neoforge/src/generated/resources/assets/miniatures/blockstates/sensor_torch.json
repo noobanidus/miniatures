@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "trigger=false": {
+      "model": "minecraft:block/torch"
+    },
+    "trigger=true": {
+      "model": "minecraft:block/torch"
+    }
+  }
+}
