@@ -19,7 +19,7 @@ public class EntityEvents {
     return type == ModEntities.MINIME.get() || type == ModEntities.MAXIME.get() || type == ModEntities.ME.get();
   }
 
-  @SubscribeEvent
+/*  @SubscribeEvent
   public static void onSizeChange(EntityEvent.Size event) {
     if (event.getEntity().isAddedToLevel()) {
       if (isMiniature(event.getEntity())) {
@@ -28,16 +28,5 @@ public class EntityEvents {
         event.setNewSize(EntityDimensions.scalable(oldSize.width() * mini.getMiniScale(), oldSize.height() * mini.getMiniScale()));
       }
     }
-  }
-
-  @SubscribeEvent
-  public static void onEntityDismount(EntityMountEvent event) {
-    if (event.isDismounting()) {
-      Entity mounted = event.getEntityBeingMounted();
-      if (isMiniature(event.getEntityBeingMounted())) {
-        MiniMeEntity mini = (MiniMeEntity) mounted;
-        mini.setPickupCooldown(mini.getRandom().nextInt(800) + 600);
-      }
-    }
-  }
+  }*/
 }

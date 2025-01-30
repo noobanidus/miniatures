@@ -21,10 +21,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PowerableMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -300,6 +297,18 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       return false;
     }
     return super.hurt(source, amount);
+  }
+
+  @Override
+  protected EntityDimensions getDefaultDimensions(Pose pose) {
+    return super.getDefaultDimensions(pose).scale(getMiniScale());
+  }
+
+  @Override
+  protected void addPassenger(Entity entity) {
+    super.addPassenger(entity);
+
+    this.setPickupCooldown(this.getRandom().nextInt(800) + 600);
   }
 
   @Override

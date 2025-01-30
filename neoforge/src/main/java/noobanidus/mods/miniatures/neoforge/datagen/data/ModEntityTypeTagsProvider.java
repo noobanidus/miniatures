@@ -19,5 +19,6 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
   @Override
   protected void addTags(HolderLookup.Provider provider) {
     tag(MiniTags.Entity.MOB_ATTACK_BLACKLIST).add(ModEntities.MAXIME.get(), ModEntities.MINIME.get(), ModEntities.ME.get());
+    tag(MiniTags.Entity.MINI).add(ModEntities.MINIME.get(), ModEntities.ME.get(), ModEntities.MAXIME.get());
   }
 }

@@ -1,4 +1,4 @@
-package noobanidus.mods.miniatures.neoforge.event;
+package noobanidus.mods.miniatures.neoforge.setup;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.GameProfileCache;

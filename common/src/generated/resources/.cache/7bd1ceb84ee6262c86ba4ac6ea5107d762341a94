@@ -1,2 +1,3 @@
-// 1.21	2025-01-29T18:46:52.1837991	Tags for minecraft:entity_type mod id miniatures
+// 1.21	2025-01-30T13:34:51.7378972	Tags for minecraft:entity_type mod id miniatures
 4b9122c9d9d931d0ed6ec6e6c21a23c8fadf3422 data/minecolonies/tags/entity_type/mob_attack_blacklist.json
+3537ec4af83353bd773353478cb2bc54526ff092 data/miniatures/tags/entity_type/mini.json

@@ -1,4 +1,4 @@
-package noobanidus.mods.miniatures.neoforge.config;
+package noobanidus.mods.miniatures.common.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
