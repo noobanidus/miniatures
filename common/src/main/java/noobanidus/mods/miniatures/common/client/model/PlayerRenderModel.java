@@ -106,7 +106,6 @@ public class PlayerRenderModel<T extends LivingEntity> extends HumanoidModel<T> 
       this.cloak.z = -1.1F;
       this.cloak.y = -0.85F;
     }
-
   }
 
   public void setAllVisible(boolean bl) {

@@ -71,13 +71,13 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     if (noob == 3) {
       packedLightIn = 15728880;
       this.model = ModelHolder.ghostlyMiniMe;
-      if (miniMeEntity.isSlim() && this.model != ModelHolder.ghostlyMiniMeSlim) {
+      if (isSlim && this.model != ModelHolder.ghostlyMiniMeSlim) {
         this.model = ModelHolder.ghostlyMiniMeSlim;
       }
     } else if (noob == 4) {
       packedLightIn = 15728880;
       this.model = ModelHolder.glowingMiniMe;
-      if (miniMeEntity.isSlim() && this.model != ModelHolder.glowingMiniMeSlim) {
+      if (isSlim && this.model != ModelHolder.glowingMiniMeSlim) {
         this.model = ModelHolder.glowingMiniMeSlim;
       }
     }
@@ -86,11 +86,10 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
 
 
   protected void scale(MiniMeEntity miniMeEntity, PoseStack poseStack, float partialTickTime) {
-    float scale = miniMeEntity.getMiniScale();
     if (NoobUtil.isNoob(miniMeEntity)) {
-      poseStack.scale(1.0975F * scale, 1.0975F * scale, 1.0975F * scale);
+      poseStack.scale(1.0975F, 1.0975F, 1.0975F);
     } else {
-      poseStack.scale(0.9375F * scale, 0.9375F * scale, 0.9375F * scale);
+      poseStack.scale(0.9375F, 0.9375F, 0.9375F);
     }
   }
 
@@ -98,10 +97,10 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     super.setupRotations(miniMeEntity, poseStack, f, g, h, i);
     int noob = miniMeEntity.getNoobVariant();
     if (noob == 0) {
-      poseStack.translate(0.0D, miniMeEntity.getBbHeight() + 0.3F, 0.0D);
+      poseStack.translate(0.0D, miniMeEntity.getBbHeight() + 0.25F, 0.0D);
       poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
     } else if (noob == 1) {
-      poseStack.translate(0.0D, 0.5F, 0.0D);
+      poseStack.translate(0.0D, 0.35F, 0.0D);
     } else if (noob == 6) {
       poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
     } else if (noob == 7) {

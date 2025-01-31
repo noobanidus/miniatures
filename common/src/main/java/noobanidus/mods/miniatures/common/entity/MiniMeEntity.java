@@ -54,17 +54,14 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 public class MiniMeEntity extends Monster implements PowerableMob {
-  // TODO: Not sure if this is safe, how does bumblezone do it?
   private static final EntityDataAccessor<Optional<ResolvableProfile>> RESOLVABLE_PROFILE = SynchedEntityData.defineId(MiniMeEntity.class, MiniaturesAPI.getGameProfileSerializer());
 
   public static final EntityDataAccessor<Integer> AGGRO = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.INT);
   public static final EntityDataAccessor<Byte> NOOB = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.BYTE);
-  public static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.FLOAT);
 
   private ServerBossEvent bossInfo;
 
@@ -72,24 +69,15 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   private static LoadingCache<String, CompletableFuture<Optional<GameProfile>>> gameProfileCacheByName;
   @Nullable
   private static LoadingCache<UUID, CompletableFuture<Optional<GameProfile>>> gameProfileCacheById;
-  @Nullable
-  private static Executor mainThreadExecutor;
-  private static final Executor CHECKED_MAIN_THREAD_EXECUTOR = runnable -> {
-    Executor executor = mainThreadExecutor;
-    if (executor != null) {
-      executor.execute(runnable);
-    }
-  };
   private int pickupCooldown = 0;
   private boolean wasRidden = false;
   protected boolean adult = false;
 
   private boolean healthBoosted = false;
   private boolean attackBoosted = false;
-  private int scaleChanged = -1;
-  private boolean isSlim;
 
-  private boolean isLoading = false;
+  private boolean isBeingLoaded = false;
+  private CompletableFuture<?> currentFuture = null;
 
   static CompletableFuture<Optional<GameProfile>> fetchProfileByName(String name, Services services) {
     return services.profileCache()
@@ -133,28 +121,26 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     }, Util.backgroundExecutor());
   }
 
-  public static void setup(final Services services, Executor pMainThreadExecutor) {
-    MiniMeEntity.mainThreadExecutor = pMainThreadExecutor;
+  public static void setup(final Services services) {
     final BooleanSupplier booleanSupplier = () -> gameProfileCacheById == null;
     gameProfileCacheByName = CacheBuilder.newBuilder().expireAfterAccess(Duration.ofHours(6))
         .maximumSize(256L)
         .build(new CacheLoader<>() {
           @Override
-          public CompletableFuture<Optional<GameProfile>> load(String key) throws Exception {
+          public CompletableFuture<Optional<GameProfile>> load(String key) {
             return fetchProfileByName(key, services);
           }
         });
     gameProfileCacheById = CacheBuilder.newBuilder().expireAfterAccess(Duration.ofHours(6)).maximumSize(256L)
         .build(new CacheLoader<>() {
           @Override
-          public CompletableFuture<Optional<GameProfile>> load(UUID key) throws Exception {
+          public CompletableFuture<Optional<GameProfile>> load(UUID key) {
             return fetchProfileById(key, services, booleanSupplier);
           }
         });
   }
 
   public static void clear() {
-    mainThreadExecutor = null;
     gameProfileCacheById = null;
     gameProfileCacheByName = null;
   }
@@ -195,7 +181,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     arg.define(RESOLVABLE_PROFILE, Optional.empty());
     arg.define(AGGRO, -1);
     arg.define(NOOB, (byte) random.nextInt(20));
-    arg.define(SCALE, 1f);
 
     // 0: Upside down
     // 1: Floating
@@ -217,22 +202,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
   public void setNoobVariant(int variant) {
     entityData.set(NOOB, (byte) variant);
-  }
-
-  public float getMiniScale() {
-    return entityData.get(SCALE);
-  }
-
-  public void setMiniScale(float scale) {
-    entityData.set(SCALE, scale);
-  }
-
-  public void setSlim(boolean slim) {
-    this.isSlim = slim;
-  }
-
-  public boolean isSlim() {
-    return this.isSlim;
   }
 
   public int getAggro() {
@@ -267,10 +236,12 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       return;
     }
 
-    String username = name.toLowerCase(Locale.ROOT);
-    if (!NullProfileCache.isCachedNull(username, null)) {
-      fetchGameProfile(username).thenAccept(
-          profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(new ResolvableProfile(profile.orElse(new GameProfile(Util.NIL_UUID, username))))));
+    if (currentFuture == null || (currentFuture.isCancelled() || currentFuture.isDone())) {
+      String username = name.toLowerCase(Locale.ROOT);
+      if (!NullProfileCache.isCachedNull(username, null)) {
+        currentFuture = fetchGameProfile(username).thenAccept(
+            profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(new ResolvableProfile(profile.orElse(new GameProfile(Util.NIL_UUID, username))))));
+      }
     }
   }
 
@@ -279,8 +250,10 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       return;
     }
 
-    fetchGameProfile(id).thenAccept(
-        profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(new ResolvableProfile(profile.orElse(new GameProfile(id, ""))))));
+    if (currentFuture == null || (currentFuture.isCancelled() || currentFuture.isDone())) {
+      currentFuture = fetchGameProfile(id).thenAccept(
+          profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(new ResolvableProfile(profile.orElse(new GameProfile(id, ""))))));
+    }
   }
 
   @Override
@@ -300,13 +273,8 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   }
 
   @Override
-  protected EntityDimensions getDefaultDimensions(Pose pose) {
-    return super.getDefaultDimensions(pose).scale(getMiniScale());
-  }
-
-  @Override
-  protected void addPassenger(Entity entity) {
-    super.addPassenger(entity);
+  protected void removePassenger(Entity entity) {
+    super.removePassenger(entity);
 
     this.setPickupCooldown(this.getRandom().nextInt(800) + 600);
   }
@@ -325,12 +293,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       if (tickCount % 4 == 0 && noob == 1) {
         level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 0.3, getZ(), 0, 0, 0);
       }
-    }
-    if (scaleChanged == -1) {
-      scaleChanged = tickCount + 20;
-    } else if (this.tickCount > scaleChanged && scaleChanged != 0) {
-      this.refreshDimensions();
-      scaleChanged = 0;
     }
     if (bossInfo != null) {
       this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
@@ -359,12 +321,15 @@ public class MiniMeEntity extends Monster implements PowerableMob {
         this.bossInfo.setName(name);
       }
 
-      String username = name.getString().toLowerCase(Locale.ROOT);
-      if (!NullProfileCache.isCachedNull(username, null)) {
-        fetchGameProfile(username).thenAccept(
-            profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(new ResolvableProfile(profile.orElse(new GameProfile(Util.NIL_UUID, username))))));
-      } else {
-        MiniaturesAPI.LOG.error("Null profile detected from setCustomNAme! Name {} is null.", username);
+      Optional<ResolvableProfile> opt = getGameProfile();
+      if ((isBeingLoaded && opt.isEmpty()) || (isBeingLoaded && opt.isEmpty() && currentFuture == null) || (isBeingLoaded && opt.isEmpty() && currentFuture != null && currentFuture.isDone()) || (isBeingLoaded && currentFuture != null && currentFuture.isCancelled()) || !isBeingLoaded) {
+        String username = name.getString().toLowerCase(Locale.ROOT);
+        if (!NullProfileCache.isCachedNull(username, null)) {
+          currentFuture = fetchGameProfile(username).thenAccept(
+              profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(new ResolvableProfile(profile.orElse(new GameProfile(Util.NIL_UUID, username))))));
+        } else {
+          MiniaturesAPI.LOG.error("Null profile detected from setCustomName! Name {} is null.", username);
+        }
       }
     }
   }
@@ -390,8 +355,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
           .ifPresent(profile -> compound.put("gameProfile", profile));
     }
 
-    compound.putByte("Noob", (byte) getNoobVariant());
-    compound.putFloat("Scale", getMiniScale());
+    compound.putByte("Noob", entityData.get(NOOB));
 
     compound.putInt("pickupCooldown", pickupCooldown);
     if (healthBoosted) {
@@ -414,7 +378,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       }
     }
 
-    compound.putInt("Hostile", getAggro());
+    compound.putInt("Hostile", entityData.get(AGGRO));
 
     if (bossInfo != null) {
       compound.putBoolean("BossBar", true);
@@ -429,9 +393,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     this.pickupCooldown = tag.getInt("pickupCooldown");
     if (tag.contains("Noob")) {
       this.setNoobVariant(tag.getByte("Noob"));
-    }
-    if (tag.contains("Scale")) {
-      this.setMiniScale(tag.getFloat("Scale"));
     }
     if (tag.contains("Hostile")) {
       this.setAggro(tag.getInt("Hostile"));
@@ -449,7 +410,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
   @Override
   public void load(CompoundTag compound) {
-    super.load(compound);
+    this.isBeingLoaded = true;
 
     ResolvableProfile incomingProfile = null;
 
@@ -462,16 +423,35 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     ResolvableProfile currentProfile = getGameProfile().orElse(null);
 
     if (incomingProfile != null && currentProfile != null && (!compareOptional(incomingProfile.name(), currentProfile.name(), String::isBlank) || !compareOptional(incomingProfile.id(), currentProfile.id(), Util.NIL_UUID::equals))) {
-      entityData.set(RESOLVABLE_PROFILE, Optional.of(incomingProfile));
+      // Different profile than currently set
+      if (!incomingProfile.isResolved()) {
+        currentFuture = incomingProfile.resolve()
+            .thenAccept(profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(profile)));
+      } else {
+        entityData.set(RESOLVABLE_PROFILE, Optional.of(incomingProfile));
+      }
     } else if (incomingProfile != null && currentProfile == null) {
-      entityData.set(RESOLVABLE_PROFILE, Optional.of(incomingProfile));
-    } else if (incomingProfile == null && currentProfile == null) {
+      // No current profile
+      if (!incomingProfile.isResolved()) {
+        currentFuture = incomingProfile.resolve()
+            .thenAccept(profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(profile)));
+      } else {
+        entityData.set(RESOLVABLE_PROFILE, Optional.of(incomingProfile));
+      }
+    } else if (incomingProfile == null && currentProfile != null) {
+      if (!currentProfile.isResolved()) {
+        currentFuture = currentProfile.resolve()
+            .thenAccept(profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(profile)));
+      }
+    } else if (incomingProfile == null) {
       if (compound.contains("owner", Tag.TAG_STRING)) {
         setGameProfileByName(compound.getString("owner"));
       } else if (compound.hasUUID("OwnerUUID")) {
         setGameProfileById(compound.getUUID("OwnerUUID"));
       }
     }
+
+    super.load(compound);
 
     if (compound.contains("NameTag", Tag.TAG_STRING)) {
       entityData.set(DATA_CUSTOM_NAME, Optional.of(Component.literal(compound.getString("NameTag"))));
@@ -535,6 +515,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
       bossInfo = new ServerBossEvent(name, bossInfoColor, bossInfoOverlay);
     }
+    this.isBeingLoaded = false;
   }
 
   public static Component getDisplayName(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ResolvableProfile> incomingProfile) {
@@ -567,11 +548,6 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     if (bossInfo != null) {
       this.bossInfo.removePlayer(player);
     }
-  }
-
-  @Override
-  public float getScale() {
-    return 1.0f;
   }
 
   @Override

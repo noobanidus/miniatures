@@ -13,13 +13,13 @@ import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 public class ModEntities {
   public static final EntityType<MiniMeEntity> MINIME = EntityType.Builder.of(MiniMeEntity::new, MobCategory.CREATURE)
-      .sized(0.3f, 1.1f).clientTrackingRange(8).updateInterval(4).build("minime");
+      .sized(0.37f, 1.1f).eyeHeight(0.93f).alwaysUpdateVelocity(true).clientTrackingRange(8).updateInterval(4).build();
 
   public static final EntityType<MeEntity> ME = EntityType.Builder.of(MeEntity::new, MobCategory.CREATURE)
-      .sized(0.6f, 2f).clientTrackingRange(8).updateInterval(4).build("me");
+      .sized(0.6f, 2f).alwaysUpdateVelocity(true).clientTrackingRange(8).updateInterval(4).build();
 
   public static final EntityType<MaxiMeEntity> MAXIME = EntityType.Builder.of(MaxiMeEntity::new, MobCategory.CREATURE)
-      .sized(2.3f, 7f).clientTrackingRange(16).updateInterval(4).build("maxime");
+      .sized(2.3f, 7f).eyeHeight(6.25f).alwaysUpdateVelocity(true).clientTrackingRange(16).updateInterval(4).build();
 
   public static void register() {
     Registry.register(BuiltInRegistries.ENTITY_TYPE, ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("minime")), MINIME);

@@ -21,7 +21,7 @@ public class ModEntities {
 
   public static final Supplier<EntityType<MiniMeEntity>> MINIME = ENTITY_TYPES.register("minime",
           () -> EntityType.Builder.<MiniMeEntity>of(MiniMeEntity::new, MobCategory.CREATURE)
-                  .sized(0.3f, 1.1F).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
+                  .sized(0.37f, 1.1F).eyeHeight(0.93f).clientTrackingRange(8).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("minime"));
 
   public static final Supplier<EntityType<MeEntity>> ME = ENTITY_TYPES.register("me",
@@ -31,7 +31,7 @@ public class ModEntities {
 
   public static final Supplier<EntityType<MaxiMeEntity>> MAXIME = ENTITY_TYPES.register("maxime",
           () -> EntityType.Builder.<MaxiMeEntity>of(MaxiMeEntity::new, MobCategory.CREATURE)
-                  .sized(2.3f, 7).clientTrackingRange(16).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
+                  .sized(2.3f, 7).eyeHeight(6.25f).clientTrackingRange(16).setShouldReceiveVelocityUpdates(true).setUpdateInterval(4)
                   .build("maxime"));
 
   public static void register(IEventBus eventBus) {

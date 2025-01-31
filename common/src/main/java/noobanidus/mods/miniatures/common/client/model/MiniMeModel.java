@@ -19,10 +19,6 @@ public class MiniMeModel<E extends MiniMeEntity> extends PlayerRenderModel<E> {
     super(renderTypeIn, root, slim);
   }
 
-  public boolean isSlim() {
-    return slim;
-  }
-
   @Override
   public void setupAnim(E entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);

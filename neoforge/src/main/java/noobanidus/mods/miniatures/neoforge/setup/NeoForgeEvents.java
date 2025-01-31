@@ -17,7 +17,7 @@ public class NeoForgeEvents {
   @SubscribeEvent
   public static void onServerAboutToStart(ServerAboutToStartEvent event) {
     MinecraftServer server = event.getServer();
-    MiniMeEntity.setup(server.services, server);
+    MiniMeEntity.setup(server.services);
     GameProfileCache.setUsesAuthentication(server.usesAuthentication());
   }
 

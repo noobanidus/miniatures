@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerLinks;
 import net.minecraft.server.players.GameProfileCache;
 import net.neoforged.fml.config.ModConfig;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
@@ -44,7 +43,7 @@ public class Miniatures implements ModInitializer {
 
     ServerLifecycleEvents.SERVER_STARTING.register( server -> {
       serverInstance = server;
-      MiniMeEntity.setup(server.services, server);
+      MiniMeEntity.setup(server.services);
       GameProfileCache.setUsesAuthentication(server.usesAuthentication());
     });
 

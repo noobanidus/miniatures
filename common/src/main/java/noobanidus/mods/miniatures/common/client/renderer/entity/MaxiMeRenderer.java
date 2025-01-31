@@ -54,13 +54,13 @@ public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     if (noob == 3) {
       packedLightIn = 15728880;
       this.model = ModelHolder.ghostlyMiniMe;
-      if (miniMeEntity.isSlim() && this.model != ModelHolder.ghostlyMiniMeSlim) {
+      if (isSlim && this.model != ModelHolder.ghostlyMiniMeSlim) {
         this.model = ModelHolder.ghostlyMiniMeSlim;
       }
     } else if (noob == 4) {
       packedLightIn = 15728880;
       this.model = ModelHolder.glowingMiniMe;
-      if (miniMeEntity.isSlim() && this.model != ModelHolder.glowingMiniMeSlim) {
+      if (isSlim && this.model != ModelHolder.glowingMiniMeSlim) {
         this.model = ModelHolder.glowingMiniMeSlim;
       }
     }
