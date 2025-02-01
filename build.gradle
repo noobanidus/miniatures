@@ -118,7 +118,7 @@ subprojects {
                 discord {
                     webhookUrl = project.findProperty("curse_discord_webhook")
                     username = "Miniatures Update"
-                    setPlatforms(publishMods.platforms.curseforge, publishMods.platforms.modrinth)
+                    setPlatforms(publishMods.platforms.curseforge)
                 }
             }
         }

@@ -324,7 +324,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
       Optional<ResolvableProfile> opt = getGameProfile();
       if ((isBeingLoaded && opt.isEmpty()) || (isBeingLoaded && opt.isEmpty() && currentFuture == null) || (isBeingLoaded && opt.isEmpty() && currentFuture != null && currentFuture.isDone()) || (isBeingLoaded && currentFuture != null && currentFuture.isCancelled()) || !isBeingLoaded) {
         String username = name.getString().toLowerCase(Locale.ROOT);
-        if (!NullProfileCache.isCachedNull(username, null)) {
+        if (StringUtil.isValidPlayerName(username) && !NullProfileCache.isCachedNull(username, null)) {
           currentFuture = fetchGameProfile(username).thenAccept(
               profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(new ResolvableProfile(profile.orElse(new GameProfile(Util.NIL_UUID, username))))));
         } else {
@@ -556,6 +556,9 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   }
 
   public static CompletableFuture<Optional<GameProfile>> fetchGameProfile(String profileName) {
+    if (!StringUtil.isValidPlayerName(profileName)) {
+      return CompletableFuture.completedFuture(Optional.empty());
+    }
     LoadingCache<String, CompletableFuture<Optional<GameProfile>>> loadingcache = gameProfileCacheByName;
     return loadingcache != null && StringUtil.isValidPlayerName(profileName)
         ? loadingcache.getUnchecked(profileName)
