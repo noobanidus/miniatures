@@ -86,11 +86,8 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
 
 
   protected void scale(MiniMeEntity miniMeEntity, PoseStack poseStack, float partialTickTime) {
-    if (NoobUtil.isNoob(miniMeEntity)) {
-      poseStack.scale(1.0975F, 1.0975F, 1.0975F);
-    } else {
-      poseStack.scale(0.9375F, 0.9375F, 0.9375F);
-    }
+    float scale = (NoobUtil.isNoob(miniMeEntity) ? 1.0975f : 0.9375f) * miniMeEntity.getAgeScale();
+    poseStack.scale(scale, scale, scale);
   }
 
   protected void setupRotations(MiniMeEntity miniMeEntity, PoseStack poseStack, float f, float g, float h, float i) {

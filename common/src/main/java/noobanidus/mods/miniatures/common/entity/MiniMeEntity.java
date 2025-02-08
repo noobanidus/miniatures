@@ -193,6 +193,11 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     // 8: backwards
   }
 
+  @Override
+  public float getAgeScale() {
+    return 1f;
+  }
+
   public int getNoobVariant() {
     if (!NoobUtil.isNoob(this)) {
       return -1;
