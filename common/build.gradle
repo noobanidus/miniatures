@@ -27,9 +27,6 @@ dependencies {
     compileOnly "net.fabricmc:sponge-mixin:${project.mixin_version}"
     compileOnly "io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"
     annotationProcessor "io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"
-
-    // COMPAT
-    compileOnly("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config}") { transitive = false  }
 }
 
 neoForge {
@@ -76,14 +73,14 @@ publishing {
             }
 
             pom {
-                name = 'Lootr'
+                name = 'Miniatures'
                 description = 'Friendly loot for everyone.'
-                url = 'https://github.com/LootrMinecraft/Lootr'
+                url = 'https://github.com/Noobanidus/Miniatures'
 
                 scm {
-                    connection = 'git:https://github.com/LootrMinecraft/Lootr.git'
-                    developerConnection = 'git:https://github.com/LootrMinecraft/Lootr.git'
-                    url = 'https://github.com/LootrMinecraft/Lootr'
+                    connection = 'git:https://github.com/Noobanidus/Miniatures.git'
+                    developerConnection = 'git:https://github.com/Noobanidus/Miniatures.git'
+                    url = 'https://github.com/Noobanidus/Miniatures'
                 }
 
                 licenses {

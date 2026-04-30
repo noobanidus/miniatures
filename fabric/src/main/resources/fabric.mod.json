@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "miniatures",
+  "version": "${version}",
+  "name": "Miniatures",
+  "description": "Spawn a smaller version of you!",
+  "authors": [
+    "Noobanidus"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/miniatures",
+    "sources": "https://github.com/noobanidus/miniatures/tree/1.19.2",
+    "issues": "https://github.com/noobanidus/miniatures/issues"
+  },
+  "license": "MIT License",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "noobanidus.mods.miniatures.fabric.Miniatures"
+    ],
+    "client": [
+      "noobanidus.mods.miniatures.fabric.MiniaturesClient"
+    ]
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.9",
+    "fabric": ">=0.127.0",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21"
+  }
+}

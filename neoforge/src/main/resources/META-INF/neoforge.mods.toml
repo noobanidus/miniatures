@@ -1,0 +1,21 @@
+modLoader="javafml" 
+loaderVersion="[2,)"
+issueTrackerURL="https://github.com/noobanidus/miniatures/issues"
+license="https://github.com/noobanidus/miniatures/blob/1.16/LICENSE"
+[[mods]]
+    modId="miniatures"
+    version="${mod_version}"
+    displayName="Miniatures"
+    displayURL="https://minecraft.curseforge.com/projects/miniatures"
+    authors="Noobanidus"
+    description="Summon a miniature version of yourself!"
+
+[[dependencies.miniatures]]
+    modId="minecraft"
+    type="required"
+    versionRange="$[1.21.5,)"
+
+ [[dependencies.miniatures]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.5,)"

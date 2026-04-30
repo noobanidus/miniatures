@@ -46,9 +46,6 @@ dependencies {
     modLocalRuntime("com.terraformersmc:modmenu:${project.mod_menu_version}") {
         transitive = false
     }
-
-    modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config}")
-    modLocalRuntime("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config}")
 }
 
 publishMods {
@@ -71,19 +68,18 @@ publishMods {
     changelogText = changelogText.take(500)
 
     def uploadDependencies = [
-            "fabric-api": true,
-            "cloth-config": true
+            "fabric-api": true
     ]
 
-    if (project.hasProperty('curseforge_id_fabric')) {
-        curseforge('curseforgeFabric') {
+    if (project.hasProperty('curseforge_id')) {
+        curseforge('curseforge') {
 
-            projectSlug = "lootr-fabric"
+            projectSlug = "miniatures-fabric"
             type = ALPHA
-            displayName = "lootr-fabric-${rootProject.minecraft_version}-${rootProject.mod_version}"
+            displayName = "miniatures-fabric-${rootProject.minecraft_version}-${rootProject.mod_version}"
             accessToken = project.findProperty("curse_auth")
             projectId = project.findProperty('curseforge_id_fabric')
-            announcementTitle = "Lootr ${rootProject.minecraft_version}-${rootProject.mod_version} for Fabric on CurseForge"
+            announcementTitle = "Miniatures ${rootProject.minecraft_version}-${rootProject.mod_version} for Fabric on CurseForge"
             minecraftVersions.add(project.minecraft_version)
             changelog = changelogText
 
@@ -97,33 +93,11 @@ publishMods {
         }
     }
 
-    if (project.hasProperty('modrinth_id_fabric')) {
-        modrinth('modrinthFabric') {
-            type = ALPHA
-            displayName = "lootr-fabric-${rootProject.minecraft_version}-${rootProject.mod_version}"
-            accessToken = project.findProperty("modrinth_auth")
-            projectId = project.findProperty('modrinth_id_fabric')
-            announcementTitle = "Lootr ${rootProject.minecraft_version}-${rootProject.mod_version} for Fabric on Modrinth"
-            minecraftVersions.add(project.minecraft_version)
-            changelog = changelogText
-
-            dependencies {
-                uploadDependencies.each { dep, required ->
-                    if (required) {
-                        requires(dep)
-                    } else {
-                        optional(dep)
-                    }
-                }
-            }
-        }
-    }
-
     if (project.hasProperty("curse_discord_webhook")) {
          discord {
              webhookUrl = project.findProperty("curse_discord_webhook")
-             username = "Lootr Update"
-             content = "A new version of Lootr has been released!\n\n${changelogText.take(500)}"
+             username = "Miniatures Update"
+             content = "A new version of Miniatures has been released!\n\n${changelogText.take(500)}"
          }
     }
 }
@@ -205,14 +179,14 @@ publishing {
             }
 
             pom {
-                name = 'Lootr'
+                name = 'Miniatures'
                 description = 'Friendly loot for everyone.'
-                url = 'https://github.com/LootrMinecraft/Lootr'
+                url = 'https://github.com/Noobanidus/Miniatures'
 
                 scm {
-                    connection = 'git:https://github.com/LootrMinecraft/Lootr.git'
-                    developerConnection = 'git:https://github.com/LootrMinecraft/Lootr.git'
-                    url = 'https://github.com/LootrMinecraft/Lootr'
+                    connection = 'git:https://github.com/Noobanidus/Miniatures.git'
+                    developerConnection = 'git:https://github.com/Noobanidus/Miniatures.git'
+                    url = 'https://github.com/Noobanidus/Miniatures'
                 }
 
                 licenses {
