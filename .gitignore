@@ -1,48 +1,48 @@
-/download
-/eclipseBin
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-## gradle
-**/.gradle
-**/build
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
 
-## ForgeGradle
-/run
-/*/run
-/*.launch
-/*/*.launch
+# gradle
+build
+.gradle
 
-## eclipse
-/eclipse
-**/.settings
-**/.metadata
-**/.classpath
-**/.project
-**/bin
+# other
+eclipse
+run
+/runs
+.gitattributes
+/deps
+/flatdir
 
-## intellij
-/out
-/.idea
-/*.iml
-/*.ipr
-/*.iws
-/atlassian-ide-plugin.xml
-/classes
+# Files from Forge MDK
+forge*changelog.txt
+.factorypath
 
-## gedit
-*~
-## most Windows editors
-*.bak
-## OSX
-.DS_Store
+# songs
+*.ogg
 
-## translation reports
-resources/assets/enderio/lang/*.lang.txt
-/ebin/
+# Misc
+CHANGELOG_OLD.md
+oxipng.exe
+.architectury-transformer/
 
-## local user properties
-user.properties
+*.un~
 
-## temporary build files
-eiostore.jks
+*.gradle~
 
-build\.sh
+gradle.properties~
+
+gradle/wrapper/gradle-wrapper.properties~
+
+common/src/generated/resources/.cache/
