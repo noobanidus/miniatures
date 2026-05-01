@@ -11,9 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import noobanidus.mods.miniatures.common.client.model.PlayerRenderModel;
+import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 
-public class BeeStingerRenderTypeLayer<T extends LivingEntity, M extends PlayerRenderModel<T>> extends StuckInBodyRenderTypeLayer<T, M> {
+public class BeeStingerRenderTypeLayer<T extends LivingEntity, M extends MiniRenderModel<T>> extends StuckInBodyRenderTypeLayer<T, M> {
   private static final ResourceLocation BEE_STINGER_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/bee/bee_stinger.png");
 
   public BeeStingerRenderTypeLayer(LivingEntityRenderer<T, M> arg) {

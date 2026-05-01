@@ -20,11 +20,12 @@ import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.common.client.renderer.layers.ArrowRenderTypeLayer;
 import noobanidus.mods.miniatures.common.client.renderer.layers.BeeStingerRenderTypeLayer;
 import noobanidus.mods.miniatures.common.client.renderer.layers.ChargedLayer;
+import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 import noobanidus.mods.miniatures.common.util.NoobUtil;
 
 // TODO:
-public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeModel<MiniMeEntity>> {
+public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniRenderState, MiniMeModel> {
   private static final ResourceLocation TEXTURE_STEVE = ResourceLocation.withDefaultNamespace("textures/entity/player/wide/steve.png");
   public boolean isSlim = false;
 
@@ -32,7 +33,7 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   public MiniMeRenderer(EntityRendererProvider.Context context) {
     super(context, new MiniMeModel<>(context.bakeLayer(Layers.MINI_ME), false), 0.5f);
     ModelHolder.init(context);
-    this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
+    this.addLayer(new ItemInHandLayer<>(this));
     this.addLayer(new ArrowRenderTypeLayer<>(context, this));
     this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getItemInHandRenderer()));
     this.addLayer(new ElytraLayer<>(this, context.getModelSet()));
@@ -42,7 +43,12 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   }
 
   @Override
-  public ResourceLocation getTextureLocation(MiniMeEntity entity) {
+  public MiniRenderState createRenderState() {
+    return null;
+  }
+
+  @Override
+  public ResourceLocation getTextureLocation(MiniRenderState entity) {
     return entity.getGameProfile()
         .map(MiniMeRenderer::getSkin)
         .orElse(TEXTURE_STEVE);
@@ -58,7 +64,7 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
   }
 
   @Override
-  public void render(MiniMeEntity miniMeEntity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
+  public void render(MiniRenderState miniMeEntity, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
     this.model = ModelHolder.miniMe;
     SkinManager skinmanager = Minecraft.getInstance().getSkinManager();
     if (miniMeEntity.getGameProfile().isPresent()) {
@@ -84,14 +90,14 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     super.render(miniMeEntity, entityYaw, partialTicks, poseStack, bufferIn, packedLightIn);
   }
 
-
-  protected void scale(MiniMeEntity miniMeEntity, PoseStack poseStack, float partialTickTime) {
+  protected void scale(MiniRenderState miniMeEntity, PoseStack poseStack, float partialTickTime) {
     float scale = (NoobUtil.isNoob(miniMeEntity) ? 1.0975f : 0.9375f) * miniMeEntity.getAgeScale();
     poseStack.scale(scale, scale, scale);
   }
 
-  protected void setupRotations(MiniMeEntity miniMeEntity, PoseStack poseStack, float f, float g, float h, float i) {
-    super.setupRotations(miniMeEntity, poseStack, f, g, h, i);
+  protected void setupRotations(MiniRenderState miniMeEntity, PoseStack poseStack, float f, float g) {
+    super.setupRotations(miniMeEntity, poseStack, f, g);
+    // TODO: Move this into the extract state
     int noob = miniMeEntity.getNoobVariant();
     if (noob == 0) {
       poseStack.translate(0.0D, miniMeEntity.getBbHeight() + 0.25F, 0.0D);

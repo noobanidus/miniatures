@@ -27,6 +27,8 @@ dependencies {
     compileOnly "net.fabricmc:sponge-mixin:${project.mixin_version}"
     compileOnly "io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"
     annotationProcessor "io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"
+
+    compileOnly ("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${forge_config_api_port}") { transitive false }
 }
 
 neoForge {

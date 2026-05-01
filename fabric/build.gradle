@@ -46,6 +46,7 @@ dependencies {
     modLocalRuntime("com.terraformersmc:modmenu:${project.mod_menu_version}") {
         transitive = false
     }
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api_port}"
 }
 
 publishMods {

@@ -10,10 +10,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
-import noobanidus.mods.miniatures.common.client.model.PlayerRenderModel;
+import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 
 // TODO:?
-public class ArrowRenderTypeLayer<T extends LivingEntity, M extends PlayerRenderModel<T>> extends StuckInBodyRenderTypeLayer<T, M> {
+public class ArrowRenderTypeLayer<T extends LivingEntity, M extends MiniRenderModel<T>> extends StuckInBodyRenderTypeLayer<T, M> {
   private final EntityRenderDispatcher dispatcher;
 
   public ArrowRenderTypeLayer(EntityRendererProvider.Context context, LivingEntityRenderer<T, M> rendererIn) {

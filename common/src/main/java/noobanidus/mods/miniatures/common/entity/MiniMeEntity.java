@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.Util;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -16,6 +17,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.Services;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.StringUtil;
@@ -57,7 +59,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
-public class MiniMeEntity extends Monster implements PowerableMob {
+public class MiniMeEntity extends Monster {
   private static final EntityDataAccessor<Optional<ResolvableProfile>> RESOLVABLE_PROFILE = SynchedEntityData.defineId(MiniMeEntity.class, MiniaturesAPI.getGameProfileSerializer());
 
   public static final EntityDataAccessor<Integer> AGGRO = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.INT);
@@ -163,7 +165,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   }
 
   @Override
-  public boolean isPreventingPlayerRest(Player p_230292_1_) {
+  public boolean isPreventingPlayerRest(ServerLevel p_376906_, Player p_33036_) {
     return false;
   }
 
@@ -268,6 +270,8 @@ public class MiniMeEntity extends Monster implements PowerableMob {
     navigator.setCanFloat(true);
     return navigator;
   }
+
+
 
   @Override
   public boolean hurt(DamageSource source, float amount) {
@@ -395,12 +399,12 @@ public class MiniMeEntity extends Monster implements PowerableMob {
   @Override
   public void readAdditionalSaveData(CompoundTag tag) {
     super.readAdditionalSaveData(tag);
-    this.pickupCooldown = tag.getInt("pickupCooldown");
+    this.pickupCooldown = tag.getIntOr("pickupCooldown", 0);
     if (tag.contains("Noob")) {
-      this.setNoobVariant(tag.getByte("Noob"));
+      this.setNoobVariant(tag.getIntOr("Noob", 0));
     }
     if (tag.contains("Hostile")) {
-      this.setAggro(tag.getInt("Hostile"));
+      this.setAggro(tag.getIntOr("Hostile", 0));
     }
   }
 
@@ -419,7 +423,7 @@ public class MiniMeEntity extends Monster implements PowerableMob {
 
     ResolvableProfile incomingProfile = null;
 
-    boolean profileExists = compound.getBoolean("gameProfileExists");
+    boolean profileExists = compound.getBooleanOr("gameProfileExists", false);
     if (profileExists) {
       incomingProfile = ResolvableProfile.CODEC.parse(NbtOps.INSTANCE, compound.get("gameProfile"))
           .resultOrPartial(o -> MiniaturesAPI.LOG.error("Failed to parse game profile: {}", o)).orElse(null);
@@ -449,8 +453,8 @@ public class MiniMeEntity extends Monster implements PowerableMob {
             .thenAccept(profile -> entityData.set(RESOLVABLE_PROFILE, Optional.of(profile)));
       }
     } else if (incomingProfile == null) {
-      if (compound.contains("owner", Tag.TAG_STRING)) {
-        setGameProfileByName(compound.getString("owner"));
+      if (compound.contains("owner")) {
+        setGameProfileByName(compound.getString("owner").orElseThrow());
       } else if (compound.hasUUID("OwnerUUID")) {
         setGameProfileById(compound.getUUID("OwnerUUID"));
       }

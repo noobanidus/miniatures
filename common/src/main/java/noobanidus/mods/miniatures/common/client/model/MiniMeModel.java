@@ -5,14 +5,15 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import noobanidus.mods.miniatures.common.client.AdditionalRenderTypes;
+import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 import java.util.function.Function;
 
-public class MiniMeModel<E extends MiniMeEntity> extends PlayerRenderModel<E> {
+public class MiniMeModel extends MiniRenderModel {
 
   public MiniMeModel(ModelPart root, boolean slim) {
-    super(AdditionalRenderTypes::entityTranslucent, root, slim);
+    super(RenderType::entityTranslucent, root, slim);
   }
 
   public MiniMeModel(Function<ResourceLocation, RenderType> renderTypeIn, ModelPart root, boolean slim) {

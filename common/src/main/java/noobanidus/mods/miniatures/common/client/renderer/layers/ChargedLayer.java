@@ -3,16 +3,15 @@ package noobanidus.mods.miniatures.common.client.renderer.layers;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EnergySwirlLayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PowerableMob;
 import noobanidus.mods.miniatures.common.client.ModelHolder;
-import noobanidus.mods.miniatures.common.client.model.PlayerRenderModel;
+import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
+import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
 @SuppressWarnings("NullableProblems")
-public class ChargedLayer<T extends LivingEntity & PowerableMob, M extends PlayerRenderModel<T>> extends EnergySwirlLayer<T, M> {
+public class ChargedLayer<M extends MiniRenderModel> extends EnergySwirlLayer<MiniRenderState, M> {
   private static final ResourceLocation POWER_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
 
-  public ChargedLayer(RenderLayerParent<T, M> p_i50947_1_) {
+  public ChargedLayer(RenderLayerParent<MiniRenderState, M> p_i50947_1_) {
     super(p_i50947_1_);
   }
 
@@ -27,5 +26,10 @@ public class ChargedLayer<T extends LivingEntity & PowerableMob, M extends Playe
   protected M model() {
     //noinspection unchecked
     return (M) ModelHolder.chargedMiniMe;
+  }
+
+  @Override
+  protected boolean isPowered(MiniRenderState p_360505_) {
+    return false;
   }
 }
