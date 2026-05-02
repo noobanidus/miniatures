@@ -1,38 +1,27 @@
 package noobanidus.mods.miniatures.common.client.renderer.layers;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.ArrowModel;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.entity.TippableArrowRenderer;
+import net.minecraft.client.renderer.entity.layers.StuckInBodyLayer;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
+import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
 // TODO:?
-public class ArrowRenderTypeLayer<T extends LivingEntity, M extends MiniRenderModel<T>> extends StuckInBodyRenderTypeLayer<T, M> {
-  private final EntityRenderDispatcher dispatcher;
-
-  public ArrowRenderTypeLayer(EntityRendererProvider.Context context, LivingEntityRenderer<T, M> rendererIn) {
-    super(rendererIn);
-    this.dispatcher = context.getEntityRenderDispatcher();
+public class ArrowRenderTypeLayer<M extends MiniRenderModel> extends StuckInBodyRenderTypeLayer<M> {
+  public ArrowRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> p_174466_, EntityRendererProvider.Context p_174465_) {
+    super(
+        p_174466_,
+        new ArrowModel(p_174465_.bakeLayer(ModelLayers.ARROW)),
+        TippableArrowRenderer.NORMAL_ARROW_LOCATION,
+        StuckInBodyLayer.PlacementStyle.IN_CUBE
+    );
   }
 
-  protected int numStuck(T p_225631_1_) {
-    return p_225631_1_.getArrowCount();
+  @Override
+  protected int numStuck(MiniRenderState p_365413_) {
+    return p_365413_.arrowCount;
   }
-
-	@Override
-	protected void renderStuckItem(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, Entity entity, float f, float g, float h, float j) {
-		float k = Mth.sqrt(f * f + h * h);
-		Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ(), ItemStack.EMPTY, null);
-		arrow.setYRot((float)(Math.atan2((double)f, (double)h) * 180.0F / (float)Math.PI));
-		arrow.setXRot((float)(Math.atan2((double)g, (double)k) * 180.0F / (float)Math.PI));
-		arrow.yRotO = arrow.getYRot();
-		arrow.xRotO = arrow.getXRot();
-		this.dispatcher.render(arrow, 0.0, 0.0, 0.0, 0.0F, j, poseStack, multiBufferSource, i);
-	}
 }

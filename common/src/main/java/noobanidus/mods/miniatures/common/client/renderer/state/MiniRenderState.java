@@ -9,4 +9,5 @@ public class MiniRenderState extends PlayerRenderState {
   public boolean isPowered;
   public UUID playerId;
   public int noobVariant;
+  public double bbHeight;
 }

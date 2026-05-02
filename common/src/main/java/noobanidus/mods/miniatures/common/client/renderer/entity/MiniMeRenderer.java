@@ -3,17 +3,19 @@ package noobanidus.mods.miniatures.common.client.renderer.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.HumanoidArmorModel;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
+import net.minecraft.client.renderer.entity.layers.WingsLayer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.ResolvableProfile;
-import noobanidus.mods.miniatures.common.api.client.Layers;
 import noobanidus.mods.miniatures.common.client.ModelHolder;
 import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.common.client.renderer.layers.ArrowRenderTypeLayer;
@@ -21,24 +23,28 @@ import noobanidus.mods.miniatures.common.client.renderer.layers.BeeStingerRender
 import noobanidus.mods.miniatures.common.client.renderer.layers.ChargedLayer;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
-import noobanidus.mods.miniatures.common.util.NoobUtil;
 
-// TODO:
-public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniRenderState, MiniMeModel> {
+public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRenderState, MiniMeModel> {
   private static final ResourceLocation TEXTURE_STEVE = ResourceLocation.withDefaultNamespace("textures/entity/player/wide/steve.png");
   public boolean isSlim = false;
 
-  @SuppressWarnings("unchecked")
-  public MiniMeRenderer(EntityRendererProvider.Context context) {
-    super(context, new MiniMeModel<>(context.bakeLayer(Layers.MINI_ME), false), 0.5f);
+  public MiniMeRenderer(EntityRendererProvider.Context context, boolean useSlimModel) {
+    super(context, new MiniMeModel(context.bakeLayer(useSlimModel ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER), useSlimModel), 0.5F);
     ModelHolder.init(context);
-    this.addLayer(new ItemInHandLayer<>(this));
-    this.addLayer(new ArrowRenderTypeLayer<>(context, this));
-    this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getItemInHandRenderer()));
-    this.addLayer(new ElytraLayer<>(this, context.getModelSet()));
-    this.addLayer(new BeeStingerRenderTypeLayer<>(this));
-    this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(Layers.MINI_ME_ARMOR)), new HumanoidModel<>(context.bakeLayer(Layers.MINI_ME_ARMOR)), context.getModelManager()));
+    this.addLayer(
+        new HumanoidArmorLayer<>(
+            this,
+            new HumanoidArmorModel<>(context.bakeLayer(useSlimModel ? ModelLayers.PLAYER_SLIM_INNER_ARMOR : ModelLayers.PLAYER_INNER_ARMOR)),
+            new HumanoidArmorModel<>(context.bakeLayer(useSlimModel ? ModelLayers.PLAYER_SLIM_OUTER_ARMOR : ModelLayers.PLAYER_OUTER_ARMOR)),
+            context.getEquipmentRenderer()
+        )
+    );
+    this.addLayer(new PlayerItemInHandLayer<>(this));
     this.addLayer(new ChargedLayer<>(this));
+    this.addLayer(new ArrowRenderTypeLayer<>(this, context));
+    this.addLayer(new CustomHeadLayer<>(this, context.getModelSet()));
+    this.addLayer(new WingsLayer<>(this, context.getModelSet(), context.getEquipmentRenderer()));
+    this.addLayer(new BeeStingerRenderTypeLayer<>(this, context));
   }
 
   @Override
@@ -48,9 +54,7 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniRender
 
   @Override
   public ResourceLocation getTextureLocation(MiniRenderState entity) {
-    return entity.getGameProfile()
-        .map(MiniMeRenderer::getSkin)
-        .orElse(TEXTURE_STEVE);
+    return entity.skin.texture();
   }
 
   public static ResourceLocation getSkin(ResolvableProfile resolvableProfile) {
@@ -65,14 +69,12 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniRender
   @Override
   public void render(MiniRenderState miniMeEntity, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
     this.model = ModelHolder.miniMe;
-    SkinManager skinmanager = Minecraft.getInstance().getSkinManager();
-    if (miniMeEntity.getGameProfile().isPresent()) {
-      if (isSlim != skinmanager.getInsecureSkin(miniMeEntity.getGameProfile().get().gameProfile()).model().id()
-          .equals("slim"))
-        isSlim = !isSlim;
+    boolean shouldBeSlim = miniMeEntity.skin.model() == PlayerSkin.Model.SLIM;
+    if (isSlim != shouldBeSlim) {
+      isSlim = !isSlim;
     }
     this.model = isSlim ? ModelHolder.miniMeSlim : ModelHolder.miniMe;
-    int noob = miniMeEntity.getNoobVariant();
+    int noob = miniMeEntity.noobVariant;
     if (noob == 3) {
       packedLightIn = 15728880;
       this.model = ModelHolder.ghostlyMiniMe;
@@ -86,20 +88,21 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniRender
         this.model = ModelHolder.glowingMiniMeSlim;
       }
     }
-    super.render(miniMeEntity, entityYaw, partialTicks, poseStack, bufferIn, packedLightIn);
+    super.render(miniMeEntity, poseStack, bufferIn, packedLightIn);
   }
 
-  protected void scale(MiniRenderState miniMeEntity, PoseStack poseStack, float partialTickTime) {
-    float scale = (NoobUtil.isNoob(miniMeEntity) ? 1.0975f : 0.9375f) * miniMeEntity.getAgeScale();
+  @Override
+  protected void scale(MiniRenderState miniMeEntity, PoseStack poseStack) {
+    float scale = miniMeEntity.noobVariant != -1 ? 1.0975f : 0.9375f;
     poseStack.scale(scale, scale, scale);
   }
 
   protected void setupRotations(MiniRenderState miniMeEntity, PoseStack poseStack, float f, float g) {
     super.setupRotations(miniMeEntity, poseStack, f, g);
     // TODO: Move this into the extract state
-    int noob = miniMeEntity.getNoobVariant();
+    int noob = miniMeEntity.noobVariant;
     if (noob == 0) {
-      poseStack.translate(0.0D, miniMeEntity.getBbHeight() + 0.25F, 0.0D);
+      poseStack.translate(0.0D, miniMeEntity.bbHeight, 0.0D);
       poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
     } else if (noob == 1) {
       poseStack.translate(0.0D, 0.35F, 0.0D);

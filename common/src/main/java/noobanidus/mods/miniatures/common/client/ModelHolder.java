@@ -22,7 +22,7 @@ public class ModelHolder {
     chargedMiniMe = new MiniMeModel(context.bakeLayer(Layers.CHARGED_MINI_ME), false);
     ghostlyMiniMe = new GhostlyMiniMeModel(context.bakeLayer(Layers.GHOSTLY_MINI_ME), false);
     ghostlyMiniMeSlim = new GhostlyMiniMeModel(context.bakeLayer(Layers.GHOSTLY_MINI_ME_SLIM), true);
-    glowingMiniMe = new GlowingMiniMeModel<>(context.bakeLayer(Layers.GLOWING_MINI_ME), false);
-    glowingMiniMeSlim = new GlowingMiniMeModel<>(context.bakeLayer(Layers.GLOWING_MINI_ME_SLIM), true);
+    glowingMiniMe = new GlowingMiniMeModel(context.bakeLayer(Layers.GLOWING_MINI_ME), false);
+    glowingMiniMeSlim = new GlowingMiniMeModel(context.bakeLayer(Layers.GLOWING_MINI_ME_SLIM), true);
   }
 }

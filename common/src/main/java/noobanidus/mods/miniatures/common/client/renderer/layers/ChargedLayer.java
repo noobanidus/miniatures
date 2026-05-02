@@ -7,7 +7,6 @@ import noobanidus.mods.miniatures.common.client.ModelHolder;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
-@SuppressWarnings("NullableProblems")
 public class ChargedLayer<M extends MiniRenderModel> extends EnergySwirlLayer<MiniRenderState, M> {
   private static final ResourceLocation POWER_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
 
@@ -30,6 +29,6 @@ public class ChargedLayer<M extends MiniRenderModel> extends EnergySwirlLayer<Mi
 
   @Override
   protected boolean isPowered(MiniRenderState p_360505_) {
-    return false;
+    return p_360505_.isPowered;
   }
 }
