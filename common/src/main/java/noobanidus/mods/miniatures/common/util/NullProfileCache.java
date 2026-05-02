@@ -30,7 +30,7 @@ public class NullProfileCache extends SavedData {
 
   private static void save() {
     ServerLevel world = getServerWorld();
-    world.getDataStorage().save();
+    world.getDataStorage().scheduleSave();
   }
 
   public static NullProfileCache getInstance() {

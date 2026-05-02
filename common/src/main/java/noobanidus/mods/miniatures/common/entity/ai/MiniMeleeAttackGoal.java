@@ -1,5 +1,6 @@
 package noobanidus.mods.miniatures.common.entity.ai;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
@@ -161,7 +162,7 @@ public class MiniMeleeAttackGoal extends Goal {
     if (distToEnemySqr <= d0 && this.ticksUntilNextAttack <= 0) {
       this.resetAttackCooldown();
       this.attacker.swing(InteractionHand.MAIN_HAND);
-      this.attacker.doHurtTarget(enemy);
+      this.attacker.doHurtTarget((ServerLevel) enemy.level(), enemy);
     }
 
   }
