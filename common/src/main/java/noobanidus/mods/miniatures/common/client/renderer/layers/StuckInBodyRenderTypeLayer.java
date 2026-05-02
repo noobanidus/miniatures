@@ -8,13 +8,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.StuckInBodyLayer;
-import net.minecraft.client.renderer.entity.state.MiniRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
-
+import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
 public abstract class StuckInBodyRenderTypeLayer<M extends MiniRenderModel> extends RenderLayer<MiniRenderState, M> {
   private final Model model;

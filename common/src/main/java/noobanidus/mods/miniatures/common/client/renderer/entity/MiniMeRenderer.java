@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
-import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.resources.SkinManager;
@@ -44,7 +43,7 @@ public class MiniMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniRender
 
   @Override
   public MiniRenderState createRenderState() {
-    return null;
+    return new MiniRenderState();
   }
 
   @Override

@@ -1,7 +1,6 @@
 package noobanidus.mods.miniatures.common.util;
 
 
-
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 import java.util.UUID;

@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.miniatures.common.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,7 +8,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
-import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.resources.SkinManager;
@@ -71,3 +71,4 @@ public class MaxiMeRenderer extends HumanoidMobRenderer<MiniMeEntity, MiniMeMode
     poseStack.scale(3.5375F, 3.5375F, 3.5375F);
   }
 }
+*/

@@ -142,5 +142,10 @@ public class MiniRenderModel extends HumanoidModel<MiniRenderState> {
   public ModelPart getRandomBodyPart(RandomSource p_365097_) {
     return Util.getRandom(this.bodyParts, p_365097_);
   }
+
+  @Override
+  public ModelPart getHead() {
+    return super.getHead();
+  }
 }
 

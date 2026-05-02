@@ -1,12 +1,9 @@
 package noobanidus.mods.miniatures.common.client.model;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import noobanidus.mods.miniatures.common.client.AdditionalRenderTypes;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
-import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 import java.util.function.Function;
 
@@ -21,16 +18,16 @@ public class MiniMeModel extends MiniRenderModel {
   }
 
   @Override
-  public void setupAnim(E entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-    super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-    int noob = entityIn.getNoobVariant();
+  public void setupAnim(MiniRenderState entityIn) {
+    super.setupAnim(entityIn);
+    int noob = entityIn.noobVariant;
     if (noob == 1) {
       this.leftLeg.xRot = 0.0f;
       this.leftLeg.zRot = 0.0f;
       this.rightLeg.xRot = 0.0f;
       this.rightLeg.zRot = 0.0f;
     }
-    if (entityIn.isVehicle()) {
+    if (entityIn.isPassenger) {
       this.leftArm.xRot = -3f;
       this.rightArm.xRot = -3f;
       this.leftArm.zRot = 0.3f;
@@ -43,11 +40,4 @@ public class MiniMeModel extends MiniRenderModel {
     this.leftPants.copyFrom(this.leftLeg);
     this.rightPants.copyFrom(this.rightLeg);
   }
-
-  @Override
-  protected Iterable<ModelPart> headParts() {
-    return ImmutableList.of(this.head, this.hat);
-  }
-
-
 }

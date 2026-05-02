@@ -5,13 +5,15 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.Util;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -23,7 +25,10 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -253,6 +258,9 @@ public class MiniMeEntity extends Monster {
   }
 
   public void setGameProfileById(UUID id) {
+    if (id == null) {
+      return;
+    }
     if (NullProfileCache.isCachedNull(null, id)) {
       return;
     }
@@ -271,14 +279,12 @@ public class MiniMeEntity extends Monster {
     return navigator;
   }
 
-
-
   @Override
-  public boolean hurt(DamageSource source, float amount) {
+  public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
     if (MiniaturesAPI.getImmune() && !(source.getEntity() instanceof Player) && !source.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
       return false;
     }
-    return super.hurt(source, amount);
+    return super.hurtServer(level, source, amount);
   }
 
   @Override
@@ -390,9 +396,7 @@ public class MiniMeEntity extends Monster {
     compound.putInt("Hostile", entityData.get(AGGRO));
 
     if (bossInfo != null) {
-      compound.putBoolean("BossBar", true);
-      compound.putString("BossBarColor", bossInfo.getColor().getName());
-      compound.putString("BossBarOverlay", bossInfo.getOverlay().getName());
+      compound.store("BossBar", MiniBossEvent.CODEC, new MiniBossEvent(bossInfo));
     }
   }
 
@@ -454,28 +458,23 @@ public class MiniMeEntity extends Monster {
       }
     } else if (incomingProfile == null) {
       if (compound.contains("owner")) {
+
         setGameProfileByName(compound.getString("owner").orElseThrow());
-      } else if (compound.hasUUID("OwnerUUID")) {
-        setGameProfileById(compound.getUUID("OwnerUUID"));
+      } else if (compound.contains("OwnerUUID")) {
+        setGameProfileById(compound.read("owner", UUIDUtil.CODEC).orElse(null));
       }
     }
 
     super.load(compound);
 
-    if (compound.contains("NameTag", Tag.TAG_STRING)) {
-      entityData.set(DATA_CUSTOM_NAME, Optional.of(Component.literal(compound.getString("NameTag"))));
+    if (compound.contains("NameTag")) {
+      entityData.set(DATA_CUSTOM_NAME, Optional.of(Component.literal(compound.getStringOr("NameTag", ""))));
     }
     if (compound.contains("AttackAddition")) {
+      var tag = compound.get("AttackAddition");
       AttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
-      if (attack != null) {
-        double value = 0.0;
-        if (compound.contains("AttackAddition", Tag.TAG_FLOAT)) {
-          value = compound.getFloat("AttackAddition");
-        } else if (compound.contains("AttackAddition", Tag.TAG_INT)) {
-          value = compound.getInt("AttackAddition");
-        } else if (compound.contains("AttackAddition", Tag.TAG_DOUBLE)) {
-          value = compound.getDouble("AttackAddition");
-        }
+      if (attack != null && tag != null) {
+        double value = tag.asDouble().orElse(0.0);
         if (value != 0.0) {
           if (attack.getModifier(Modifiers.ATTACK_DAMAGE_INCREASE) != null) {
             attack.removeModifier(Modifiers.ATTACK_DAMAGE_INCREASE);
@@ -487,45 +486,52 @@ public class MiniMeEntity extends Monster {
     }
     if (compound.contains("HealthAddition")) {
       AttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
-      if (health != null) {
-        double value = 0.0;
-        if (compound.contains("HealthAddition", Tag.TAG_FLOAT)) {
-          value = compound.getFloat("HealthAddition");
-        } else if (compound.contains("HealthAddition", Tag.TAG_INT)) {
-          value = compound.getInt("HealthAddition");
-        } else if (compound.contains("HealthAddition", Tag.TAG_DOUBLE)) {
-          value = compound.getDouble("HealthAddition");
-        }
+      var tag = compound.get("HealthAddition");
+      if (health != null && tag != null) {
+        double value = tag.asDouble().orElse(0.0);
         if (value != 0.0) {
           if (health.getModifier(Modifiers.HEALTH_INCREASE) != null) {
             health.removeModifier(Modifiers.HEALTH_INCREASE);
           }
           health.addPermanentModifier(new AttributeModifier(Modifiers.HEALTH_INCREASE, value, AttributeModifier.Operation.ADD_VALUE));
-          if (!compound.contains("HealthWasBoosted") || !compound.getBoolean("HealthWasBoosted")) {
+          // TODO: Check this logic
+          if (!compound.contains("HealthWasBoosted") || !compound.getBooleanOr("HealthWasBoosted", true)) {
             this.heal((float) value);
           }
           healthBoosted = true;
         }
       }
     }
-    if (compound.contains("BossBar", Tag.TAG_BYTE) && compound.getBoolean("BossBar")) {
-      BossEvent.BossBarColor bossInfoColor = BossEvent.BossBarColor.WHITE;
-      BossEvent.BossBarOverlay bossInfoOverlay = BossEvent.BossBarOverlay.PROGRESS;
-      if (compound.contains("BossBarColor", Tag.TAG_STRING)) {
-        bossInfoColor = BossEvent.BossBarColor.byName(compound.getString("BossBarColor").toLowerCase());
-      }
-      if (compound.contains("BossBarOverlay", Tag.TAG_STRING)) {
-        bossInfoOverlay = BossEvent.BossBarOverlay.byName(compound.getString("BossBarOverlay").toLowerCase());
-      }
-      Component name = Component.literal("Unknown Mini");
-      if (getGameProfile().isPresent()) {
-        name = getDisplayName(getGameProfile());
-      }
-
-      bossInfo = new ServerBossEvent(name, bossInfoColor, bossInfoOverlay);
+    if (compound.contains("BossBar")) {
+      this.bossInfo = compound.read("BossBar", MiniBossEvent.CODEC).map(MiniBossEvent::event).orElse(null);
     }
     this.isBeingLoaded = false;
   }
+
+  public record MiniBossEvent(
+      Component name,
+      BossEvent.BossBarColor color,
+      BossEvent.BossBarOverlay overlay
+  ) {
+    public static final Codec<MiniBossEvent> CODEC = RecordCodecBuilder.create(
+        instance -> instance.group(
+            ComponentSerialization.CODEC.fieldOf("Name").forGetter(MiniBossEvent::name),
+            BossEvent.BossBarColor.CODEC.optionalFieldOf("Color", BossEvent.BossBarColor.WHITE)
+                .forGetter(MiniBossEvent::color),
+            BossEvent.BossBarOverlay.CODEC.optionalFieldOf("Overlay", BossEvent.BossBarOverlay.PROGRESS)
+                .forGetter(MiniBossEvent::overlay)
+        ).apply(instance, MiniBossEvent::new)
+    );
+
+    public MiniBossEvent (ServerBossEvent bossEvent) {
+      this(bossEvent.getName(), bossEvent.getColor(), bossEvent.getOverlay());
+    }
+
+    public ServerBossEvent event () {
+      return new ServerBossEvent(name, color, overlay);
+    }
+  }
+
 
   public static Component getDisplayName(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ResolvableProfile> incomingProfile) {
     if (incomingProfile.isEmpty()) {
@@ -559,10 +565,10 @@ public class MiniMeEntity extends Monster {
     }
   }
 
-  @Override
+/*  @Override
   public boolean isPowered() {
     return getNoobVariant() == 5;
-  }
+  }*/
 
   public static CompletableFuture<Optional<GameProfile>> fetchGameProfile(String profileName) {
     if (!StringUtil.isValidPlayerName(profileName)) {
@@ -578,18 +584,4 @@ public class MiniMeEntity extends Monster {
     LoadingCache<UUID, CompletableFuture<Optional<GameProfile>>> loadingcache = gameProfileCacheById;
     return loadingcache != null ? loadingcache.getUnchecked(profileUuid) : CompletableFuture.completedFuture(Optional.empty());
   }
-
-/*  public static CompletableFuture<ResolvableProfile> resolve(ResolvableProfile resolvableProfile) {
-    if (resolvableProfile.isResolved()) {
-      return CompletableFuture.completedFuture(resolvableProfile);
-    } else {
-      return resolvableProfile.id().isPresent() ? fetchGameProfile(resolvableProfile.id().get()).thenApply(p_332081_ -> {
-        GameProfile gameprofile = p_332081_.orElseGet(() -> new GameProfile(resolvableProfile.id().get(), resolvableProfile.name().orElse("")));
-        return new ResolvableProfile(gameprofile);
-      }) : fetchGameProfile(resolvableProfile.name().orElseThrow()).thenApply(p_339530_ -> {
-        GameProfile gameprofile = p_339530_.orElseGet(() -> new GameProfile(Util.NIL_UUID, resolvableProfile.name().get()));
-        return new ResolvableProfile(gameprofile);
-      });
-    }
-  }*/
 }
