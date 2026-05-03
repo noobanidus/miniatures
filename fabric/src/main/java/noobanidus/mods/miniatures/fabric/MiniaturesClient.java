@@ -9,8 +9,10 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import noobanidus.mods.miniatures.common.api.client.Layers;
+import noobanidus.mods.miniatures.common.client.AdditionalRenderTypes;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.entity.MiniMeRenderer;
 import noobanidus.mods.miniatures.fabric.init.ModBlocks;
@@ -26,6 +28,9 @@ public class MiniaturesClient implements ClientModInitializer {
     EntityRendererRegistry.register(ModEntities.ME, MiniMeRenderer::new);
     EntityRendererRegistry.register(ModEntities.MINIME, MiniMeRenderer::new);
     EntityRendererRegistry.register(ModEntities.MAXIME, MiniMeRenderer::new); // TODO: Prayge
+
+    RenderPipelines.register(AdditionalRenderTypes.GLOWING_PIPELINE);
+    RenderPipelines.register(AdditionalRenderTypes.OTHER_GLOWING_PIPELINE);
 
     LayerDefinition armor = LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.02f), 0.0f), 64, 32);
 
