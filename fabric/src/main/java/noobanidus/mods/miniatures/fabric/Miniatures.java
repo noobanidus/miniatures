@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.GameProfileCache;
@@ -39,7 +40,8 @@ public class Miniatures implements ModInitializer {
     FabricDefaultAttributeRegistry.register(ModEntities.MINIME, MiniMeEntity.attributes());
     FabricDefaultAttributeRegistry.register(ModEntities.MAXIME, MaxiMeEntity.attributes());
 
-    EntityDataSerializers.registerSerializer(ModSerializers.RESOLVABLE_PROFILE);
+    FabricTrackedDataRegistry.register(MiniaturesAPI.rl("resolvable_profile"), ModSerializers.RESOLVABLE_PROFILE);
+/*    EntityDataSerializers.registerSerializer(ModSerializers.RESOLVABLE_PROFILE);*/
 
     ServerLifecycleEvents.SERVER_STARTING.register( server -> {
       serverInstance = server;
