@@ -1,27 +1,45 @@
 package noobanidus.mods.miniatures.common.util;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.Util;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.*;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 public class NullProfileCache extends SavedData {
-  private final Set<String> cachedNull = new HashSet<>();
-  private final Set<UUID> cachedNullUUID = new HashSet<>();
+  public static final Codec<NullProfileCache> CODEC = RecordCodecBuilder.create(instance ->
+      instance.group(
+          Codec.list(Codec.STRING).xmap(HashSet::new, ArrayList::new).fieldOf("cachedNull")
+              .forGetter(o -> o.cachedNull),
+          UUIDUtil.CODEC_SET.fieldOf("cachedNullUUID").forGetter(o -> o.cachedNullUUID)
+      ).apply(instance, NullProfileCache::new));
+
+  private static final String IDENTIFIER = "MiniaturesNullProfileCache";
+  public static final SavedDataType<NullProfileCache> TYPE = new SavedDataType<>(IDENTIFIER, NullProfileCache::new, CODEC, null);
+
+  private final HashSet<String> cachedNull;
+  private final Set<UUID> cachedNullUUID;
 
   private static NullProfileCache INSTANCE = null;
 
-  private static final String IDENTIFIER = "MiniaturesNullProfileCache";
-
   public NullProfileCache() {
+    this.cachedNull = new HashSet<>();
+    this.cachedNullUUID = new HashSet<>();
+  }
+
+  public NullProfileCache(HashSet<String> cachedNull, Set<UUID> cachedUuids) {
+    this.cachedNull = cachedNull;
+    this.cachedNullUUID = cachedUuids;
   }
 
   private static ServerLevel getServerWorld() {
@@ -36,7 +54,7 @@ public class NullProfileCache extends SavedData {
   public static NullProfileCache getInstance() {
     if (INSTANCE == null) {
       DimensionDataStorage manager = getServerWorld().getDataStorage();
-      INSTANCE = manager.computeIfAbsent(new SavedData.Factory<>(NullProfileCache::new, NullProfileCache::new, null), IDENTIFIER);
+      INSTANCE = manager.computeIfAbsent(TYPE);
     }
 
     return INSTANCE;
@@ -112,33 +130,5 @@ public class NullProfileCache extends SavedData {
     if (id != null && !id.equals(Util.NIL_UUID)) {
       internalCacheNull(id);
     }
-  }
-
-  public NullProfileCache(CompoundTag pCompound, HolderLookup.Provider provider) {
-    cachedNull.clear();
-    cachedNullUUID.clear();
-    ListTag uuids = pCompound.getList("uuids", Tag.TAG_INT_ARRAY);
-    for (Tag nbt : uuids) {
-      cachedNullUUID.add(NbtUtils.loadUUID(nbt));
-    }
-    ListTag names = pCompound.getList("names", Tag.TAG_STRING);
-    for (Tag nbt : names) {
-      cachedNull.add(nbt.getAsString());
-    }
-  }
-
-  @Override
-  public CompoundTag save(CompoundTag pCompound, HolderLookup.Provider lookup) {
-    ListTag uuids = new ListTag();
-    for (UUID uuid : cachedNullUUID) {
-      uuids.add(NbtUtils.createUUID(uuid));
-    }
-    ListTag names = new ListTag();
-    for (String name : cachedNull) {
-      names.add(StringTag.valueOf(name));
-    }
-    pCompound.put("uuids", uuids);
-    pCompound.put("names", names);
-    return pCompound;
   }
 }

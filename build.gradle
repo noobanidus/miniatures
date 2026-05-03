@@ -142,7 +142,7 @@ subprojects {
                 "minecraft_version"    : project.minecraft_version,
                 "neoforge_version"     : project.neoforge_version,
                 "fabric_loader_version": project.fabric_loader_version,
-                "java_version"         : "${javaVersion}",
+                "java_version"         : "21",
         ]
 
         filesMatching(['pack.mcmeta', '*.mod.json', 'META-INF/neoforge.mods.toml']) {
