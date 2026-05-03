@@ -1,30 +1,34 @@
 package noobanidus.mods.miniatures.common.util;
 
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ProfileCache extends SavedData {
-  private final Set<String> cached = new HashSet<>();
+  public static Codec<ProfileCache> CODEC = RecordCodecBuilder.create(instance ->
+      instance.group(Codec.STRING.listOf().xmap(HashSet::new, ArrayList::new).fieldOf("cached")
+          .forGetter(o -> o.cached)).apply(instance, ProfileCache::new));
+  private static final String IDENTIFIER = "MiniaturesProfileCache";
+  public static final SavedDataType<ProfileCache> TYPE = new SavedDataType<>(IDENTIFIER, ProfileCache::new, CODEC, null);
+
+  private final HashSet<String> cached;
 
   private static ProfileCache INSTANCE = null;
 
-  private static final String IDENTIFIER = "MiniaturesProfileCache";
-
   public ProfileCache() {
+    this.cached = new HashSet<>();
+  }
+
+  public ProfileCache(HashSet<String> cached) {
+    this.cached = cached;
   }
 
   private static ServerLevel getServerWorld() {
@@ -33,13 +37,13 @@ public class ProfileCache extends SavedData {
 
   private static void save() {
     ServerLevel world = getServerWorld();
-    world.getDataStorage().save();
+    world.getDataStorage().scheduleSave();
   }
 
   public static ProfileCache getInstance() {
     if (INSTANCE == null) {
       DimensionDataStorage manager = getServerWorld().getDataStorage();
-      INSTANCE = manager.computeIfAbsent(new SavedData.Factory<>(ProfileCache::new, ProfileCache::new, null), IDENTIFIER);
+      INSTANCE = manager.computeIfAbsent(TYPE);
     }
 
     return INSTANCE;
@@ -97,23 +101,5 @@ public class ProfileCache extends SavedData {
     }
 
     return ImmutableSet.copyOf(instance.cached);
-  }
-
-  public ProfileCache(CompoundTag pCompound, HolderLookup.Provider provider) {
-    cached.clear();
-    ListTag names = pCompound.getList("names", Tag.TAG_STRING);
-    for (Tag nbt : names) {
-      cached.add(nbt.getAsString());
-    }
-  }
-
-  @Override
-  public CompoundTag save(CompoundTag pCompound, HolderLookup.Provider provider) {
-    ListTag names = new ListTag();
-    for (String name : cached) {
-      names.add(StringTag.valueOf(name));
-    }
-    pCompound.put("names", names);
-    return pCompound;
   }
 }
