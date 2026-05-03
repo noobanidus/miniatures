@@ -18,18 +18,16 @@ import java.util.concurrent.CompletableFuture;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ModDatagen {
   @SubscribeEvent
-  public static void gatherData(GatherDataEvent event) {
+  public static void gatherData(GatherDataEvent.Client event) {
     DataGenerator generator = event.getGenerator();
     PackOutput packOutput = generator.getPackOutput();
     CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-    if (event.includeDev()) {
-      generator.addProvider(true, new ModLootTableProvider(packOutput, lookupProvider));
-      generator.addProvider(true, new ModBlockTagsProvider(packOutput, lookupProvider));
-      generator.addProvider(true, new ModEntityTypeTagsProvider(packOutput, lookupProvider));
-      generator.addProvider(true, new ModBlockstateProvider(packOutput));
-      generator.addProvider(true, new ModLanguageProvider(packOutput, "en_us"));
-      generator.addProvider(true, new ModLanguageProvider(packOutput, "en_ud"));
-    }
+    generator.addProvider(true, new ModLootTableProvider(packOutput, lookupProvider));
+    generator.addProvider(true, new ModBlockTagsProvider(packOutput, lookupProvider));
+    generator.addProvider(true, new ModEntityTypeTagsProvider(packOutput, lookupProvider));
+    generator.addProvider(true, new ModBlockstateProvider(packOutput));
+    generator.addProvider(true, new ModLanguageProvider(packOutput, "en_us"));
+    generator.addProvider(true, new ModLanguageProvider(packOutput, "en_ud"));
   }
 }
