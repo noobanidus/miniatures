@@ -4,13 +4,16 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 import noobanidus.mods.miniatures.common.api.client.Layers;
+import noobanidus.mods.miniatures.common.client.AdditionalRenderTypes;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.entity.MiniMeRenderer;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
@@ -28,6 +31,12 @@ public class ClientSetup {
       //noinspection deprecation
       ItemBlockRenderTypes.setRenderLayer(ModBlocks.SENSOR_TORCH_BLOCK.get(), rendertype);
     });
+  }
+
+  @SubscribeEvent
+  public static void registerPipelines (RegisterRenderPipelinesEvent event) {
+    event.registerPipeline(AdditionalRenderTypes.GLOWING_PIPELINE);
+    event.registerPipeline(AdditionalRenderTypes.OTHER_GLOWING_PIPELINE);
   }
 
   @SubscribeEvent
