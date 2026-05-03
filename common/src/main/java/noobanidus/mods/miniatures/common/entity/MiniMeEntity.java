@@ -202,7 +202,7 @@ public class MiniMeEntity extends Monster {
 
   @Override
   public float getAgeScale() {
-    return 1f;
+    return super.getAgeScale();
   }
 
   public int getNoobVariant() {
