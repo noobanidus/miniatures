@@ -12,7 +12,6 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import noobanidus.mods.miniatures.common.api.client.Layers;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
-import noobanidus.mods.miniatures.common.client.renderer.entity.MaxiMeRenderer;
 import noobanidus.mods.miniatures.common.client.renderer.entity.MiniMeRenderer;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import noobanidus.mods.miniatures.neoforge.init.ModBlocks;

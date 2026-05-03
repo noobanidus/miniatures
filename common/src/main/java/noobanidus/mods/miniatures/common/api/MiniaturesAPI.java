@@ -1,11 +1,14 @@
 package noobanidus.mods.miniatures.common.api;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
@@ -19,6 +22,11 @@ public class MiniaturesAPI {
   public static final Logger LOG = LogManager.getLogger();
   public static final String MODID = "miniatures";
   public static final String NETWORK_VERSION = "miniatures-v1.21.1-0";
+
+  public static final ResourceKey<EntityType<?>> MINIME = ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("minime"));
+  public static final ResourceKey<EntityType<?>> ME = ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("me"));
+  public static final ResourceKey<EntityType<?>> MAXIME = ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("maxime"));
+
 
   public static IMiniaturesAPI INSTANCE;
 

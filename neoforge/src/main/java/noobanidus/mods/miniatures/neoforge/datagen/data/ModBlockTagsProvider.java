@@ -5,17 +5,15 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import noobanidus.mods.miniatures.common.api.MiniTags;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import noobanidus.mods.miniatures.neoforge.init.ModBlocks;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ModBlockTagsProvider extends BlockTagsProvider {
-  public ModBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper fileHelper) {
-    super(output, lookupProvider, MiniaturesAPI.MODID, fileHelper);
+  public ModBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+    super(output, lookupProvider, MiniaturesAPI.MODID);
   }
 
   @Override

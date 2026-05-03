@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
 import net.minecraft.client.resources.PlayerSkin;
@@ -21,6 +20,7 @@ import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.common.client.renderer.layers.ArrowRenderTypeLayer;
 import noobanidus.mods.miniatures.common.client.renderer.layers.BeeStingerRenderTypeLayer;
 import noobanidus.mods.miniatures.common.client.renderer.layers.ChargedLayer;
+import noobanidus.mods.miniatures.common.client.renderer.layers.DynamicHumanoidArmorLayer;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
@@ -28,17 +28,28 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
   private static final ResourceLocation TEXTURE_STEVE = ResourceLocation.withDefaultNamespace("textures/entity/player/wide/steve.png");
   public boolean isSlim = false;
 
-  public MiniMeRenderer(EntityRendererProvider.Context context, boolean useSlimModel) {
-    super(context, new MiniMeModel(context.bakeLayer(useSlimModel ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER), useSlimModel), 0.5F);
+  public MiniMeRenderer(EntityRendererProvider.Context context) {
+    super(context, new MiniMeModel(context.bakeLayer(ModelLayers.PLAYER), false), 0.5F);
     ModelHolder.init(context);
     this.addLayer(
-        new HumanoidArmorLayer<>(
+        new DynamicHumanoidArmorLayer<>(
             this,
-            new HumanoidArmorModel<>(context.bakeLayer(useSlimModel ? ModelLayers.PLAYER_SLIM_INNER_ARMOR : ModelLayers.PLAYER_INNER_ARMOR)),
-            new HumanoidArmorModel<>(context.bakeLayer(useSlimModel ? ModelLayers.PLAYER_SLIM_OUTER_ARMOR : ModelLayers.PLAYER_OUTER_ARMOR)),
-            context.getEquipmentRenderer()
+            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)),
+            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR)),
+            context.getEquipmentRenderer(),
+            true
         )
     );
+    this.addLayer(
+        new DynamicHumanoidArmorLayer<>(
+            this,
+            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
+            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),
+            context.getEquipmentRenderer(),
+            false
+        )
+    );
+
     this.addLayer(new PlayerItemInHandLayer<>(this));
     this.addLayer(new ChargedLayer<>(this));
     this.addLayer(new ArrowRenderTypeLayer<>(this, context));

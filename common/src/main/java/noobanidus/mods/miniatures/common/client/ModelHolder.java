@@ -5,6 +5,7 @@ import noobanidus.mods.miniatures.common.api.client.Layers;
 import noobanidus.mods.miniatures.common.client.model.GhostlyMiniMeModel;
 import noobanidus.mods.miniatures.common.client.model.GlowingMiniMeModel;
 import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
+import noobanidus.mods.miniatures.common.client.renderer.entity.MiniMeRenderer;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 public class ModelHolder {
@@ -15,6 +16,8 @@ public class ModelHolder {
   public static MiniMeModel ghostlyMiniMeSlim;
   public static MiniMeModel glowingMiniMe;
   public static MiniMeModel glowingMiniMeSlim;
+
+
 
   public static void init(EntityRendererProvider.Context context) {
     miniMe = new MiniMeModel(context.bakeLayer(Layers.MINI_ME), false);

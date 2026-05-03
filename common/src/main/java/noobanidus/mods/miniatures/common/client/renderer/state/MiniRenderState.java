@@ -7,7 +7,6 @@ import java.util.UUID;
 public class MiniRenderState extends PlayerRenderState {
   // TODO: Noob variants
   public boolean isPowered;
-  public UUID playerId;
   public int noobVariant;
   public double bbHeight;
 }

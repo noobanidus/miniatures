@@ -76,7 +76,7 @@ neoForge {
         mappingsVersion = project.parchment_mappings_version
     }
 
-    def atFile = project.file("src/main/resources/META-INF/accesstransformer_neoforge.cfg")
+    def atFile = project.file("../common/src/main/resources/META-INF/accesstransformer.cfg")
     if (atFile.exists()) {
         accessTransformers {
             from atFile
