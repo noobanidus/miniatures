@@ -41,7 +41,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
   public boolean isSlim = false;
 
   public MiniMeRenderer(EntityRendererProvider.Context context) {
-    super(context, new MiniMeModel(context.bakeLayer(ModelLayers.PLAYER), false), 0.5F);
+    super(context, new MiniMeModel(context.bakeLayer(ModelLayers.PLAYER), false), 0.25F);
     ModelHolder.init(context);
     this.addLayer(
         new DynamicHumanoidArmorLayer<>(
