@@ -7,6 +7,7 @@ import noobanidus.mods.miniatures.common.client.ModelHolder;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
+@SuppressWarnings("unchecked")
 public class ChargedLayer<M extends MiniRenderModel> extends EnergySwirlLayer<MiniRenderState, M> {
   private static final ResourceLocation POWER_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
 
@@ -23,7 +24,6 @@ public class ChargedLayer<M extends MiniRenderModel> extends EnergySwirlLayer<Mi
   }
 
   protected M model() {
-    //noinspection unchecked
     return (M) ModelHolder.chargedMiniMe;
   }
 
