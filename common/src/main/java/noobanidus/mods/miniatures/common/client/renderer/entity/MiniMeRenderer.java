@@ -34,10 +34,10 @@ import noobanidus.mods.miniatures.common.client.renderer.layers.BeeStingerRender
 import noobanidus.mods.miniatures.common.client.renderer.layers.ChargedLayer;
 import noobanidus.mods.miniatures.common.client.renderer.layers.DynamicHumanoidArmorLayer;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
+import noobanidus.mods.miniatures.common.entity.MaxiMeEntity;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRenderState, MiniMeModel> {
-  private static final ResourceLocation TEXTURE_STEVE = ResourceLocation.withDefaultNamespace("textures/entity/player/wide/steve.png");
   public boolean isSlim = false;
 
   public MiniMeRenderer(EntityRendererProvider.Context context) {
@@ -126,7 +126,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
 
   @Override
   protected void scale(MiniRenderState miniMeEntity, PoseStack poseStack) {
-    float scale = (miniMeEntity.noobVariant != -1 ? 1.0975f : 0.9375f) * miniMeEntity.ageScale;
+    float scale = miniMeEntity.isMaxi ? 3.5375f : (miniMeEntity.noobVariant != -1 ? 1.0975f : 0.9375f) * miniMeEntity.ageScale;
     poseStack.scale(scale, scale, scale);
   }
 
@@ -151,11 +151,12 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
   public void extractRenderState(MiniMeEntity entity, MiniRenderState state, float someFloatValue) {
     super.extractRenderState(entity, state, someFloatValue);
     state.isPowered = entity.isPowered();
-    state.bbHeight = entity.getBbHeight();
+    state.bbHeight = entity.getBbHeight() + 0.25;
     state.noobVariant = entity.getNoobVariant();
     HumanoidMobRenderer.extractHumanoidRenderState(entity, state, someFloatValue, this.itemModelResolver);
 /*        state.leftArmPose = PlayerRenderer.getArmPose(entity, HumanoidArm.LEFT);
         state.rightArmPose = PlayerRenderer.getArmPose(entity, HumanoidArm.RIGHT);*/
+    state.isMaxi = entity instanceof MaxiMeEntity;
     state.skin = getSkin(entity); //entity.getSkin();
     state.arrowCount = entity.getArrowCount();
     state.stingerCount = entity.getStingerCount();
