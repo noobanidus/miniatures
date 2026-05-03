@@ -1,10 +1,10 @@
 {
   "variants": {
     "trigger=false": {
-      "model": "minecraft:block/torch"
+      "model": "miniatures:block/sensor_torch"
     },
     "trigger=true": {
-      "model": "minecraft:block/torch"
+      "model": "miniatures:block/sensor_torch"
     }
   }
 }

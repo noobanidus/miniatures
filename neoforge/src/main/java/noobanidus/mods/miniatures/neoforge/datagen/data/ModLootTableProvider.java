@@ -24,12 +24,11 @@ public class ModLootTableProvider extends LootTableProvider {
 
   public ModLootTableProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> future) {
     super(packOutput, Set.of(), List.of(
-            new SubProviderEntry(ModBlockLoot::new, LootContextParamSets.BLOCK),
             new SubProviderEntry(ModEntityLoot::new, LootContextParamSets.ENTITY)
     ), future);
   }
 
-  private static class ModBlockLoot extends BlockLootSubProvider {
+/*  private static class ModBlockLoot extends BlockLootSubProvider {
 
     protected ModBlockLoot(HolderLookup.Provider provider) {
       super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
@@ -37,14 +36,13 @@ public class ModLootTableProvider extends LootTableProvider {
 
     @Override
     protected void generate() {
-      this.dropOther(ModBlocks.SENSOR_TORCH_BLOCK.get(), Items.AIR);
     }
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-      return (Iterable<Block>) ModBlocks.BLOCKS.getEntries().stream().map((holder) -> (Block) holder.value())::iterator;
+      return List.of(ModBlocks.SENSOR_TORCH_BLOCK.value());
     }
-  }
+  }*/
 
   private static class ModEntityLoot extends EntityLootSubProvider {
     protected ModEntityLoot(HolderLookup.Provider provider) {

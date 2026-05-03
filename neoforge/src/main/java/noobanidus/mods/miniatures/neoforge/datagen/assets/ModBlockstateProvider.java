@@ -9,6 +9,7 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import noobanidus.mods.miniatures.common.block.SensorTorchBlock;
@@ -23,10 +24,8 @@ public class ModBlockstateProvider extends ModelProvider {
 
   @Override
   protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-    super.registerModels(blockModels, itemModels);
-
     var torchBlock = ModBlocks.SENSOR_TORCH_BLOCK.value();
-    
+
     TextureMapping texturemapping = TextureMapping.torch(torchBlock);
     var torchModel = BlockModelGenerators.plainVariant(ModelTemplates.TORCH.create(torchBlock, texturemapping, blockModels.modelOutput));
     blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(torchBlock)
@@ -36,5 +35,10 @@ public class ModBlockstateProvider extends ModelProvider {
   @Override
   protected Stream<? extends Holder<Block>> getKnownBlocks() {
     return Stream.of(ModBlocks.SENSOR_TORCH_BLOCK);
+  }
+
+  @Override
+  protected Stream<? extends Holder<Item>> getKnownItems() {
+    return Stream.of();
   }
 }
