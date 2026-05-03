@@ -8,10 +8,11 @@ import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import noobanidus.mods.miniatures.common.block.SensorTorchBlock;
 
 public class ModBlocks {
-  public static final SensorTorchBlock SENSOR_TORCH_BLOCK = new SensorTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TORCH));
+  public static final BlockBehaviour.Properties PROPERTIES = BlockBehaviour.Properties.ofFullCopy(Blocks.TORCH);
+
+  public static SensorTorchBlock SENSOR_TORCH_BLOCK;
 
   public static void register() {
-    Blocks.register(ResourceKey.create(Registries.BLOCK, MiniaturesAPI.rl("sensor_torch")), SENSOR_TORCH_BLOCK);
-
+    SENSOR_TORCH_BLOCK = (SensorTorchBlock) Blocks.register(ResourceKey.create(Registries.BLOCK, MiniaturesAPI.rl("sensor_torch")), SensorTorchBlock::new, PROPERTIES);
   }
 }
