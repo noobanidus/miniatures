@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
+import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
@@ -21,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.ReadOnlyScoreInfo;
@@ -67,6 +69,25 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     this.addLayer(new WingsLayer<>(this, context.getModelSet(), context.getEquipmentRenderer()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this, context));
   }
+
+  @Override
+  public Vec3 getRenderOffset(MiniRenderState p_360756_) {
+    Vec3 vec3 = super.getRenderOffset(p_360756_);
+    return p_360756_.isCrouching ? vec3.add(0.0, p_360756_.scale * -2.0F / 16.0, 0.0) : vec3;
+  }
+
+  @Override
+  protected void renderNameTag(MiniRenderState p_363185_, Component p_117809_, PoseStack p_117810_, MultiBufferSource p_117811_, int p_117812_) {
+    p_117810_.pushPose();
+    if (p_363185_.scoreText != null) {
+      super.renderNameTag(p_363185_, p_363185_.scoreText, p_117810_, p_117811_, p_117812_);
+      p_117810_.translate(0.0F, 9.0F * 1.15F * 0.025F, 0.0F);
+    }
+
+    super.renderNameTag(p_363185_, p_117809_, p_117810_, p_117811_, p_117812_);
+    p_117810_.popPose();
+  }
+
 
   @Override
   public MiniRenderState createRenderState() {

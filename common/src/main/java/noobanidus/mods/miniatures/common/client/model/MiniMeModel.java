@@ -33,11 +33,11 @@ public class MiniMeModel extends MiniRenderModel {
       this.leftArm.zRot = 0.3f;
       this.rightArm.zRot = -0.3f;
     }
-    this.hat.copyFrom(this.head);
+/*    this.hat.copyFrom(this.head);
     this.jacket.copyFrom(this.body);
     this.leftSleeve.copyFrom(this.leftArm);
     this.rightSleeve.copyFrom(this.rightArm);
     this.leftPants.copyFrom(this.leftLeg);
-    this.rightPants.copyFrom(this.rightLeg);
+    this.rightPants.copyFrom(this.rightLeg);*/
   }
 }
