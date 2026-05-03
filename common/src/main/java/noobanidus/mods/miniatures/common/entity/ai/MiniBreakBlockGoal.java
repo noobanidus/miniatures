@@ -42,7 +42,10 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
     if (!MiniaturesAPI.getBreaksBlocks()) {
       return false;
     }
-    if (!MiniaturesAPI.canEntityDestroy(this.entity.level(), this.blockPos, this.entity)) {
+    if (this.entity.level().isClientSide()) {
+      return false; // ???
+    }
+    if (!MiniaturesAPI.canEntityDestroy((ServerLevel)this.entity.level(), this.blockPos, this.entity)) {
       return false;
     } else if (this.nextStartTick > 0) {
       --this.nextStartTick;

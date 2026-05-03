@@ -33,7 +33,7 @@ public class ClientSetup {
   @SubscribeEvent
   public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
     event.registerEntityRenderer(ModEntities.MINIME.get(), MiniMeRenderer::new);
-    event.registerEntityRenderer(ModEntities.MAXIME.get(), MaxiMeRenderer::new);
+    event.registerEntityRenderer(ModEntities.MAXIME.get(), MiniMeRenderer::new);
     event.registerEntityRenderer(ModEntities.ME.get(), MiniMeRenderer::new);
   }
 
