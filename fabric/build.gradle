@@ -77,7 +77,7 @@ publishMods {
             type = ALPHA
             displayName = "miniatures-fabric-${rootProject.minecraft_version}-${rootProject.mod_version}"
             accessToken = project.findProperty("curse_auth")
-            projectId = project.findProperty('curseforge_id_fabric')
+            projectId = project.findProperty('curseforge_id')
             announcementTitle = "Miniatures ${rootProject.minecraft_version}-${rootProject.mod_version} for Fabric on CurseForge"
             minecraftVersions.add(project.minecraft_version)
             changelog = changelogText
