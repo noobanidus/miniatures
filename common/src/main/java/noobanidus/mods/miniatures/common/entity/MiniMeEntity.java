@@ -565,10 +565,9 @@ public class MiniMeEntity extends Monster {
     }
   }
 
-/*  @Override
   public boolean isPowered() {
     return getNoobVariant() == 5;
-  }*/
+  }
 
   public static CompletableFuture<Optional<GameProfile>> fetchGameProfile(String profileName) {
     if (!StringUtil.isValidPlayerName(profileName)) {

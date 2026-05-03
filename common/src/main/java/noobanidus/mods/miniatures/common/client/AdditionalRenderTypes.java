@@ -17,7 +17,6 @@ import net.minecraft.util.TriState;
 import java.util.function.Function;
 
 public class AdditionalRenderTypes {
-  // TODO: REGISTER THESE
   public static final RenderPipeline GLOWING_PIPELINE =
       RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
           .withLocation("pipeline/miniatures_glowing")
@@ -38,7 +37,7 @@ public class AdditionalRenderTypes {
 
   private static final Function<ResourceLocation, RenderType> GLOWING = Util.memoize((pLocation) -> RenderType.create("spirit_entity", 256, false, true, GLOWING_PIPELINE, RenderType.CompositeState.builder()
       .setTextureState(new RenderStateShard.TextureStateShard(pLocation, TriState.FALSE, false)).setLightmapState(RenderType.LIGHTMAP)
-      .setOverlayState(RenderType.NO_OVERLAY)
+      .setOverlayState(RenderType.OVERLAY)
       .createCompositeState(false)));
 
   public static RenderType getGlowing (ResourceLocation location) {
@@ -47,7 +46,7 @@ public class AdditionalRenderTypes {
 
   private static final Function<ResourceLocation, RenderType> OTHER_GLOWING = Util.memoize((pLocation) -> RenderType.create("spirit_entity2", 256, false, true, OTHER_GLOWING_PIPELINE, RenderType.CompositeState.builder()
       .setTextureState(new RenderStateShard.TextureStateShard(pLocation, TriState.FALSE, false)).setLightmapState(RenderType.LIGHTMAP)
-      .setOverlayState(RenderType.NO_OVERLAY)
+      .setOverlayState(RenderType.OVERLAY)
       .createCompositeState(false)));
 
   public static RenderType getOtherGlowing (ResourceLocation location) {

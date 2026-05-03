@@ -126,7 +126,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
 
   @Override
   protected void scale(MiniRenderState miniMeEntity, PoseStack poseStack) {
-    float scale = miniMeEntity.noobVariant != -1 ? 1.0975f : 0.9375f;
+    float scale = (miniMeEntity.noobVariant != -1 ? 1.0975f : 0.9375f) * miniMeEntity.ageScale;
     poseStack.scale(scale, scale, scale);
   }
 
@@ -134,7 +134,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     super.setupRotations(miniMeEntity, poseStack, f, g);
     int noob = miniMeEntity.noobVariant;
     if (noob == 0) {
-      /*      poseStack.translate(0.0D, miniMeEntity.bbHeight, 0.0D);*/
+      poseStack.translate(0.0D, miniMeEntity.bbHeight, 0.0D);
       poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
     } else if (noob == 1) {
       poseStack.translate(0.0D, 0.35F, 0.0D);
@@ -145,12 +145,13 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     } else if (noob == 8) {
       poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
     }
-    // TODO: Copy player rendering stuff
   }
 
   @Override
   public void extractRenderState(MiniMeEntity entity, MiniRenderState state, float someFloatValue) {
     super.extractRenderState(entity, state, someFloatValue);
+    state.isPowered = entity.isPowered();
+    state.bbHeight = entity.getBbHeight();
     state.noobVariant = entity.getNoobVariant();
     HumanoidMobRenderer.extractHumanoidRenderState(entity, state, someFloatValue, this.itemModelResolver);
 /*        state.leftArmPose = PlayerRenderer.getArmPose(entity, HumanoidArm.LEFT);
