@@ -20,7 +20,7 @@ public class AdditionalRenderTypes {
   // TODO: REGISTER THESE
   public static final RenderPipeline GLOWING_PIPELINE =
       RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
-          .withLocation("pipeline/entity_translucent")
+          .withLocation("pipeline/miniatures_glowing")
           .withShaderDefine("ALPHA_CUTOUT", 0.02F)
           .withSampler("Sampler1")
           .withBlend(BlendFunction.GLINT)
@@ -29,7 +29,7 @@ public class AdditionalRenderTypes {
 
   public static final RenderPipeline OTHER_GLOWING_PIPELINE =
       RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
-          .withLocation("pipeline/entity_translucent")
+          .withLocation("pipeline/miniatures_other_glowing")
           .withShaderDefine("ALPHA_CUTOUT", 0.02F)
           .withSampler("Sampler1")
           .withBlend(BlendFunction.LIGHTNING)
