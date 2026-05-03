@@ -151,6 +151,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
   @Override
   public void extractRenderState(MiniMeEntity entity, MiniRenderState state, float someFloatValue) {
     super.extractRenderState(entity, state, someFloatValue);
+    state.noobVariant = entity.getNoobVariant();
     HumanoidMobRenderer.extractHumanoidRenderState(entity, state, someFloatValue, this.itemModelResolver);
 /*        state.leftArmPose = PlayerRenderer.getArmPose(entity, HumanoidArm.LEFT);
         state.rightArmPose = PlayerRenderer.getArmPose(entity, HumanoidArm.RIGHT);*/
