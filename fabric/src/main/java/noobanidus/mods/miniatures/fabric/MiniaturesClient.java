@@ -12,7 +12,6 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.RenderType;
 import noobanidus.mods.miniatures.common.api.client.Layers;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
-import noobanidus.mods.miniatures.common.client.renderer.entity.MaxiMeRenderer;
 import noobanidus.mods.miniatures.common.client.renderer.entity.MiniMeRenderer;
 import noobanidus.mods.miniatures.fabric.init.ModBlocks;
 import noobanidus.mods.miniatures.fabric.init.ModEntities;
@@ -26,7 +25,7 @@ public class MiniaturesClient implements ClientModInitializer {
 
     EntityRendererRegistry.register(ModEntities.ME, MiniMeRenderer::new);
     EntityRendererRegistry.register(ModEntities.MINIME, MiniMeRenderer::new);
-    EntityRendererRegistry.register(ModEntities.MAXIME, MaxiMeRenderer::new);
+    EntityRendererRegistry.register(ModEntities.MAXIME, MiniMeRenderer::new); // TODO: Prayge
 
     LayerDefinition armor = LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.02f), 0.0f), 64, 32);
 

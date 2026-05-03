@@ -1,6 +1,6 @@
 package noobanidus.mods.miniatures.fabric;
 
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -31,7 +31,7 @@ public class Miniatures implements ModInitializer {
     ModBlocks.register();
     ModEntities.register();
 
-    NeoForgeConfigRegistry.INSTANCE.register(MiniaturesAPI.MODID, ModConfig.Type.COMMON, ConfigManager.COMMON_CONFIG);
+    ConfigRegistry.INSTANCE.register(MiniaturesAPI.MODID, ModConfig.Type.COMMON, ConfigManager.COMMON_CONFIG);
 
     PayloadTypeRegistry.playS2C().register(PacketValidateClient.TYPE, PacketValidateClient.STREAM_CODEC);
 
