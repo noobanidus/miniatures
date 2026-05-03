@@ -62,7 +62,7 @@ public interface IMiniaturesAPI {
 
   EntityDataSerializer<Optional<ResolvableProfile>> getGameProfileSerializer ();
 
-  boolean canEntityDestroy(Level level, BlockPos blockPos, Mob entity);
+  boolean canEntityDestroy(ServerLevel level, BlockPos blockPos, Mob entity);
 
   Path getGameDir();
 

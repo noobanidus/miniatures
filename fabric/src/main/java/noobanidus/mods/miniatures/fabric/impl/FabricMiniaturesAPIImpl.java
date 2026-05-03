@@ -5,9 +5,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import noobanidus.mods.miniatures.common.api.IMiniaturesAPI;
 import noobanidus.mods.miniatures.fabric.Miniatures;
@@ -29,8 +31,8 @@ public class FabricMiniaturesAPIImpl implements IMiniaturesAPI {
   }
 
   @Override
-  public boolean canEntityDestroy(Level level, BlockPos blockPos, Mob entity) {
-    return true;
+  public boolean canEntityDestroy(ServerLevel level, BlockPos blockPos, Mob entity) {
+    return level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
   }
 
   @Override

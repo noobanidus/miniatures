@@ -3,6 +3,7 @@ package noobanidus.mods.miniatures.neoforge.impl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.component.ResolvableProfile;
@@ -30,7 +31,7 @@ public class NeoForgeMiniaturesAPIImpl implements IMiniaturesAPI {
   }
 
   @Override
-  public boolean canEntityDestroy(Level level, BlockPos blockPos, Mob entity) {
+  public boolean canEntityDestroy(ServerLevel level, BlockPos blockPos, Mob entity) {
     return CommonHooks.canEntityDestroy(level, blockPos, entity);
   }
 

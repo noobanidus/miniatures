@@ -89,7 +89,7 @@ public class MiniaturesAPI {
     return ResourceLocation.fromNamespaceAndPath(MODID, path);
   }
 
-  public static boolean canEntityDestroy(Level level, BlockPos blockPos, Mob entity) {
+  public static boolean canEntityDestroy(ServerLevel level, BlockPos blockPos, Mob entity) {
     return INSTANCE.canEntityDestroy(level, blockPos, entity);
   }
 
