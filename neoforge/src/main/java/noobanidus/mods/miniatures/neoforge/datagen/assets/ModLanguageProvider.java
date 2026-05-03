@@ -50,7 +50,7 @@ public class ModLanguageProvider extends LanguageProvider {
       char c = normal.charAt(i);
       if (c == '%') {
         String fmtArg = "";
-        while (Character.isDigit(c) || c == '%' || c == '$' || c == 's' || c == 'd') { // TODO this is a bit lazy
+        while (Character.isDigit(c) || c == '%' || c == '$' || c == 's' || c == 'd') {
           fmtArg += c;
           i++;
           c = i == normal.length() ? 0 : normal.charAt(i);

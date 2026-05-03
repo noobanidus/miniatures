@@ -27,7 +27,7 @@ public class MiniaturesClient implements ClientModInitializer {
 
     EntityRendererRegistry.register(ModEntities.ME, MiniMeRenderer::new);
     EntityRendererRegistry.register(ModEntities.MINIME, MiniMeRenderer::new);
-    EntityRendererRegistry.register(ModEntities.MAXIME, MiniMeRenderer::new); // TODO: Prayge
+    EntityRendererRegistry.register(ModEntities.MAXIME, MiniMeRenderer::new);
 
     RenderPipelines.register(AdditionalRenderTypes.GLOWING_PIPELINE);
     RenderPipelines.register(AdditionalRenderTypes.OTHER_GLOWING_PIPELINE);

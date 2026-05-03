@@ -6,6 +6,5 @@ public class MiniRenderState extends PlayerRenderState {
   public boolean isMaxi = false;
   public boolean isPowered = false;
   public int noobVariant = -1;
-  // TODO: Check logic
   public double bbHeight;
 }

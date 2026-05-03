@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.entity.layers.StuckInBodyLayer;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
-// TODO:?
 public class ArrowRenderTypeLayer<M extends MiniRenderModel> extends StuckInBodyRenderTypeLayer<M> {
   public ArrowRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> p_174466_, EntityRendererProvider.Context p_174465_) {
     super(

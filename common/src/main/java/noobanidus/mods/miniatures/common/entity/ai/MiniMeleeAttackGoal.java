@@ -11,7 +11,6 @@ import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 import java.util.EnumSet;
 
-// TODO: Update this?
 public class MiniMeleeAttackGoal extends Goal {
   protected final MiniMeEntity attacker;
   private final double speedTowardsTarget;

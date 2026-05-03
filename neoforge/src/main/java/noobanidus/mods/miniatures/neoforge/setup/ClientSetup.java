@@ -25,7 +25,6 @@ public class ClientSetup {
 
   @SubscribeEvent
   public static void init(FMLClientSetupEvent event) {
-    // TODO:
     event.enqueueWork(() -> {
       RenderType rendertype = RenderType.cutoutMipped();
       //noinspection deprecation

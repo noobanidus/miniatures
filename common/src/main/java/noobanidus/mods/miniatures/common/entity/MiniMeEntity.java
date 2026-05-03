@@ -494,7 +494,6 @@ public class MiniMeEntity extends Monster {
             health.removeModifier(Modifiers.HEALTH_INCREASE);
           }
           health.addPermanentModifier(new AttributeModifier(Modifiers.HEALTH_INCREASE, value, AttributeModifier.Operation.ADD_VALUE));
-          // TODO: Check this logic
           if (!compound.contains("HealthWasBoosted") || !compound.getBooleanOr("HealthWasBoosted", true)) {
             this.heal((float) value);
           }
