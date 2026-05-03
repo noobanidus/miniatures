@@ -11,7 +11,7 @@ import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 public class ModBlocks {
   public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MiniaturesAPI.MODID);
   public static final DeferredBlock<SensorTorchBlock> SENSOR_TORCH_BLOCK = BLOCKS.register("sensor_torch", () ->
-          new SensorTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TORCH)));
+          new SensorTorchBlock(MiniaturesAPI.SENSOR_TORCH_PROPERTIES));
 
   public static void load(IEventBus eventBus) {
     BLOCKS.register(eventBus);

@@ -12,6 +12,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,6 +29,7 @@ public class MiniaturesAPI {
   public static final ResourceKey<EntityType<?>> ME = ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("me"));
   public static final ResourceKey<EntityType<?>> MAXIME = ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("maxime"));
 
+  public static final BlockBehaviour.Properties SENSOR_TORCH_PROPERTIES = BlockBehaviour.Properties.ofFullCopy(Blocks.TORCH).setId(ResourceKey.create(Registries.BLOCK, MiniaturesAPI.rl("sensor_torch_block")));
 
   public static IMiniaturesAPI INSTANCE;
 
