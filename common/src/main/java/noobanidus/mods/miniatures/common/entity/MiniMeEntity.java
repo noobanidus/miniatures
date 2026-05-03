@@ -68,7 +68,7 @@ public class MiniMeEntity extends Monster {
   private static final EntityDataAccessor<Optional<ResolvableProfile>> RESOLVABLE_PROFILE = SynchedEntityData.defineId(MiniMeEntity.class, MiniaturesAPI.getGameProfileSerializer());
 
   public static final EntityDataAccessor<Integer> AGGRO = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.INT);
-  public static final EntityDataAccessor<Byte> NOOB = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.BYTE);
+  public static final EntityDataAccessor<Integer> NOOB = SynchedEntityData.defineId(MiniMeEntity.class, EntityDataSerializers.INT);
 
   private ServerBossEvent bossInfo;
 
@@ -187,7 +187,7 @@ public class MiniMeEntity extends Monster {
     super.defineSynchedData(arg);
     arg.define(RESOLVABLE_PROFILE, Optional.empty());
     arg.define(AGGRO, -1);
-    arg.define(NOOB, (byte) random.nextInt(20));
+    arg.define(NOOB, random.nextInt(20));
 
     // 0: Upside down
     // 1: Floating
@@ -213,7 +213,7 @@ public class MiniMeEntity extends Monster {
   }
 
   public void setNoobVariant(int variant) {
-    entityData.set(NOOB, (byte) variant);
+    entityData.set(NOOB, variant);
   }
 
   public int getAggro() {
@@ -370,7 +370,7 @@ public class MiniMeEntity extends Monster {
           .ifPresent(profile -> compound.put("gameProfile", profile));
     }
 
-    compound.putByte("Noob", entityData.get(NOOB));
+    compound.putInt("Noob", entityData.get(NOOB));
 
     compound.putInt("pickupCooldown", pickupCooldown);
     if (healthBoosted) {
