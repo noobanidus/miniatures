@@ -42,18 +42,6 @@ def getRequiredProperty(name) {
     throw new RuntimeException("The ${name} property is required!")
 }
 
-def getExecOutput(commands) {
-
-    def out = new ByteArrayOutputStream()
-        
-    exec {
-        commandLine commands
-        standardOutput out
-    }
-        
-    return out.toString().trim();
-}
-
 def getDefaultBoolean(name, defaultEnabled = true) {
 
     return project.hasProperty(name) ? project.findProperty(name).toBoolean() : defaultEnabled
@@ -61,11 +49,13 @@ def getDefaultBoolean(name, defaultEnabled = true) {
 
 ext {
 
+    def exec = objects.newInstance(ExecUtils)
+
     getDefaultString = this.&getString
     getDefaultProperty = this.&getProperty
     getRequiredString = this.&getRequiredString
     getRequiredProperty = this.&getRequiredProperty
-    getExecOutput = this.&getExecOutput
     getOptionalString = this.&getOptionalString
     getDefaultBoolean = this.&getDefaultBoolean
+    getExecOutput = exec.&getExecOutput
 }

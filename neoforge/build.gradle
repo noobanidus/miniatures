@@ -13,21 +13,27 @@ dependencies {
     compileOnly(project(':common')) {
         transitive = false
     }
+
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
+    implementation("io.github.llamalad7:mixinextras-neoforge:${rootProject.mixin_extras_version}")
+    compileOnly "maven.modrinth:jade:${rootProject.jade_version}+neoforge"
+    //runtimeOnly "maven.modrinth:jade:${rootProject.jade_version}+neoforge"
+    jarJar(implementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-26.1:${rootProject.resourceful_config_version}")
 }
 publishMods {
     file = tasks.jar.archiveFile
     modLoaders.add("neoforge")
 
     var env = System.getenv()
-
-    def gitRepo = getExecOutput(['git', 'remote', 'get-url', 'origin'])
-    def gitCommit = getExecOutput(['git', 'log', '-n', '1', '--pretty=tformat:%h'])
+    def utils = project.objects.newInstance(ExecUtils)
+    def gitRepo = utils.getExecOutput(['git', 'remote', 'get-url', 'origin'])
+    def gitCommit = utils.getExecOutput(['git', 'log', '-n', '1', '--pretty=tformat:%h'])
     def gitPrevCommit = project.findProperty("git_previous_commit") ?: env["GIT_PREVIOUS_COMMIT"]
 
     var changelogText = ""
 
     if (gitCommit && gitPrevCommit) {
-        changelogText += getExecOutput(['git', 'log', "--pretty=tformat:- %s [(%h)](${gitRepo}/commit/%h)", '' + gitPrevCommit + '..' + gitCommit])
+        changelogText += utils.getExecOutput(['git', 'log', "--pretty=tformat:- %s [(%h)](${gitRepo}/commit/%h)", '' + gitPrevCommit + '..' + gitCommit])
     }
 
     if (project.hasProperty('curseforge_id')) {
@@ -55,11 +61,6 @@ publishMods {
 
 neoForge {
     version = project.neoforge_version
-
-    parchment {
-        minecraftVersion = project.parchment_minecraft_version
-        mappingsVersion = project.parchment_mappings_version
-    }
 
     def atFile = project.file("../common/src/main/resources/META-INF/accesstransformer.cfg")
     if (atFile.exists()) {
@@ -144,7 +145,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
 
-            artifactId project.archivesBaseName
+            artifactId = "{$rootProject.mod_id}-${name}"
             artifact jar
             artifact project.sourcesJar {
                 archiveClassifier.set('sources')

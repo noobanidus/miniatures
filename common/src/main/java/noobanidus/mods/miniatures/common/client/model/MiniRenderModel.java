@@ -1,7 +1,6 @@
 package noobanidus.mods.miniatures.common.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.Util;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,9 +8,11 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.HumanoidArm;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
@@ -27,7 +28,7 @@ public class MiniRenderModel extends HumanoidModel<MiniRenderState> {
   public final ModelPart jacket;
   private final boolean slim;
 
-  public MiniRenderModel(Function<ResourceLocation, RenderType> renderType, ModelPart root, boolean slim) {
+  public MiniRenderModel(Function<Identifier, RenderType> renderType, ModelPart root, boolean slim) {
     super(root, renderType);
     this.slim = slim;
     this.leftSleeve = this.leftArm.getChild("left_sleeve");
@@ -116,17 +117,7 @@ public class MiniRenderModel extends HumanoidModel<MiniRenderState> {
   }
 
   @Override
-  public void setAllVisible(boolean visible) {
-    super.setAllVisible(visible);
-    this.leftSleeve.visible = visible;
-    this.rightSleeve.visible = visible;
-    this.leftPants.visible = visible;
-    this.rightPants.visible = visible;
-    this.jacket.visible = visible;
-  }
-
-  @Override
-  public void translateToHand(HumanoidArm side, PoseStack poseStack) {
+  public void translateToHand(MiniRenderState state, HumanoidArm side, PoseStack poseStack) {
     this.root().translateAndRotate(poseStack);
     ModelPart modelpart = this.getArm(side);
     if (this.slim) {

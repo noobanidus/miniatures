@@ -17,8 +17,6 @@ public class ModelHolder {
   public static MiniMeModel glowingMiniMe;
   public static MiniMeModel glowingMiniMeSlim;
 
-
-
   public static void init(EntityRendererProvider.Context context) {
     miniMe = new MiniMeModel(context.bakeLayer(Layers.MINI_ME), false);
     miniMeSlim = new MiniMeModel(context.bakeLayer(Layers.MINI_ME_SLIM), true);

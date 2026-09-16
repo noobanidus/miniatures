@@ -3,22 +3,24 @@ package noobanidus.mods.miniatures.common.client.renderer.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidArmorModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.numbers.StyledFormat;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,6 +31,7 @@ import net.minecraft.world.scores.ReadOnlyScoreInfo;
 import net.minecraft.world.scores.Scoreboard;
 import noobanidus.mods.miniatures.common.client.ModelHolder;
 import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
+import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.layers.ArrowRenderTypeLayer;
 import noobanidus.mods.miniatures.common.client.renderer.layers.BeeStingerRenderTypeLayer;
 import noobanidus.mods.miniatures.common.client.renderer.layers.ChargedLayer;
@@ -46,8 +49,9 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     this.addLayer(
         new DynamicHumanoidArmorLayer<>(
             this,
-            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)),
-            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR)),
+            ArmorModelSet.bake(
+                ModelLayers.PLAYER_SLIM_ARMOR, context.getModelSet(), part -> new MiniRenderModel(RenderTypes::entityCutout, part, true)
+            ),
             context.getEquipmentRenderer(),
             true
         )
@@ -55,17 +59,17 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     this.addLayer(
         new DynamicHumanoidArmorLayer<>(
             this,
-            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
-            new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),
+            ArmorModelSet.bake(
+                ModelLayers.PLAYER_ARMOR, context.getModelSet(), part -> new MiniRenderModel(RenderTypes::entityCutout, part, false)
+            ),
             context.getEquipmentRenderer(),
             false
         )
     );
-
     this.addLayer(new PlayerItemInHandLayer<>(this));
     this.addLayer(new ChargedLayer<>(this));
     this.addLayer(new ArrowRenderTypeLayer<>(this, context));
-    this.addLayer(new CustomHeadLayer<>(this, context.getModelSet()));
+    this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
     this.addLayer(new WingsLayer<>(this, context.getModelSet(), context.getEquipmentRenderer()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this, context));
   }
@@ -77,51 +81,38 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
   }
 
   @Override
-  protected void renderNameTag(MiniRenderState p_363185_, Component p_117809_, PoseStack p_117810_, MultiBufferSource p_117811_, int p_117812_) {
-    p_117810_.pushPose();
-    if (p_363185_.scoreText != null) {
-      super.renderNameTag(p_363185_, p_363185_.scoreText, p_117810_, p_117811_, p_117812_);
-      p_117810_.translate(0.0F, 9.0F * 1.15F * 0.025F, 0.0F);
-    }
-
-    super.renderNameTag(p_363185_, p_117809_, p_117810_, p_117811_, p_117812_);
-    p_117810_.popPose();
-  }
-
-
-  @Override
   public MiniRenderState createRenderState() {
     return new MiniRenderState();
   }
 
   @Override
-  public ResourceLocation getTextureLocation(MiniRenderState entity) {
-    return entity.skin.texture();
+  public Identifier getTextureLocation(MiniRenderState entity) {
+    return entity.skin.body().texturePath();
   }
 
   @Override
-  public void render(MiniRenderState miniMeEntity, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
+  public void submit(MiniRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
     this.model = ModelHolder.miniMe;
-    boolean shouldBeSlim = miniMeEntity.skin.model() == PlayerSkin.Model.SLIM;
+    boolean shouldBeSlim = state.skin.model() == PlayerModelType.SLIM;
     if (isSlim != shouldBeSlim) {
       isSlim = !isSlim;
     }
     this.model = isSlim ? ModelHolder.miniMeSlim : ModelHolder.miniMe;
-    int noob = miniMeEntity.noobVariant;
+    int noob = state.noobVariant;
     if (noob == 3) {
-      packedLightIn = 15728880;
+      state.lightCoords = 15728880;
       this.model = ModelHolder.ghostlyMiniMe;
       if (isSlim && this.model != ModelHolder.ghostlyMiniMeSlim) {
         this.model = ModelHolder.ghostlyMiniMeSlim;
       }
     } else if (noob == 4) {
-      packedLightIn = 15728880;
+      state.lightCoords = 15728880;
       this.model = ModelHolder.glowingMiniMe;
       if (isSlim && this.model != ModelHolder.glowingMiniMeSlim) {
         this.model = ModelHolder.glowingMiniMeSlim;
       }
     }
-    super.render(miniMeEntity, poseStack, bufferIn, packedLightIn);
+    super.submit(state, poseStack, submitNodeCollector, camera);
   }
 
   @Override

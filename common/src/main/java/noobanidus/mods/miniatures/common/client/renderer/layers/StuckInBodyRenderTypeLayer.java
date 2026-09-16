@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.StuckInBodyLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
@@ -17,10 +17,10 @@ import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
 public abstract class StuckInBodyRenderTypeLayer<M extends MiniRenderModel> extends RenderLayer<MiniRenderState, M> {
   private final Model model;
-  private final ResourceLocation texture;
+  private final Identifier texture;
   private final StuckInBodyLayer.PlacementStyle placementStyle;
 
-  public StuckInBodyRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> arg, Model model, ResourceLocation layer, StuckInBodyLayer.PlacementStyle style) {
+  public StuckInBodyRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> arg, Model model, Identifier layer, StuckInBodyLayer.PlacementStyle style) {
     super(arg);
     this.model = model;
     this.texture = layer;

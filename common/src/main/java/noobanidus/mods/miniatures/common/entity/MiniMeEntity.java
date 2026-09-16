@@ -7,7 +7,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.Util;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -87,7 +86,7 @@ public class MiniMeEntity extends Monster {
   private CompletableFuture<?> currentFuture = null;
 
   static CompletableFuture<Optional<GameProfile>> fetchProfileByName(String name, Services services) {
-    return services.profileCache()
+    return services.profileResolver().fetchByName(name).
         .getAsync(name)
         .exceptionally(
             throwable -> {

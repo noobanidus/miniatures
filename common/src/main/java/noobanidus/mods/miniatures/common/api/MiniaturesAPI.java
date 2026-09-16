@@ -3,8 +3,8 @@ package noobanidus.mods.miniatures.common.api;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -88,8 +88,8 @@ public class MiniaturesAPI {
     return INSTANCE.getGameProfileSerializer();
   }
 
-  public static ResourceLocation rl(String path) {
-    return ResourceLocation.fromNamespaceAndPath(MODID, path);
+  public static Identifier rl(String path) {
+    return Identifier.fromNamespaceAndPath(MODID, path);
   }
 
   public static boolean canEntityDestroy(ServerLevel level, BlockPos blockPos, Mob entity) {

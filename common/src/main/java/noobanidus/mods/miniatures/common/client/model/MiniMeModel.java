@@ -1,8 +1,10 @@
 package noobanidus.mods.miniatures.common.client.model;
 
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
 import java.util.function.Function;
@@ -10,10 +12,10 @@ import java.util.function.Function;
 public class MiniMeModel extends MiniRenderModel {
 
   public MiniMeModel(ModelPart root, boolean slim) {
-    super(RenderType::entityTranslucent, root, slim);
+    super(RenderTypes::entityTranslucent, root, slim);
   }
 
-  public MiniMeModel(Function<ResourceLocation, RenderType> renderTypeIn, ModelPart root, boolean slim) {
+  public MiniMeModel(Function<Identifier, RenderType> renderTypeIn, ModelPart root, boolean slim) {
     super(renderTypeIn, root, slim);
   }
 
@@ -33,11 +35,5 @@ public class MiniMeModel extends MiniRenderModel {
       this.leftArm.zRot = 0.3f;
       this.rightArm.zRot = -0.3f;
     }
-/*    this.hat.copyFrom(this.head);
-    this.jacket.copyFrom(this.body);
-    this.leftSleeve.copyFrom(this.leftArm);
-    this.rightSleeve.copyFrom(this.rightArm);
-    this.leftPants.copyFrom(this.leftLeg);
-    this.rightPants.copyFrom(this.rightLeg);*/
   }
 }

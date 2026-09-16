@@ -2,14 +2,14 @@ package noobanidus.mods.miniatures.common.client.renderer.layers;
 
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EnergySwirlLayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import noobanidus.mods.miniatures.common.client.ModelHolder;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
 @SuppressWarnings("unchecked")
 public class ChargedLayer<M extends MiniRenderModel> extends EnergySwirlLayer<MiniRenderState, M> {
-  private static final ResourceLocation POWER_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
+  private static final Identifier POWER_LOCATION = Identifier.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
 
   public ChargedLayer(RenderLayerParent<MiniRenderState, M> p_i50947_1_) {
     super(p_i50947_1_);
@@ -19,7 +19,7 @@ public class ChargedLayer<M extends MiniRenderModel> extends EnergySwirlLayer<Mi
     return p_225634_1_ * 0.01F;
   }
 
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return POWER_LOCATION;
   }
 

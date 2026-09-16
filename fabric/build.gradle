@@ -1,73 +1,41 @@
 plugins {
-    id 'fabric-loom' version '1.10-SNAPSHOT'
-}
-
-repositories {
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "ParchmentMC"
-                url = "https://maven.parchmentmc.org"
-            }
-        }
-        filter {
-            includeGroupAndSubgroups("org.parchmentmc")
-        }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                url = "https://maven.terraformersmc.com/releases"
-            }
-        }
-        filter {
-            includeGroupAndSubgroups("com.terraformersmc")
-        }
-    }
+    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings(loom.layered {
-        it.officialMojangMappings()
-        it.parchment("org.parchmentmc.data:parchment-${project.parchment_minecraft_version}:${project.parchment_mappings_version}@zip")
-    })
     compileOnly(project.project(":common")) {
         transitive = false
     }
 
-    modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    // COMPAT
-    modCompileOnly("com.terraformersmc:modmenu:${project.mod_menu_version}") {
-        transitive = false
-    }
-    modLocalRuntime("com.terraformersmc:modmenu:${project.mod_menu_version}") {
-        transitive = false
-    }
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api_port}"
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
+    implementation("io.github.llamalad7:mixinextras-fabric:${rootProject.mixin_extras_version}")
+
+    include(implementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-26.1:${rootProject.resourceful_config_version}")
 }
 
 publishMods {
-    file = tasks.remapJar.archiveFile
+    file = tasks.jar.archiveFile
     modLoaders.add("fabric")
 
     var env = System.getenv()
 
-    def gitRepo = getExecOutput(['git', 'remote', 'get-url', 'origin'])
-    def gitCommit = getExecOutput(['git', 'log', '-n', '1', '--pretty=tformat:%h'])
+    def utils = project.objects.newInstance(ExecUtils)
+    def gitRepo = utils.getExecOutput(['git', 'remote', 'get-url', 'origin'])
+    def gitCommit = utils.getExecOutput(['git', 'log', '-n', '1', '--pretty=tformat:%h'])
     def gitPrevCommit = project.findProperty("git_previous_commit") ?: env["GIT_PREVIOUS_COMMIT"]
 
     var changelogText = ""
 
     if (gitCommit && gitPrevCommit) {
-        changelogText += getExecOutput(['git', 'log', "--pretty=tformat:- %s [(%h)](${gitRepo}/commit/%h)", '' + gitPrevCommit + '..' + gitCommit])
+        changelogText += utils.getExecOutput(['git', 'log', "--pretty=tformat:- %s [(%h)](${gitRepo}/commit/%h)", '' + gitPrevCommit + '..' + gitCommit])
     }
 
     def uploadDependencies = [
-            "fabric-api": true,
-            "forge-config-api-port": true
+            "fabric-api": true
     ]
 
     if (project.hasProperty('curseforge_id')) {
@@ -171,15 +139,15 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
 
-            artifactId project.archivesBaseName
-            artifact remapJar
+            artifactId = "${rootProject.mod_id}-${name}"
+            artifact jar
             artifact project.sourcesJar {
                 archiveClassifier.set('sources')
             }
 
             pom {
                 name = 'Miniatures'
-                description = 'Friendly loot for everyone.'
+                description = 'Sublimiter torture simulator'
                 url = 'https://github.com/Noobanidus/Miniatures'
 
                 scm {

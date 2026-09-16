@@ -27,17 +27,10 @@ dependencies {
     compileOnly "net.fabricmc:sponge-mixin:${project.mixin_version}"
     compileOnly "io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"
     annotationProcessor "io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"
-
-    compileOnly ("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${forge_config_api_port}") { transitive false }
 }
 
 neoForge {
     neoFormVersion = project.neoform_version
-
-    parchment {
-        minecraftVersion = project.parchment_minecraft_version
-        mappingsVersion = project.parchment_mappings_version
-    }
 
     def atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
     if (atFile.exists()) {
@@ -68,7 +61,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
 
-            artifactId project.archivesBaseName
+            artifactId = "${rootProject.mod_id}-${name}"
             artifact jar
             artifact project.sourcesJar {
                 archiveClassifier.set('sources')
@@ -76,7 +69,7 @@ publishing {
 
             pom {
                 name = 'Miniatures'
-                description = 'Friendly loot for everyone.'
+                description = 'Sublimiter torture simulator!'
                 url = 'https://github.com/Noobanidus/Miniatures'
 
                 scm {
