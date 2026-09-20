@@ -35,7 +35,7 @@ public class CommandMiniatures {
   public static LiteralArgumentBuilder<CommandSourceStack> validateBuilder(LiteralArgumentBuilder<CommandSourceStack> builder) {
     builder.executes(c -> {
       c.getSource().getLevel().getEntities(EntityTypeTest.forClass(MiniMeEntity.class), e -> true).forEach(e -> {
-        Optional<ResolvableProfile> profile = e.getGameProfile();
+        Optional<ResolvableProfile> profile = e.getResolvableProfile();
         profile.ifPresent(
             innerProfile -> {
               if (!innerProfile.isResolved()) {

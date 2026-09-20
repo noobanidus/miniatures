@@ -19,7 +19,7 @@ public class ClientValidate {
     }
     if (instance.player.level() instanceof ClientLevel level) {
       level.entityStorage.getEntityGetter().get(EntityTypeTest.forClass(MiniMeEntity.class), e -> {
-        Optional<ResolvableProfile> profile = e.getGameProfile();
+        Optional<ResolvableProfile> profile = e.getResolvableProfile();
         profile.ifPresentOrElse(
             innerProfile -> {
               if (!innerProfile.isResolved()) {

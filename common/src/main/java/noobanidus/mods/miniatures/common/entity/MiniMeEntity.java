@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.StringUtil;
+import net.minecraft.util.Util;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -86,7 +87,7 @@ public class MiniMeEntity extends Monster {
   private CompletableFuture<?> currentFuture = null;
 
   static CompletableFuture<Optional<GameProfile>> fetchProfileByName(String name, Services services) {
-    return services.profileResolver().fetchByName(name).
+    return services.profileResolver().fetchByName(name)
         .getAsync(name)
         .exceptionally(
             throwable -> {
@@ -156,7 +157,7 @@ public class MiniMeEntity extends Monster {
     setPersistenceRequired();
   }
 
-  public Optional<ResolvableProfile> getGameProfile() {
+  public Optional<ResolvableProfile> getResolvableProfile() {
     return entityData.get(RESOLVABLE_PROFILE);
   }
 
@@ -184,7 +185,7 @@ public class MiniMeEntity extends Monster {
   @Override
   protected void defineSynchedData(SynchedEntityData.Builder arg) {
     super.defineSynchedData(arg);
-    arg.define(RESOLVABLE_PROFILE, Optional.empty());
+    arg.define(RESOLVABLE_PROFILE, Optional.of(ResolvableProfile.createUnresolved("steve")));
     arg.define(AGGRO, -1);
     arg.define(NOOB, random.nextInt(20));
 
@@ -335,7 +336,7 @@ public class MiniMeEntity extends Monster {
         this.bossInfo.setName(name);
       }
 
-      Optional<ResolvableProfile> opt = getGameProfile();
+      Optional<ResolvableProfile> opt = getResolvableProfile();
       if ((isBeingLoaded && opt.isEmpty()) || (isBeingLoaded && opt.isEmpty() && currentFuture == null) || (isBeingLoaded && opt.isEmpty() && currentFuture != null && currentFuture.isDone()) || (isBeingLoaded && currentFuture != null && currentFuture.isCancelled()) || !isBeingLoaded) {
         String username = name.getString().toLowerCase(Locale.ROOT);
         if (StringUtil.isValidPlayerName(username) && !NullProfileCache.isCachedNull(username, null)) {
@@ -363,7 +364,7 @@ public class MiniMeEntity extends Monster {
     super.addAdditionalSaveData(compound);
 
     compound.putBoolean("gameProfileExists", entityData.get(RESOLVABLE_PROFILE).isPresent());
-    if (getGameProfile().isPresent()) {
+    if (getResolvableProfile().isPresent()) {
       ResolvableProfile.CODEC.encodeStart(NbtOps.INSTANCE, entityData.get(RESOLVABLE_PROFILE).get())
           .resultOrPartial(MiniaturesAPI.LOG::error)
           .ifPresent(profile -> compound.put("gameProfile", profile));
@@ -432,7 +433,7 @@ public class MiniMeEntity extends Monster {
           .resultOrPartial(o -> MiniaturesAPI.LOG.error("Failed to parse game profile: {}", o)).orElse(null);
     }
 
-    ResolvableProfile currentProfile = getGameProfile().orElse(null);
+    ResolvableProfile currentProfile = getResolvableProfile().orElse(null);
 
     if (incomingProfile != null && currentProfile != null && (!compareOptional(incomingProfile.name(), currentProfile.name(), String::isBlank) || !compareOptional(incomingProfile.id(), currentProfile.id(), Util.NIL_UUID::equals))) {
       // Different profile than currently set

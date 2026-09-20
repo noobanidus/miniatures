@@ -69,6 +69,6 @@ public interface IMiniaturesAPI {
   void sendValidatePacket(ServerPlayer player);
 
   default boolean isMini (Entity entity) {
-    return entity.getType().is(MiniTags.Entity.MINI);
+    return entity.is(MiniTags.Entity.MINI);
   }
 }

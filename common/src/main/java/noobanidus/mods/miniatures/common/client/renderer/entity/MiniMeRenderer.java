@@ -193,7 +193,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
   }
 
   public static PlayerSkin getSkin(MiniMeEntity entity) {
-    return entity.getGameProfile().map(resolvableProfile -> Minecraft.getInstance().getSkinManager()
+    return entity.getResolvableProfile().map(resolvableProfile -> Minecraft.getInstance().getSkinManager()
         .getInsecureSkin(resolvableProfile.gameProfile())).orElseGet(DefaultPlayerSkin::getDefaultSkin);
   }
 }

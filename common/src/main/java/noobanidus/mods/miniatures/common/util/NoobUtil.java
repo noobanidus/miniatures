@@ -10,8 +10,8 @@ public class NoobUtil {
   private static final UUID noobanidus = UUID.fromString("9902e63b-d02d-4689-8c5c-9653f45cc268");
 
   public static boolean isNoob(MiniMeEntity entity) {
-    if (entity.getGameProfile().isPresent()) {
-      UUID profileId = entity.getGameProfile().get().gameProfile().getId();
+    if (entity.getResolvableProfile().isPresent()) {
+      UUID profileId = entity.getResolvableProfile().get().gameProfile().getId();
       return profileId != null && (profileId.equals(nooblybear) || profileId.equals(noobanidus));
     }
 

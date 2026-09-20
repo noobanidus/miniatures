@@ -79,7 +79,7 @@ public class PickupPlayerGoal extends Goal {
     if (!MiniaturesAPI.getOwnerRider()) {
       return true;
     }
-    final ResolvableProfile owner = minime.getGameProfile().orElse(null);
+    final ResolvableProfile owner = minime.getResolvableProfile().orElse(null);
     return owner != null && player != null && player.getGameProfile().getId().equals(owner.gameProfile().getId());
   }
 }
