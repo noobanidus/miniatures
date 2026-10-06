@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.function.Function;
 
 public class MiniRenderModel extends HumanoidModel<MiniRenderState> {
+  private static final float BABY_HEAD_SCALE = 1.5F / 2.0F; // scaleHead = true, babyHeadScale = 2
+  private static final float BABY_HEAD_Y_OFFSET = 16.0F;
+  private static final float BABY_BODY_SCALE = 1.0F / 2.0F; // babyBodyScale = 2
+  private static final float BABY_BODY_Y_OFFSET = 24.0F;
+
   private final List<ModelPart> bodyParts;
   public final ModelPart leftSleeve;
   public final ModelPart rightSleeve;
@@ -101,19 +106,40 @@ public class MiniRenderModel extends HumanoidModel<MiniRenderState> {
   }
 
   public void setupAnim(MiniRenderState p_365286_) {
-    boolean flag = !p_365286_.isSpectator;
+    boolean flag = true;
     this.body.visible = flag;
     this.rightArm.visible = flag;
     this.leftArm.visible = flag;
     this.rightLeg.visible = flag;
     this.leftLeg.visible = flag;
-    this.hat.visible = p_365286_.showHat;
-    this.jacket.visible = p_365286_.showJacket;
-    this.leftPants.visible = p_365286_.showLeftPants;
-    this.rightPants.visible = p_365286_.showRightPants;
-    this.leftSleeve.visible = p_365286_.showLeftSleeve;
-    this.rightSleeve.visible = p_365286_.showRightSleeve;
+    this.hat.visible = true;
+    this.jacket.visible = true;
+    this.leftPants.visible = true;
+    this.rightPants.visible = true;
+    this.leftSleeve.visible = true;
+    this.rightSleeve.visible = true;
     super.setupAnim(p_365286_);
+    if (p_365286_.isBaby) {
+      applyBabyProportions();
+    }
+  }
+
+  protected void applyBabyProportions() {
+    scalePart(this.head, BABY_HEAD_Y_OFFSET, BABY_HEAD_SCALE);
+    scalePart(this.body, BABY_BODY_Y_OFFSET, BABY_BODY_SCALE);
+    scalePart(this.leftArm, BABY_BODY_Y_OFFSET, BABY_BODY_SCALE);
+    scalePart(this.rightArm, BABY_BODY_Y_OFFSET, BABY_BODY_SCALE);
+    scalePart(this.leftLeg, BABY_BODY_Y_OFFSET, BABY_BODY_SCALE);
+    scalePart(this.rightLeg, BABY_BODY_Y_OFFSET, BABY_BODY_SCALE);
+  }
+
+  private static void scalePart(ModelPart part, float yOffset, float scale) {
+    part.x *= scale;
+    part.y = (part.y + yOffset) * scale;
+    part.z *= scale;
+    part.xScale *= scale;
+    part.yScale *= scale;
+    part.zScale *= scale;
   }
 
   @Override
@@ -121,7 +147,7 @@ public class MiniRenderModel extends HumanoidModel<MiniRenderState> {
     this.root().translateAndRotate(poseStack);
     ModelPart modelpart = this.getArm(side);
     if (this.slim) {
-      float f = 0.5F * (side == HumanoidArm.RIGHT ? 1 : -1);
+      float f = 0.5F * (side == HumanoidArm.RIGHT ? 1 : -1) * modelpart.xScale;
       modelpart.x += f;
       modelpart.translateAndRotate(poseStack);
       modelpart.x -= f;

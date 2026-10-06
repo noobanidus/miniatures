@@ -22,6 +22,25 @@ public class ModLanguageProvider extends LanguageProvider {
     addEntityType(ModEntities.MINIME, "Minime");
 
     add("miniatures.networking.client_validate.failed", "Failed to validate client data: %s");
+
+    add("miniatures.config.title", "Miniatures");
+    add("miniatures.config.desc", "Configuration options for Miniatures.");
+
+    addConfig("hostile", "Hostility", "If true, miniatures are automatically hostile to players. [default: false]");
+    addConfig("non_player_immune", "Non-Player Damage Immunity", "If true, miniatures are immune to any damage whose source is not directly (or indirectly) a player [default: true]");
+    addConfig("breaks_blocks", "Block breaking", "If true, miniatures will attempt to break blocks that are tagged as such. [default: true]");
+    addConfig("distraction_chance", "Distraction chance", "Chance per tick that a miniature will be distracted from breaking a block. [default 0.05]");
+    addConfig("base_run_delay", "Run delay", "The minimum delay in ticks before a miniature will begin running towards a block that it can break.");
+    addConfig("random_run_delay", "Random run delay", "The maximum value that can be added to the run delay.");
+    addConfig("destroys_blocks", "Destroys blocks", "Whether or not miniatures will destroy (break without dropping) blocks in the default block break tag.");
+    addConfig("pickup_goal", "Pick-up goal", "Whether or not miniatures will attempt to pick up players.");
+    addConfig("owner_rider", "Owner Rider", "If true, miniatures will only attempt to pick up their equivalent player owner.");
+    addConfig("skip_null_check", "Skip null check", "If true, the null profile cache isn't consulted, which means skin loading may be delayed.");
+  }
+
+  protected void addConfig (String section, String title, String description) {
+    add("miniatures.config." + section, title);
+    add("miniatures.config." + section + ".desc", description);
   }
 
   // Generate upside-down if the locale is en_ud

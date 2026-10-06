@@ -2,7 +2,6 @@ package noobanidus.mods.miniatures.common.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.PlayerSkinRenderCache;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -11,15 +10,19 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
-import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.numbers.StyledFormat;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -33,10 +36,7 @@ import net.minecraft.world.scores.Scoreboard;
 import noobanidus.mods.miniatures.common.client.ModelHolder;
 import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
-import noobanidus.mods.miniatures.common.client.renderer.layers.ArrowRenderTypeLayer;
-import noobanidus.mods.miniatures.common.client.renderer.layers.BeeStingerRenderTypeLayer;
-import noobanidus.mods.miniatures.common.client.renderer.layers.ChargedLayer;
-import noobanidus.mods.miniatures.common.client.renderer.layers.DynamicHumanoidArmorLayer;
+import noobanidus.mods.miniatures.common.client.renderer.layers.*;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 import noobanidus.mods.miniatures.common.entity.MaxiMeEntity;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
@@ -68,7 +68,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
             false
         )
     );
-    this.addLayer(new PlayerItemInHandLayer<>(this));
+    this.addLayer(new MiniItemInHandLayer(this));
     this.addLayer(new ChargedLayer<>(this));
     this.addLayer(new ArrowRenderTypeLayer<>(this, context));
     this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
@@ -115,7 +115,50 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
         this.model = ModelHolder.glowingMiniMeSlim;
       }
     }
-    super.submit(state, poseStack, submitNodeCollector, camera);
+
+    poseStack.pushPose();
+    if (state.hasPose(Pose.SLEEPING)) {
+      Direction bedOrientation = state.bedOrientation;
+      if (bedOrientation != null) {
+        float headOffset = state.eyeHeight - 0.1F;
+        poseStack.translate(-bedOrientation.getStepX() * headOffset, 0.0F, -bedOrientation.getStepZ() * headOffset);
+      }
+    }
+
+    float scale = state.scale;
+    poseStack.scale(scale, scale, scale);
+    this.setupRotations(state, poseStack, state.bodyRot, scale);
+    poseStack.scale(-1.0F, -1.0F, 1.0F);
+    this.scale(state, poseStack);
+    poseStack.translate(0.0F, -1.501F, 0.0F);
+    boolean isBodyVisible = this.isBodyVisible(state);
+    boolean forceTransparent = !isBodyVisible && !state.isInvisibleToPlayer;
+    RenderType renderType = this.getRenderType(state, isBodyVisible, forceTransparent, state.appearsGlowing());
+    if (renderType != null) {
+      int overlayCoords = getOverlayCoords(state, this.getWhiteOverlayProgress(state));
+      int baseColor = forceTransparent ? 654311423 : -1;
+      int tintedColor = ARGB.multiply(baseColor, this.getModelTint(state));
+      submitNodeCollector.submitModel(
+          this.model, state, poseStack, renderType, state.lightCoords, overlayCoords, tintedColor, null, state.outlineColor, null
+      );
+    }
+
+    if (this.shouldRenderLayers(state) && !this.layers.isEmpty()) {
+      this.model.setupAnim(state);
+
+      for (RenderLayer<MiniRenderState, MiniMeModel> layer : this.layers) {
+        layer.submit(poseStack, submitNodeCollector, state.lightCoords, state, state.yRot, state.xRot);
+      }
+    }
+
+    poseStack.popPose();
+    if (state.leashStates != null) {
+      for (EntityRenderState.LeashState leashState : state.leashStates) {
+        submitNodeCollector.submitLeash(poseStack, leashState);
+      }
+    }
+
+    this.submitNameDisplay(state, poseStack, submitNodeCollector, camera);
   }
 
   @Override
@@ -142,28 +185,27 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
   }
 
   @Override
+  protected boolean shouldShowName(MiniMeEntity entity, double distanceToCameraSq) {
+    return super.shouldShowName(entity, distanceToCameraSq)
+        && (entity.shouldShowName() || entity.hasCustomName() && entity == this.entityRenderDispatcher.crosshairPickEntity);
+  }
+
+  @Override
+  protected float getShadowRadius(MiniRenderState state) {
+    return super.getShadowRadius(state) * state.ageScale;
+  }
+
+  @Override
   public void extractRenderState(MiniMeEntity entity, MiniRenderState state, float someFloatValue) {
     super.extractRenderState(entity, state, someFloatValue);
     state.isPowered = entity.isPowered();
     state.bbHeight = entity.getBbHeight() + 0.25;
     state.noobVariant = entity.getNoobVariant();
     HumanoidMobRenderer.extractHumanoidRenderState(entity, state, someFloatValue, this.itemModelResolver);
-/*        state.leftArmPose = PlayerRenderer.getArmPose(entity, HumanoidArm.LEFT);
-        state.rightArmPose = PlayerRenderer.getArmPose(entity, HumanoidArm.RIGHT);*/
     state.isMaxi = entity instanceof MaxiMeEntity;
     state.skin = getSkin(entity); //entity.getSkin();
     state.arrowCount = entity.getArrowCount();
     state.stingerCount = entity.getStingerCount();
-    state.isSpectator = entity.isSpectator();
-    state.showHat = true; //entity.isModelPartShown(PlayerModelPart.HAT);
-    state.showJacket = true; //entity.isModelPartShown(PlayerModelPart.JACKET);
-    state.showLeftPants = true; //entity.isModelPartShown(PlayerModelPart.LEFT_PANTS_LEG);
-    state.showRightPants = true; //entity.isModelPartShown(PlayerModelPart.RIGHT_PANTS_LEG);
-    state.showLeftSleeve = true; //entity.isModelPartShown(PlayerModelPart.LEFT_SLEEVE);
-    state.showRightSleeve = true; //entity.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE);
-    state.showCape = true; //entity.isModelPartShown(PlayerModelPart.CAPE);
-/*    PlayerRenderer.extractFlightData(entity, state, entity);
-    PlayerRenderer.extractCapeState(entity, state, entity);*/
     if (state.distanceToCameraSq < 100.0) {
       Scoreboard scoreboard = entity.level().getScoreboard();
       Objective objective = scoreboard.getDisplayObjective(DisplaySlot.BELOW_NAME);
@@ -179,8 +221,6 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
       state.scoreText = null;
     }
 
-    state.parrotOnLeftShoulder = null; /*getParrotOnShoulder(entity, true);*/
-    state.parrotOnRightShoulder = null; //getParrotOnShoulder(entity, false);
     state.id = entity.getId();
 /*        state.name = entity.getGameProfile().ifPresent(o ->
             if (o.)).flatMap(GameProfile::getName).orElse("Minime");*/

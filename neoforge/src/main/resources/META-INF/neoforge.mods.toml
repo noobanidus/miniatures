@@ -13,9 +13,9 @@ license="https://github.com/noobanidus/miniatures/blob/1.16/LICENSE"
 [[dependencies.miniatures]]
     modId="minecraft"
     type="required"
-    versionRange="[1.21.5,)"
+    versionRange="[26.1.2,26.2)"
 
  [[dependencies.miniatures]]
     modId="neoforge"
     type="required"
-    versionRange="[21.5,)"
+    versionRange="[26.1,)"

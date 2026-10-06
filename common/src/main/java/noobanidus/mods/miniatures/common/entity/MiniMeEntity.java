@@ -154,7 +154,7 @@ public class MiniMeEntity extends Monster {
     super.defineSynchedData(arg);
     arg.define(RESOLVABLE_PROFILE, ResolvableProfile.createUnresolved("steve"));
     arg.define(AGGRO, -1);
-    arg.define(NOOB, random.nextInt(20));
+    arg.define(NOOB, -1);
 
     // 0: Upside down
     // 1: Floating
@@ -169,7 +169,7 @@ public class MiniMeEntity extends Monster {
 
   @Override
   public float getAgeScale() {
-    return super.getAgeScale();
+    return 1f;
   }
 
   public int getNoobVariant() {
@@ -356,17 +356,12 @@ public class MiniMeEntity extends Monster {
   public void readAdditionalSaveData(ValueInput tag) {
     super.readAdditionalSaveData(tag);
     this.pickupCooldown = tag.getIntOr("pickupCooldown", 0);
-    this.setNoobVariant(tag.getIntOr("Noob", 0));
-    this.setAggro(tag.getIntOr("Hostile", 0));
-  }
-
-  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  private static <T> boolean compareOptional(Optional<T> a, Optional<T> b, Predicate<T> isEmptyOrNil) {
-    if (a.isPresent() && b.isPresent()) {
-      return isEmptyOrNil.test(a.get()) && isEmptyOrNil.test(b.get());
-    } else {
-      return a.isEmpty() && b.isEmpty();
+    var noobVariant = tag.getIntOr("Noob", -1);
+    if (noobVariant == -1) {
+      noobVariant = random.nextInt(10);
     }
+    this.setNoobVariant(noobVariant);
+    this.setAggro(tag.getIntOr("Hostile", 0));
   }
 
   @Override
