@@ -108,9 +108,9 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
       if (this.breakingTime > 0) {
         Vec3 vector3d = this.entity.getDeltaMovement();
         this.entity.setDeltaMovement(vector3d.x, 0.3D, vector3d.z);
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
           double d0 = 0.08D;
-          ((ServerLevel) world).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.EGG)), (double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.7D, (double) blockpos1.getZ() + 0.5D, 3, ((double) random.nextFloat() - 0.5D) * 0.08D, ((double) random.nextFloat() - 0.5D) * 0.08D, ((double) random.nextFloat() - 0.5D) * 0.08D, 0.15F);
+          ((ServerLevel) world).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, Items.EGG), (double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.7D, (double) blockpos1.getZ() + 0.5D, 3, ((double) random.nextFloat() - 0.5D) * 0.08D, ((double) random.nextFloat() - 0.5D) * 0.08D, ((double) random.nextFloat() - 0.5D) * 0.08D, 0.15F);
         }
       }
 
@@ -124,7 +124,7 @@ public class MiniBreakBlockGoal extends MoveToBlockGoal {
 
       if (this.breakingTime > 60) {
         world.destroyBlock(blockpos1, !MiniaturesAPI.getDestroysBlocks(), this.mob);
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
           for (int i = 0; i < 20; ++i) {
             double d3 = random.nextGaussian() * 0.02D;
             double d1 = random.nextGaussian() * 0.02D;

@@ -19,15 +19,10 @@ public class ClientValidate {
     }
     if (instance.player.level() instanceof ClientLevel level) {
       level.entityStorage.getEntityGetter().get(EntityTypeTest.forClass(MiniMeEntity.class), e -> {
-        Optional<ResolvableProfile> profile = e.getResolvableProfile();
-        profile.ifPresentOrElse(
-            innerProfile -> {
-              if (!innerProfile.isResolved()) {
-                MiniaturesAPI.LOG.warn("Unresolved profile for {}: {}", e, innerProfile);
-              }
-            }, () -> {
-              MiniaturesAPI.LOG.warn("No profile for {}", e);
-            });
+        ResolvableProfile innerProfile = e.getResolvableProfile();
+        if (!(innerProfile instanceof ResolvableProfile.Dynamic)) {
+          MiniaturesAPI.LOG.warn("Unresolved profile for {}: {}", e, innerProfile);
+        }
         return AbortableIterationConsumer.Continuation.CONTINUE;
       });
     }

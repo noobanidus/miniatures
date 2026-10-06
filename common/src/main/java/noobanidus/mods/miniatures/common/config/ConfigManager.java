@@ -1,76 +1,85 @@
 package noobanidus.mods.miniatures.common.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import com.teamresourceful.resourcefulconfig.api.annotations.Comment;
+import com.teamresourceful.resourcefulconfig.api.annotations.Config;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigInfo;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigOption;
+import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
+import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 
-public class ConfigManager {
-  private static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
+@Config("miniatures-common")
+@ConfigInfo(
+    title = "Miniatures",
+    titleTranslation = "miniatures.config.title",
+    description = "Options relating to miniatures",
+    descriptionTranslation = "miniatures.config.desc"
+)
+public final class ConfigManager {
+  private static Configurator configurator;
 
-  public static final ModConfigSpec COMMON_CONFIG;
-
-  private static final ModConfigSpec.BooleanValue HOSTILE;
-  private static final ModConfigSpec.BooleanValue IMMUNE;
-  private static final ModConfigSpec.BooleanValue DESTROYS_BLOCKS;
-  private static final ModConfigSpec.BooleanValue BREAKS_BLOCKS;
-  private static final ModConfigSpec.BooleanValue PICKUP_GOAL;
-  private static final ModConfigSpec.BooleanValue OWNER_RIDER;
-  private static final ModConfigSpec.DoubleValue DISTRACTION_CHANCE;
-  private static final ModConfigSpec.IntValue BASE_RUN_DELAY;
-  private static final ModConfigSpec.IntValue RANDOM_RUN_DELAY;
-  private static final ModConfigSpec.BooleanValue SKIP_NULL_CHECK;
-
-  static {
-    COMMON_BUILDER.comment("options relating to miniatures").push("miniatures");
-    HOSTILE = COMMON_BUILDER.comment("whether or not miniatures are hostile to players").define("hostile", false);
-    IMMUNE = COMMON_BUILDER.comment("whether or not miniatures are immune to damage that does not originate from a player").define("non_player_immune", true);
-    BREAKS_BLOCKS = COMMON_BUILDER.comment("whether or not the miniatures will break blocks in the default tag (miniatures:break_blocks)").define("breaks_blocks", true);
-    DISTRACTION_CHANCE = COMMON_BUILDER.comment("the percentage chance per tick that a miniature will get distracted from breaking a block (0 for no distraction)").defineInRange("distraction_chance", 0.05, 0, Double.MAX_VALUE);
-    BASE_RUN_DELAY = COMMON_BUILDER.comment("the minimum delay in ticks before a miniature begins running to a block (200)").defineInRange("base_run_delay", 200, 0, Integer.MAX_VALUE);
-    RANDOM_RUN_DELAY = COMMON_BUILDER.comment("the maximum value (0 to value-1) added to the run delay (200)").defineInRange("random_run_delay", 200, 0, Integer.MAX_VALUE);
-    DESTROYS_BLOCKS = COMMON_BUILDER.comment("whether blocks in the default tag (miniatures:break_blocks) will be destroyed (true) or instead dropped when broken (false)").define("destroys_blocks", false);
-    PICKUP_GOAL = COMMON_BUILDER.comment("whether or not non-hostile miniatures will try to pick up players").define("pickup_goal", true);
-    OWNER_RIDER = COMMON_BUILDER.comment("whether or not only the owner entity of the miniature will attempt to pick up a player, or whether it will pick up any player").define("owner_rider", false);
-    SKIP_NULL_CHECK = COMMON_BUILDER.comment("whether or the null profile cache should be consulted; setting this to false may cause lag when miniatures with non-existent skins are spawned").define("skip_null_check", false);
-    COMMON_BUILDER.pop();
-    COMMON_CONFIG = COMMON_BUILDER.build();
+  public static Configurator getConfigurator() {
+    if (configurator == null) {
+      configurator = new Configurator(MiniaturesAPI.MODID);
+    }
+    return configurator;
   }
 
-  public static boolean getHostile() {
-    return HOSTILE.get();
+  public static void register() {
+    getConfigurator().register(ConfigManager.class);
   }
 
-  public static boolean getImmune() {
-    return IMMUNE.get();
-  }
+  @ConfigEntry(id = "hostile", translation = "miniatures.config.hostile")
+  @Comment(value = "Whether or not miniatures are hostile to players. [default: false]", translation = "miniatures.config.hostile.desc")
+  public static boolean hostile = false;
 
-  public static boolean getDestroysBlocks() {
-    return DESTROYS_BLOCKS.get();
-  }
+  @ConfigEntry(id = "non_player_immune", translation = "miniatures.config.non_player_immune")
+  @Comment(value = "Whether or not miniatures are immune to damage that does not originate from a player. [default: true]", translation = "miniatures.config.non_player_immune.desc")
+  public static boolean nonPlayerImmune = true;
 
-  public static boolean getBreaksBlocks() {
-    return BREAKS_BLOCKS.get();
-  }
+  @ConfigEntry(id = "breaks_blocks", translation = "miniatures.config.breaks_blocks")
+  @Comment(value = "Whether or not miniatures will break blocks in the default tag (miniatures:break_blocks). [default: true]", translation = "miniatures.config.breaks_blocks.desc")
+  public static boolean breaksBlocks = true;
 
-  public static boolean getDoesPickup() {
-    return PICKUP_GOAL.get();
-  }
+  @ConfigEntry(id = "distraction_chance", translation = "miniatures.config.distraction_chance")
+  @Comment(value = "The percentage chance per tick that a miniature will get distracted from breaking a block (0 for no distraction). [default: 0.05]", translation = "miniatures.config.distraction_chance.desc")
+  @ConfigOption.Range(min = 0, max = Double.MAX_VALUE)
+  public static double distractionChance = 0.05;
 
-  public static boolean getOwnerRider() {
-    return OWNER_RIDER.get();
-  }
+  @ConfigEntry(id = "base_run_delay", translation = "miniatures.config.base_run_delay")
+  @Comment(value = "The minimum delay in ticks before a miniature begins running to a block. [default: 200]", translation = "miniatures.config.base_run_delay.desc")
+  @ConfigOption.Range(min = 0, max = Integer.MAX_VALUE)
+  public static int baseRunDelay = 200;
 
-  public static int getRandomRunDelay() {
-    return RANDOM_RUN_DELAY.get();
-  }
+  @ConfigEntry(id = "random_run_delay", translation = "miniatures.config.random_run_delay")
+  @Comment(value = "The maximum value (0 to value-1) added to the run delay. [default: 200]", translation = "miniatures.config.random_run_delay.desc")
+  @ConfigOption.Range(min = 0, max = Integer.MAX_VALUE)
+  public static int randomRunDelay = 200;
 
-  public static int getBaseRunDelay() {
-    return BASE_RUN_DELAY.get();
-  }
+  @ConfigEntry(id = "destroys_blocks", translation = "miniatures.config.destroys_blocks")
+  @Comment(value = "Whether blocks in the default tag (miniatures:break_blocks) are destroyed (true) or dropped when broken (false). [default: false]", translation = "miniatures.config.destroys_blocks.desc")
+  public static boolean destroysBlocks = false;
 
-  public static double getDistractionValue() {
-    return DISTRACTION_CHANCE.get();
-  }
+  @ConfigEntry(id = "pickup_goal", translation = "miniatures.config.pickup_goal")
+  @Comment(value = "Whether or not non-hostile miniatures will try to pick up players. [default: true]", translation = "miniatures.config.pickup_goal.desc")
+  public static boolean pickupGoal = true;
 
-  public static boolean shouldSkipNullCheck() {
-    return SKIP_NULL_CHECK.get();
-  }
+  @ConfigEntry(id = "owner_rider", translation = "miniatures.config.owner_rider")
+  @Comment(value = "If true, a miniature will only try to pick up its owner; if false, it will pick up any player. [default: false]", translation = "miniatures.config.owner_rider.desc")
+  public static boolean ownerRider = false;
+
+  @ConfigEntry(id = "skip_null_check", translation = "miniatures.config.skip_null_check")
+  @Comment(value = "If true, the null profile cache is not consulted, which may cause lag when miniatures with non-existent skins are spawned. [default: false]", translation = "miniatures.config.skip_null_check.desc")
+  public static boolean skipNullCheck = false;
+
+  public static boolean getHostile() { return hostile; }
+  public static boolean getImmune() { return nonPlayerImmune; }
+  public static boolean getDestroysBlocks() { return destroysBlocks; }
+  public static boolean getBreaksBlocks() { return breaksBlocks; }
+  public static boolean getDoesPickup() { return pickupGoal; }
+  public static boolean getOwnerRider() { return ownerRider; }
+  public static int getRandomRunDelay() { return randomRunDelay; }
+  public static int getBaseRunDelay() { return baseRunDelay; }
+  public static double getDistractionValue() { return distractionChance; }
+  public static boolean shouldSkipNullCheck() { return skipNullCheck; }
 }

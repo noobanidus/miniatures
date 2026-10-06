@@ -2,13 +2,11 @@ package noobanidus.mods.miniatures.common.client.renderer.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.player.PlayerModelType;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 

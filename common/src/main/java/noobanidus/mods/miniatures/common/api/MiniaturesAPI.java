@@ -2,7 +2,6 @@ package noobanidus.mods.miniatures.common.api;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -10,15 +9,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.component.ResolvableProfile;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class MiniaturesAPI {
   public static final Logger LOG = LogManager.getLogger();
@@ -29,7 +25,8 @@ public class MiniaturesAPI {
   public static final ResourceKey<EntityType<?>> ME = ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("me"));
   public static final ResourceKey<EntityType<?>> MAXIME = ResourceKey.create(Registries.ENTITY_TYPE, MiniaturesAPI.rl("maxime"));
 
-  public static final BlockBehaviour.Properties SENSOR_TORCH_PROPERTIES = BlockBehaviour.Properties.ofFullCopy(Blocks.TORCH).setId(ResourceKey.create(Registries.BLOCK, MiniaturesAPI.rl("sensor_torch_block")));
+  public static final BlockBehaviour.Properties SENSOR_TORCH_PROPERTIES = BlockBehaviour.Properties.ofFullCopy(Blocks.TORCH)
+      .setId(ResourceKey.create(Registries.BLOCK, MiniaturesAPI.rl("sensor_torch_block")));
 
   public static IMiniaturesAPI INSTANCE;
 
@@ -41,52 +38,46 @@ public class MiniaturesAPI {
     return INSTANCE.getOverworld();
   }
 
-  public static boolean shouldSkipNullCheck () {
+  public static boolean shouldSkipNullCheck() {
     return INSTANCE.shouldSkipNullCheck();
   }
 
-  public static boolean getHostile () {
+  public static boolean getHostile() {
     return INSTANCE.getHostile();
   }
 
-  public static boolean getImmune () {
+  public static boolean getImmune() {
     return INSTANCE.getImmune();
   }
 
-  public static boolean getDestroysBlocks () {
+  public static boolean getDestroysBlocks() {
     return INSTANCE.getDestroysBlocks();
   }
 
-  public static boolean getBreaksBlocks () {
+  public static boolean getBreaksBlocks() {
     return INSTANCE.getBreaksBlocks();
   }
 
-  public static boolean getDoesPickup () {
+  public static boolean getDoesPickup() {
     return INSTANCE.getDoesPickup();
   }
 
-  public static boolean getOwnerRider () {
+  public static boolean getOwnerRider() {
     return INSTANCE.getOwnerRider();
   }
 
-  public static double getDistractionValue () {
+  public static double getDistractionValue() {
     return INSTANCE.getDistractionValue();
   }
 
-  public static int getBaseRunDelay () {
+  public static int getBaseRunDelay() {
     return INSTANCE.getBaseRunDelay();
   }
 
-  public static int getRandomRunDelay () {
+  public static int getRandomRunDelay() {
     return INSTANCE.getRandomRunDelay();
   }
 
-
-
-
-  public static EntityDataSerializer<Optional<ResolvableProfile>> getGameProfileSerializer() {
-    return INSTANCE.getGameProfileSerializer();
-  }
 
   public static Identifier rl(String path) {
     return Identifier.fromNamespaceAndPath(MODID, path);
@@ -96,11 +87,11 @@ public class MiniaturesAPI {
     return INSTANCE.canEntityDestroy(level, blockPos, entity);
   }
 
-  public static Path getGameDir () {
+  public static Path getGameDir() {
     return INSTANCE.getGameDir();
   }
 
-  public static void sendValidatePacket (ServerPlayer player) {
+  public static void sendValidatePacket(ServerPlayer player) {
     INSTANCE.sendValidatePacket(player);
   }
 }

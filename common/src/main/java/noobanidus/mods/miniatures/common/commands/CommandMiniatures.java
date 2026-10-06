@@ -7,6 +7,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
@@ -18,12 +19,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public class CommandMiniatures {
   public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-    dispatcher.register(Commands.literal("minis").requires(p -> p.hasPermission(2))
+    dispatcher.register(Commands.literal("minis")
+        .requires(p -> p.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
         .executes(c -> {
           c.getSource().sendSuccess(() -> Component.literal("minis cache | minis validate"), false);
           return 1;
@@ -35,14 +36,10 @@ public class CommandMiniatures {
   public static LiteralArgumentBuilder<CommandSourceStack> validateBuilder(LiteralArgumentBuilder<CommandSourceStack> builder) {
     builder.executes(c -> {
       c.getSource().getLevel().getEntities(EntityTypeTest.forClass(MiniMeEntity.class), e -> true).forEach(e -> {
-        Optional<ResolvableProfile> profile = e.getResolvableProfile();
-        profile.ifPresent(
-            innerProfile -> {
-              if (!innerProfile.isResolved()) {
-                MiniaturesAPI.LOG.warn("Unresolved profile for {}: {}", e, innerProfile);
-              }
-            }
-        );
+        ResolvableProfile innerProfile = e.getResolvableProfile();
+        if (!(innerProfile instanceof ResolvableProfile.Dynamic)) {
+          MiniaturesAPI.LOG.warn("Unresolved profile for {}: {}", e, innerProfile);
+        }
       });
       c.getSource()
           .sendSuccess(() -> Component.literal("Please check server console for information about incomplete profiles."), false);
@@ -84,7 +81,7 @@ public class CommandMiniatures {
           continue;
         }
 
-        MiniMeEntity.fetchGameProfile(name);
+        MiniMeEntity.loadProfile(c.getSource().getServer(), name);
         counter++;
       }
       int finalCounter = counter;

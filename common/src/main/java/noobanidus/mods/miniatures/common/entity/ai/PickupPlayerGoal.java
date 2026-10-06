@@ -68,7 +68,7 @@ public class PickupPlayerGoal extends Goal {
   @Override
   public void tick() {
     super.tick();
-    if (!minime.level().isClientSide && (!MiniaturesAPI.getOwnerRider() || canRidePlayer(targetPlayer))) {
+    if (!minime.level().isClientSide() && (!MiniaturesAPI.getOwnerRider() || canRidePlayer(targetPlayer))) {
       if (minime.distanceTo(targetPlayer) < 1.5) {
         targetPlayer.startRiding(minime);
       }
@@ -79,7 +79,6 @@ public class PickupPlayerGoal extends Goal {
     if (!MiniaturesAPI.getOwnerRider()) {
       return true;
     }
-    final ResolvableProfile owner = minime.getResolvableProfile().orElse(null);
-    return owner != null && player != null && player.getGameProfile().getId().equals(owner.gameProfile().getId());
+    return minime.getResolvableProfile().partialProfile().id().equals(player.getUUID());
   }
 }

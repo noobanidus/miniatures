@@ -13,7 +13,6 @@ import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import noobanidus.mods.miniatures.common.api.IMiniaturesAPI;
-import noobanidus.mods.miniatures.neoforge.init.ModSerializers;
 import noobanidus.mods.miniatures.neoforge.network.ClientboundValidateCachePacket;
 
 import java.nio.file.Path;
@@ -23,11 +22,6 @@ public class NeoForgeMiniaturesAPIImpl implements IMiniaturesAPI {
   @Override
   public MinecraftServer getServer() {
     return ServerLifecycleHooks.getCurrentServer();
-  }
-
-  @Override
-  public EntityDataSerializer<Optional<ResolvableProfile>> getGameProfileSerializer() {
-    return ModSerializers.OPTIONAL_RESOLVABLE_PROFILE.get();
   }
 
   @Override

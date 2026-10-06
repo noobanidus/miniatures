@@ -60,8 +60,6 @@ public interface IMiniaturesAPI {
     return ConfigManager.getRandomRunDelay();
   }
 
-  EntityDataSerializer<Optional<ResolvableProfile>> getGameProfileSerializer ();
-
   boolean canEntityDestroy(ServerLevel level, BlockPos blockPos, Mob entity);
 
   Path getGameDir();

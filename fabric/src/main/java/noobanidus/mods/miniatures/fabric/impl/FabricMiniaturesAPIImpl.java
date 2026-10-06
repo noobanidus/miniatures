@@ -9,11 +9,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.component.ResolvableProfile;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 import noobanidus.mods.miniatures.common.api.IMiniaturesAPI;
 import noobanidus.mods.miniatures.fabric.Miniatures;
-import noobanidus.mods.miniatures.fabric.init.ModSerializers;
 import noobanidus.mods.miniatures.fabric.network.toClient.PacketValidateClient;
 
 import java.nio.file.Path;
@@ -26,13 +25,8 @@ public class FabricMiniaturesAPIImpl implements IMiniaturesAPI {
   }
 
   @Override
-  public EntityDataSerializer<Optional<ResolvableProfile>> getGameProfileSerializer() {
-    return ModSerializers.RESOLVABLE_PROFILE;
-  }
-
-  @Override
   public boolean canEntityDestroy(ServerLevel level, BlockPos blockPos, Mob entity) {
-    return level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+    return level.getGameRules().get(GameRules.MOB_GRIEFING);
   }
 
   @Override

@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.TriState;
 import net.minecraft.util.Util;
 
 import java.util.function.Function;
@@ -42,7 +41,7 @@ public class AdditionalRenderTypes {
     return RenderType.create("spirit_entity", state);
   });
 
-  public static RenderType getGlowing (Identifier location) {
+  public static RenderType getGlowing(Identifier location) {
     return GLOWING.apply(location);
   }
 
@@ -57,7 +56,7 @@ public class AdditionalRenderTypes {
     return RenderType.create("spirit_entity2", state);
   });
 
-  public static RenderType getOtherGlowing (Identifier location) {
+  public static RenderType getOtherGlowing(Identifier location) {
     return OTHER_GLOWING.apply(location);
   }
 }

@@ -84,7 +84,7 @@ public class MiniMeleeAttackGoal extends Goal {
       return false;
     } else if (!this.longMemory) {
       return !this.attacker.getNavigation().isDone();
-    } else if (!this.attacker.isWithinRestriction(livingentity.blockPosition())) {
+    } else if (!this.attacker.isWithinHome(livingentity.blockPosition())) {
       return false;
     } else {
       return !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative();

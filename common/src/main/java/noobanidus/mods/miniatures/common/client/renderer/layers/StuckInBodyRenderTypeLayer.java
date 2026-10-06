@@ -5,9 +5,11 @@ import com.mojang.math.Axis;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.StuckInBodyLayer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -15,68 +17,73 @@ import net.minecraft.util.RandomSource;
 import noobanidus.mods.miniatures.common.client.model.MiniRenderModel;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
-public abstract class StuckInBodyRenderTypeLayer<M extends MiniRenderModel> extends RenderLayer<MiniRenderState, M> {
-  private final Model model;
+public abstract class StuckInBodyRenderTypeLayer<M extends MiniRenderModel, S> extends RenderLayer<MiniRenderState, M> {
+  private final Model<S> model;
+  private final S modelState;
   private final Identifier texture;
   private final StuckInBodyLayer.PlacementStyle placementStyle;
 
-  public StuckInBodyRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> arg, Model model, Identifier layer, StuckInBodyLayer.PlacementStyle style) {
+  public StuckInBodyRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> arg,  Model<S> model, S state, Identifier layer, StuckInBodyLayer.PlacementStyle style) {
     super(arg);
     this.model = model;
     this.texture = layer;
+    this.modelState = state;
     this.placementStyle = style;
   }
 
   protected abstract int numStuck(MiniRenderState p_365314_);
 
-  private void renderStuckItem(PoseStack p_117566_, MultiBufferSource p_117567_, int p_117568_, float p_117570_, float p_117571_, float p_117572_) {
-    float f = Mth.sqrt(p_117570_ * p_117570_ + p_117572_ * p_117572_);
-    float f1 = (float) (Math.atan2(p_117570_, p_117572_) * 180.0F / (float) Math.PI);
-    float f2 = (float) (Math.atan2(p_117571_, f) * 180.0F / (float) Math.PI);
-    p_117566_.mulPose(Axis.YP.rotationDegrees(f1 - 90.0F));
-    p_117566_.mulPose(Axis.ZP.rotationDegrees(f2));
-    this.model.renderToBuffer(p_117566_, p_117567_.getBuffer(this.model.renderType(this.texture)), p_117568_, OverlayTexture.NO_OVERLAY);
+
+  private void submitStuckItem(
+      PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, float directionX, float directionY, float directionZ, int outlineColor
+  ) {
+    float directionXZ = Mth.sqrt(directionX * directionX + directionZ * directionZ);
+    float yRot = (float)(Math.atan2(directionX, directionZ) * 180.0F / (float)Math.PI);
+    float xRot = (float)(Math.atan2(directionY, directionXZ) * 180.0F / (float)Math.PI);
+    poseStack.mulPose(Axis.YP.rotationDegrees(yRot - 90.0F));
+    poseStack.mulPose(Axis.ZP.rotationDegrees(xRot));
+    submitNodeCollector.submitModel(this.model, this.modelState, poseStack, this.texture, lightCoords, OverlayTexture.NO_OVERLAY, outlineColor, null);
   }
 
-  public void render(PoseStack p_117575_, MultiBufferSource p_117576_, int p_117577_, MiniRenderState p_363391_, float p_117579_, float p_117580_) {
-    int i = this.numStuck(p_363391_);
-    if (i > 0) {
-      RandomSource randomsource = RandomSource.create(p_363391_.id);
+  public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, MiniRenderState state, float yRot, float xRot) {
+    int count = this.numStuck(state);
+    if (count > 0) {
+      RandomSource random = RandomSource.createThreadLocalInstance(state.id);
 
-      for (int j = 0; j < i; j++) {
-        p_117575_.pushPose();
-        ModelPart modelpart = this.getParentModel().getRandomBodyPart(randomsource);
-        ModelPart.Cube modelpart$cube = modelpart.getRandomCube(randomsource);
-        modelpart.translateAndRotate(p_117575_);
-        float f = randomsource.nextFloat();
-        float f1 = randomsource.nextFloat();
-        float f2 = randomsource.nextFloat();
+      for (int i = 0; i < count; i++) {
+        poseStack.pushPose();
+        ModelPart modelPart = this.getParentModel().getRandomBodyPart(random);
+        ModelPart.Cube cube = modelPart.getRandomCube(random);
+        modelPart.translateAndRotate(poseStack);
+        float midX = random.nextFloat();
+        float midY = random.nextFloat();
+        float midZ = random.nextFloat();
         if (this.placementStyle == StuckInBodyLayer.PlacementStyle.ON_SURFACE) {
-          int k = randomsource.nextInt(3);
-          switch (k) {
+          int plane = random.nextInt(3);
+          switch (plane) {
             case 0:
-              f = snapToFace(f);
+              midX = snapToFace(midX);
               break;
             case 1:
-              f1 = snapToFace(f1);
+              midY = snapToFace(midY);
               break;
             default:
-              f2 = snapToFace(f2);
+              midZ = snapToFace(midZ);
           }
         }
 
-        p_117575_.translate(
-            Mth.lerp(f, modelpart$cube.minX, modelpart$cube.maxX) / 16.0F,
-            Mth.lerp(f1, modelpart$cube.minY, modelpart$cube.maxY) / 16.0F,
-            Mth.lerp(f2, modelpart$cube.minZ, modelpart$cube.maxZ) / 16.0F
+        poseStack.translate(
+            Mth.lerp(midX, cube.minX, cube.maxX) / 16.0F, Mth.lerp(midY, cube.minY, cube.maxY) / 16.0F, Mth.lerp(midZ, cube.minZ, cube.maxZ) / 16.0F
         );
-        this.renderStuckItem(p_117575_, p_117576_, p_117577_, -(f * 2.0F - 1.0F), -(f1 * 2.0F - 1.0F), -(f2 * 2.0F - 1.0F));
-        p_117575_.popPose();
+        this.submitStuckItem(
+            poseStack, submitNodeCollector, lightCoords, -(midX * 2.0F - 1.0F), -(midY * 2.0F - 1.0F), -(midZ * 2.0F - 1.0F), state.outlineColor
+        );
+        poseStack.popPose();
       }
     }
   }
 
-  private static float snapToFace(float p_361108_) {
-    return p_361108_ > 0.5F ? 1.0F : 0.5F;
+  private static float snapToFace(float value) {
+    return value > 0.5F ? 1.0F : 0.5F;
   }
 }

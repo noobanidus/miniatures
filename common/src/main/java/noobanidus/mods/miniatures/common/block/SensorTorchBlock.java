@@ -28,7 +28,7 @@ public class SensorTorchBlock extends TorchBlock {
 
   @Override
   @SuppressWarnings("deprecated")
-  public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity, InsideBlockEffectApplier applier) {
+  public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity, InsideBlockEffectApplier applier, boolean isPrecise) {
     if (!pLevel.isClientSide() && !pState.getValue(TRIGGERED)) {
       MiniaturesAPI.getServer().getPlayerList()
           .broadcastSystemMessage(Component.literal("First to cross the line was: ").append(pEntity.getName()), false);

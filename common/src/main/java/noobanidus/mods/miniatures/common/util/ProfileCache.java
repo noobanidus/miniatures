@@ -3,10 +3,11 @@ package noobanidus.mods.miniatures.common.util;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,7 @@ public class ProfileCache extends SavedData {
   public static Codec<ProfileCache> CODEC = RecordCodecBuilder.create(instance ->
       instance.group(Codec.STRING.listOf().xmap(HashSet::new, ArrayList::new).fieldOf("cached")
           .forGetter(o -> o.cached)).apply(instance, ProfileCache::new));
-  private static final String IDENTIFIER = "MiniaturesProfileCache";
+  private static final Identifier IDENTIFIER = MiniaturesAPI.rl("ProfileCache");
   public static final SavedDataType<ProfileCache> TYPE = new SavedDataType<>(IDENTIFIER, ProfileCache::new, CODEC, null);
 
   private final HashSet<String> cached;
@@ -42,7 +43,7 @@ public class ProfileCache extends SavedData {
 
   public static ProfileCache getInstance() {
     if (INSTANCE == null) {
-      DimensionDataStorage manager = getServerWorld().getDataStorage();
+      SavedDataStorage manager = getServerWorld().getDataStorage();
       INSTANCE = manager.computeIfAbsent(TYPE);
     }
 

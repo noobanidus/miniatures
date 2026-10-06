@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.PlayerSkinRenderCache;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -42,6 +43,7 @@ import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRenderState, MiniMeModel> {
   public boolean isSlim = false;
+  private final PlayerSkinRenderCache cache;
 
   public MiniMeRenderer(EntityRendererProvider.Context context) {
     super(context, new MiniMeModel(context.bakeLayer(ModelLayers.PLAYER), false), 0.25F);
@@ -72,6 +74,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
     this.addLayer(new WingsLayer<>(this, context.getModelSet(), context.getEquipmentRenderer()));
     this.addLayer(new BeeStingerRenderTypeLayer<>(this, context));
+    this.cache = context.getPlayerSkinRenderCache();
   }
 
   @Override
@@ -151,8 +154,6 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     state.skin = getSkin(entity); //entity.getSkin();
     state.arrowCount = entity.getArrowCount();
     state.stingerCount = entity.getStingerCount();
-    state.useItemRemainingTicks = entity.getUseItemRemainingTicks();
-    state.swinging = entity.swinging;
     state.isSpectator = entity.isSpectator();
     state.showHat = true; //entity.isModelPartShown(PlayerModelPart.HAT);
     state.showJacket = true; //entity.isModelPartShown(PlayerModelPart.JACKET);
@@ -192,8 +193,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     }
   }
 
-  public static PlayerSkin getSkin(MiniMeEntity entity) {
-    return entity.getResolvableProfile().map(resolvableProfile -> Minecraft.getInstance().getSkinManager()
-        .getInsecureSkin(resolvableProfile.gameProfile())).orElseGet(DefaultPlayerSkin::getDefaultSkin);
+  public PlayerSkin getSkin(MiniMeEntity entity) {
+    return cache.getOrDefault(entity.getResolvableProfile()).playerSkin();
   }
 }

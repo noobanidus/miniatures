@@ -3,9 +3,7 @@ package noobanidus.mods.miniatures.neoforge.setup;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,16 +18,11 @@ import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import noobanidus.mods.miniatures.neoforge.init.ModBlocks;
 import noobanidus.mods.miniatures.neoforge.init.ModEntities;
 
-@EventBusSubscriber(modid = MiniaturesAPI.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MiniaturesAPI.MODID, value = Dist.CLIENT)
 public class ClientSetup {
 
   @SubscribeEvent
   public static void init(FMLClientSetupEvent event) {
-    event.enqueueWork(() -> {
-      RenderType rendertype = RenderType.cutoutMipped();
-      //noinspection deprecation
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.SENSOR_TORCH_BLOCK.get(), rendertype);
-    });
   }
 
   @SubscribeEvent

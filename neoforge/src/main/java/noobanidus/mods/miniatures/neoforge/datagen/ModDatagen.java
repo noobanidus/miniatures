@@ -7,6 +7,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import noobanidus.mods.miniatures.neoforge.datagen.assets.ModBlockstateProvider;
 import noobanidus.mods.miniatures.neoforge.datagen.assets.ModLanguageProvider;
 import noobanidus.mods.miniatures.neoforge.datagen.data.ModBlockTagsProvider;
@@ -15,7 +16,7 @@ import noobanidus.mods.miniatures.neoforge.datagen.data.ModLootTableProvider;
 
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid= MiniaturesAPI.MODID)
 public class ModDatagen {
   @SubscribeEvent
   public static void gatherData(GatherDataEvent.Client event) {

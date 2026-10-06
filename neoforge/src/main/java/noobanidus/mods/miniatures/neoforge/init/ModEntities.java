@@ -15,7 +15,7 @@ import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = MiniaturesAPI.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MiniaturesAPI.MODID)
 public class ModEntities {
   public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MiniaturesAPI.MODID);
 
