@@ -4,5 +4,5 @@ accessible field net/minecraft/world/entity/Entity DATA_CUSTOM_NAME Lnet/minecra
 accessible field net/minecraft/server/MinecraftServer services Lnet/minecraft/server/Services;
 accessible field net/minecraft/client/multiplayer/ClientLevel entityStorage Lnet/minecraft/world/level/entity/TransientEntitySectionManager;
 
-accessible field net/minecraft/client/renderer/RenderPipelines ENTITY_SNIPPET Lnet/minecraft/client/renderer/RenderPipeline$Snippet
+accessible field net/minecraft/client/renderer/RenderPipelines ENTITY_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible method net/minecraft/client/renderer/rendertype/RenderType create (Ljava/lang/String;Lnet/minecraft/client/renderer/rendertype/RenderSetup;)Lnet/minecraft/client/renderer/rendertype/RenderType;
