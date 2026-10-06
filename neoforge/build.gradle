@@ -16,9 +16,9 @@ dependencies {
 
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
     implementation("io.github.llamalad7:mixinextras-neoforge:${rootProject.mixin_extras_version}")
-    compileOnly "maven.modrinth:jade:${rootProject.jade_version}+neoforge"
+    //compileOnly "maven.modrinth:jade:${rootProject.jade_version}+neoforge"
     //runtimeOnly "maven.modrinth:jade:${rootProject.jade_version}+neoforge"
-    jarJar(implementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-26.1:${rootProject.resourceful_config_version}")
+    jarJar(implementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${rootProject.minecraft_version}:${rootProject.resourceful_config_version}")
 }
 publishMods {
     file = tasks.jar.archiveFile

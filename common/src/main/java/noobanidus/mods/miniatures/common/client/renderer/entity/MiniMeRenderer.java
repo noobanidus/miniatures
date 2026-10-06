@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
@@ -206,21 +207,6 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     state.skin = getSkin(entity); //entity.getSkin();
     state.arrowCount = entity.getArrowCount();
     state.stingerCount = entity.getStingerCount();
-    if (state.distanceToCameraSq < 100.0) {
-      Scoreboard scoreboard = entity.level().getScoreboard();
-      Objective objective = scoreboard.getDisplayObjective(DisplaySlot.BELOW_NAME);
-      if (objective != null) {
-        ReadOnlyScoreInfo readonlyscoreinfo = scoreboard.getPlayerScoreInfo(entity, objective);
-        Component component = ReadOnlyScoreInfo.safeFormatValue(readonlyscoreinfo, objective.numberFormatOrDefault(StyledFormat.NO_STYLE));
-        state.scoreText = Component.empty().append(component).append(CommonComponents.SPACE)
-            .append(objective.getDisplayName());
-      } else {
-        state.scoreText = null;
-      }
-    } else {
-      state.scoreText = null;
-    }
-
     state.id = entity.getId();
 /*        state.name = entity.getGameProfile().ifPresent(o ->
             if (o.)).flatMap(GameProfile::getName).orElse("Minime");*/

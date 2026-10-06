@@ -2,6 +2,7 @@ package noobanidus.mods.miniatures.neoforge.datagen.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.references.BlockItemIds;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
@@ -18,7 +19,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
   @Override
   protected void addTags(HolderLookup.Provider provider) {
-    tag(MiniTags.Blocks.BREAK_BLOCKS).add(Blocks.TORCH, ModBlocks.SENSOR_TORCH_BLOCK.get());
+    tag(MiniTags.Blocks.BREAK_BLOCKS).add(BlockItemIds.TORCH.block(), ModBlocks.SENSOR_TORCH_BLOCK.getKey());
     tag(MiniTags.Blocks.BREAK_BLOCKS).addTag(BlockTags.FLOWERS);
   }
 }

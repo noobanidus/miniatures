@@ -4,12 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.StuckInBodyLayer;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -23,7 +21,7 @@ public abstract class StuckInBodyRenderTypeLayer<M extends MiniRenderModel, S> e
   private final Identifier texture;
   private final StuckInBodyLayer.PlacementStyle placementStyle;
 
-  public StuckInBodyRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> arg,  Model<S> model, S state, Identifier layer, StuckInBodyLayer.PlacementStyle style) {
+  public StuckInBodyRenderTypeLayer(LivingEntityRenderer<?, MiniRenderState, M> arg, Model<S> model, S state, Identifier layer, StuckInBodyLayer.PlacementStyle style) {
     super(arg);
     this.model = model;
     this.texture = layer;
@@ -38,8 +36,8 @@ public abstract class StuckInBodyRenderTypeLayer<M extends MiniRenderModel, S> e
       PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, float directionX, float directionY, float directionZ, int outlineColor
   ) {
     float directionXZ = Mth.sqrt(directionX * directionX + directionZ * directionZ);
-    float yRot = (float)(Math.atan2(directionX, directionZ) * 180.0F / (float)Math.PI);
-    float xRot = (float)(Math.atan2(directionY, directionXZ) * 180.0F / (float)Math.PI);
+    float yRot = (float) (Math.atan2(directionX, directionZ) * 180.0F / (float) Math.PI);
+    float xRot = (float) (Math.atan2(directionY, directionXZ) * 180.0F / (float) Math.PI);
     poseStack.mulPose(Axis.YP.rotationDegrees(yRot - 90.0F));
     poseStack.mulPose(Axis.ZP.rotationDegrees(xRot));
     submitNodeCollector.submitModel(this.model, this.modelState, poseStack, this.texture, lightCoords, OverlayTexture.NO_OVERLAY, outlineColor, null);
