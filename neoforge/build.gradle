@@ -42,6 +42,8 @@ publishMods {
 
             projectSlug = "miniatures"
             displayName = "miniatures-neoforge-${rootProject.minecraft_version}-${rootProject.mod_version}"
+            client = true
+            server = true
             accessToken = project.findProperty("curse_auth")
             projectId = project.findProperty('curseforge_id')
             announcementTitle = "Miniatures ${rootProject.minecraft_version}-${rootProject.mod_version} for NeoForge on CurseForge"
