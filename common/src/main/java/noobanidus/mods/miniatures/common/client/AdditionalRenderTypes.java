@@ -3,6 +3,7 @@ package noobanidus.mods.miniatures.common.client;
 import com.mojang.renderpearl.api.pipeline.BlendFunction;
 import com.mojang.renderpearl.api.pipeline.ColorTargetState;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -17,6 +18,7 @@ public class AdditionalRenderTypes {
           .withLocation("pipeline/miniatures_glowing")
           .withShaderDefine("ALPHA_CUTOUT", 0.02F)
           .withColorTargetState(new ColorTargetState(BlendFunction.GLINT))
+          .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER1)
           .withCull(false)
           .build();
 
@@ -25,6 +27,7 @@ public class AdditionalRenderTypes {
           .withLocation("pipeline/miniatures_other_glowing")
           .withShaderDefine("ALPHA_CUTOUT", 0.02F)
           .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
+          .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER1)
           .withCull(false)
           .build();
 
