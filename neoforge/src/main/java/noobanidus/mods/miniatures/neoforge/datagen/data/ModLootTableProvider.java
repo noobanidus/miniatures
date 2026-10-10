@@ -1,18 +1,16 @@
 package noobanidus.mods.miniatures.neoforge.datagen.data;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.SingleRegistryBootstrap;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import noobanidus.mods.miniatures.neoforge.init.ModBlocks;
+import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
 import noobanidus.mods.miniatures.neoforge.init.ModEntities;
 
 import java.util.List;
@@ -20,12 +18,9 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-public class ModLootTableProvider extends LootTableProvider {
-
-  public ModLootTableProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> future) {
-    super(packOutput, Set.of(), List.of(
-            new SubProviderEntry(ModEntityLoot::new, LootContextParamSets.ENTITY)
-    ), future);
+public class ModLootTableProvider {
+  public static SingleRegistryBootstrap<LootTable> create() {
+    return new LootTableProvider(Set.of(MiniaturesAPI.MAXIME_LOOT, MiniaturesAPI.MINIME_LOOT, MiniaturesAPI.ME_LOOT), List.of(new LootTableProvider.SubProviderEntry(ModEntityLoot::new, LootContextParamSets.ENTITY)));
   }
 
 /*  private static class ModBlockLoot extends BlockLootSubProvider {
@@ -45,8 +40,8 @@ public class ModLootTableProvider extends LootTableProvider {
   }*/
 
   private static class ModEntityLoot extends EntityLootSubProvider {
-    protected ModEntityLoot(HolderLookup.Provider provider) {
-      super(FeatureFlags.REGISTRY.allFlags(), provider);
+    protected ModEntityLoot(Context context) {
+      super(FeatureFlags.REGISTRY.allFlags(), context);
     }
 
     @Override

@@ -38,9 +38,9 @@ public abstract class StuckInBodyRenderTypeLayer<M extends MiniRenderModel, S> e
     float directionXZ = Mth.sqrt(directionX * directionX + directionZ * directionZ);
     float yRot = (float) (Math.atan2(directionX, directionZ) * 180.0F / (float) Math.PI);
     float xRot = (float) (Math.atan2(directionY, directionXZ) * 180.0F / (float) Math.PI);
-    poseStack.mulPose(Axis.YP.rotationDegrees(yRot - 90.0F));
-    poseStack.mulPose(Axis.ZP.rotationDegrees(xRot));
-    submitNodeCollector.submitModel(this.model, this.modelState, poseStack, this.texture, lightCoords, OverlayTexture.NO_OVERLAY, outlineColor, null);
+    poseStack.rotateDegrees(Axis.YP, yRot - 90.0F);
+    poseStack.rotateDegrees(Axis.ZP, xRot);
+    submitNodeCollector.submitModel(this.model, this.modelState, poseStack, this.texture, lightCoords, OverlayTexture.NO_OVERLAY, outlineColor);
   }
 
   public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, MiniRenderState state, float yRot, float xRot) {

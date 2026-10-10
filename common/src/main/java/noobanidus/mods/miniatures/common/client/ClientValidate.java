@@ -3,6 +3,7 @@ package noobanidus.mods.miniatures.common.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.AbortableIterationConsumer;
+import net.minecraft.util.Continuation;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import noobanidus.mods.miniatures.common.api.MiniaturesAPI;
@@ -23,7 +24,7 @@ public class ClientValidate {
         if (!(innerProfile instanceof ResolvableProfile.Dynamic)) {
           MiniaturesAPI.LOG.warn("Unresolved profile for {}: {}", e, innerProfile);
         }
-        return AbortableIterationConsumer.Continuation.CONTINUE;
+        return Continuation.CONTINUE;
       });
     }
   }

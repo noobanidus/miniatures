@@ -9,16 +9,12 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
 import noobanidus.mods.miniatures.common.client.renderer.state.MiniRenderState;
 
 public class MiniItemInHandLayer extends ItemInHandLayer<MiniRenderState, MiniMeModel> {
-  private static final float X_ROT_MIN = (float) (-Math.PI / 6);
-  private static final float X_ROT_MAX = (float) (Math.PI / 2);
-
   public MiniItemInHandLayer(RenderLayerParent<MiniRenderState, MiniMeModel> renderer) {
     super(renderer);
   }
@@ -28,8 +24,7 @@ public class MiniItemInHandLayer extends ItemInHandLayer<MiniRenderState, MiniMe
       MiniRenderState state, ItemStackRenderState item, ItemStack itemStack, HumanoidArm arm, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords
   ) {
     if (!item.isEmpty()) {
-      InteractionHand currentHand = arm == state.mainArm ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-      if (state.isUsingItem && state.useItemHand == currentHand && state.attackTime < 1.0E-5F && !state.heldOnHead.isEmpty()) {
+      if (state.isUsingItem && state.useItemHand.asArm(state.mainArm) == arm && state.swingAnimation < 1.0E-5F && !state.heldOnHead.isEmpty()) {
         this.renderItemHeldToEye(state, arm, poseStack, submitNodeCollector, lightCoords);
       } else {
         super.submitArmWithItem(state, item, itemStack, arm, poseStack, submitNodeCollector, lightCoords);

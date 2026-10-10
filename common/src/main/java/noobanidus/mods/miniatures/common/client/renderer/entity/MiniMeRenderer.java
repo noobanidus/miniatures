@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.UvMapping;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -139,9 +140,7 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
       int overlayCoords = getOverlayCoords(state, this.getWhiteOverlayProgress(state));
       int baseColor = forceTransparent ? 654311423 : -1;
       int tintedColor = ARGB.multiply(baseColor, this.getModelTint(state));
-      submitNodeCollector.submitModel(
-          this.model, state, poseStack, renderType, state.lightCoords, overlayCoords, tintedColor, null, state.outlineColor, null
-      );
+      submitNodeCollector.submitModel(this.model, state, poseStack, renderType, state.lightCoords, overlayCoords, tintedColor, (UvMapping)null, state.outlineColor);
     }
 
     if (this.shouldRenderLayers(state) && !this.layers.isEmpty()) {
@@ -173,15 +172,15 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
     int noob = miniMeEntity.noobVariant;
     if (noob == 0) {
       poseStack.translate(0.0D, miniMeEntity.bbHeight, 0.0D);
-      poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+      poseStack.rotate(Axis.ZP, 180.0f);
     } else if (noob == 1) {
       poseStack.translate(0.0D, 0.35F, 0.0D);
     } else if (noob == 6) {
-      poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
+      poseStack.rotateDegrees(Axis.YP, 90.0f);
     } else if (noob == 7) {
-      poseStack.mulPose(Axis.YP.rotationDegrees(-90.0f));
+      poseStack.rotateDegrees(Axis.YP, -90.0f);
     } else if (noob == 8) {
-      poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
+      poseStack.rotateDegrees(Axis.YP, 180.0f);
     }
   }
 

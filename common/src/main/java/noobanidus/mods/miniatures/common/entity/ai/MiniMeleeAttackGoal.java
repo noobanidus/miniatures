@@ -1,11 +1,14 @@
 package noobanidus.mods.miniatures.common.entity.ai;
 
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.pathfinder.Path;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
@@ -158,9 +161,10 @@ public class MiniMeleeAttackGoal extends Goal {
 
   protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
     double d0 = this.getAttackReachSqr(enemy);
+    ItemStack itemInHand = enemy.getItemInHand(InteractionHand.MAIN_HAND);
     if (distToEnemySqr <= d0 && this.ticksUntilNextAttack <= 0) {
       this.resetAttackCooldown();
-      this.attacker.swing(InteractionHand.MAIN_HAND);
+      this.attacker.swing(InteractionHand.MAIN_HAND, itemInHand.getInteractAnimation());
       this.attacker.doHurtTarget((ServerLevel) enemy.level(), enemy);
     }
 
