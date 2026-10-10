@@ -21,7 +21,10 @@ public class DynamicHumanoidArmorLayer<M extends HumanoidModel<MiniRenderState>,
   @Override
   public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, MiniRenderState state, float yRot, float xRot) {
     if ((state.skin.model() == PlayerModelType.SLIM && isSlim) || (state.skin.model() == PlayerModelType.WIDE && !isSlim)) {
+      boolean oldBaby = state.isBaby;
+      state.isBaby = false;
       super.submit(poseStack, submitNodeCollector, lightCoords, state, yRot, xRot);
+      state.isBaby = oldBaby;
     }
   }
 }
