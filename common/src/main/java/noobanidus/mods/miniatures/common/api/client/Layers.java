@@ -12,4 +12,6 @@ public class Layers {
   public static final ModelLayerLocation GLOWING_MINI_ME_SLIM = new ModelLayerLocation(MiniaturesAPI.rl("glowing_mini_me_slim"), "main");
   public static final ModelLayerLocation GHOSTLY_MINI_ME = new ModelLayerLocation(MiniaturesAPI.rl("ghostly_mini_me"), "main");
   public static final ModelLayerLocation GHOSTLY_MINI_ME_SLIM = new ModelLayerLocation(MiniaturesAPI.rl("ghostly_mini_me_slim"), "main");
+  public static final ModelLayerLocation SUBTRACTIVE_MINI_ME = new ModelLayerLocation(MiniaturesAPI.rl("subtractive_mini_me"), "main");
+  public static final ModelLayerLocation SUBTRACTIVE_MINI_ME_SLIM = new ModelLayerLocation(MiniaturesAPI.rl("subtractive_mini_me_slim"), "main");
 }

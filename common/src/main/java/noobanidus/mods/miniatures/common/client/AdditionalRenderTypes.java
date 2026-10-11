@@ -3,6 +3,8 @@ package noobanidus.mods.miniatures.common.client;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DestFactor;
+import com.mojang.blaze3d.platform.SourceFactor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -27,6 +29,17 @@ public class AdditionalRenderTypes {
           .withShaderDefine("ALPHA_CUTOUT", 0.02F)
           .withSampler("Sampler1")
           .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
+          .withCull(false)
+          .build();
+
+  private static final BlendFunction SOMETHING = new BlendFunction(SourceFactor.ZERO, DestFactor.ONE_MINUS_SRC_COLOR, SourceFactor.ZERO, DestFactor.ONE);
+
+  public static final RenderPipeline SUBTRACTIVE_GLOWING_PIPELINE =
+      RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
+          .withLocation("pipeline/miniatures_subtractive_glowing")
+          .withShaderDefine("ALPHA_CUTOUT", 0.02F)
+          .withSampler("Sampler1")
+          .withColorTargetState(new ColorTargetState(BlendFunction.INVERT))
           .withCull(false)
           .build();
 
@@ -58,5 +71,19 @@ public class AdditionalRenderTypes {
 
   public static RenderType getOtherGlowing(Identifier location) {
     return OTHER_GLOWING.apply(location);
+  }
+
+  private static final Function<Identifier, RenderType> SUBTRACTIVE = Util.memoize((texture) -> {
+    RenderSetup state = RenderSetup.builder(SUBTRACTIVE_GLOWING_PIPELINE)
+        .withTexture("Sampler0", texture)
+        .useLightmap()
+        .affectsCrumbling()
+        .setOutline(RenderSetup.OutlineProperty.AFFECTS_OUTLINE)
+        .createRenderSetup();
+    return RenderType.create("spirit_entity3", state);
+  });
+
+  public static RenderType getSubtractive (Identifier location) {
+    return SUBTRACTIVE.apply(location);
   }
 }

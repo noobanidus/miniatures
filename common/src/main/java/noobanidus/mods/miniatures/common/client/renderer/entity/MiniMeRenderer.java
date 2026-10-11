@@ -114,6 +114,12 @@ public class MiniMeRenderer extends LivingEntityRenderer<MiniMeEntity, MiniRende
       if (isSlim && this.model != ModelHolder.glowingMiniMeSlim) {
         this.model = ModelHolder.glowingMiniMeSlim;
       }
+    } else if (noob == 9) {
+      state.lightCoords = 15728880;
+      this.model = ModelHolder.subtractiveMiniMe;
+      if (isSlim && this.model != ModelHolder.subtractiveMiniMeSlim) {
+        this.model = ModelHolder.subtractiveMiniMeSlim;
+      }
     }
 
     poseStack.pushPose();

@@ -5,6 +5,7 @@ import noobanidus.mods.miniatures.common.api.client.Layers;
 import noobanidus.mods.miniatures.common.client.model.GhostlyMiniMeModel;
 import noobanidus.mods.miniatures.common.client.model.GlowingMiniMeModel;
 import noobanidus.mods.miniatures.common.client.model.MiniMeModel;
+import noobanidus.mods.miniatures.common.client.model.SubtractiveMiniMeModel;
 import noobanidus.mods.miniatures.common.client.renderer.entity.MiniMeRenderer;
 import noobanidus.mods.miniatures.common.entity.MiniMeEntity;
 
@@ -16,6 +17,8 @@ public class ModelHolder {
   public static MiniMeModel ghostlyMiniMeSlim;
   public static MiniMeModel glowingMiniMe;
   public static MiniMeModel glowingMiniMeSlim;
+  public static MiniMeModel subtractiveMiniMe;
+  public static MiniMeModel subtractiveMiniMeSlim;
 
   public static void init(EntityRendererProvider.Context context) {
     miniMe = new MiniMeModel(context.bakeLayer(Layers.MINI_ME), false);
@@ -25,5 +28,7 @@ public class ModelHolder {
     ghostlyMiniMeSlim = new GhostlyMiniMeModel(context.bakeLayer(Layers.GHOSTLY_MINI_ME_SLIM), true);
     glowingMiniMe = new GlowingMiniMeModel(context.bakeLayer(Layers.GLOWING_MINI_ME), false);
     glowingMiniMeSlim = new GlowingMiniMeModel(context.bakeLayer(Layers.GLOWING_MINI_ME_SLIM), true);
+    subtractiveMiniMe = new SubtractiveMiniMeModel(context.bakeLayer(Layers.SUBTRACTIVE_MINI_ME), false);
+    subtractiveMiniMeSlim = new SubtractiveMiniMeModel(context.bakeLayer(Layers.SUBTRACTIVE_MINI_ME_SLIM), true);
   }
 }

@@ -50,5 +50,7 @@ public class ClientSetup {
     event.registerLayerDefinition(Layers.GLOWING_MINI_ME_SLIM, () -> LayerDefinition.create(MiniRenderModel.createMesh(CubeDeformation.NONE, true), 64, 64));
     event.registerLayerDefinition(Layers.GHOSTLY_MINI_ME, () -> LayerDefinition.create(MiniRenderModel.createMesh(CubeDeformation.NONE, false), 64, 64));
     event.registerLayerDefinition(Layers.GHOSTLY_MINI_ME_SLIM, () -> LayerDefinition.create(MiniRenderModel.createMesh(CubeDeformation.NONE, true), 64, 64));
+    event.registerLayerDefinition(Layers.SUBTRACTIVE_MINI_ME, () -> LayerDefinition.create(MiniRenderModel.createMesh(CubeDeformation.NONE, false), 64, 64));
+    event.registerLayerDefinition(Layers.SUBTRACTIVE_MINI_ME_SLIM, () -> LayerDefinition.create(MiniRenderModel.createMesh(CubeDeformation.NONE, true), 64, 64));
   }
 }
