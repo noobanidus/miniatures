@@ -96,6 +96,14 @@ public class MiniMeEntity extends Monster {
   }
 
   public static void loadProfile(MinecraftServer server, String name) {
+    if (name.length() > 16) {
+      name = name.substring(0, 16);
+    }
+
+    if (!StringUtil.isValidPlayerName(name)) {
+      MiniaturesAPI.LOG.error("Player name contains invalid characters: '{}'.", name);
+    }
+
     loadProfile(ResolvableProfile.createUnresolved(name), server, server.services.profileResolver(), Consumers.nop());
   }
 
@@ -211,6 +219,15 @@ public class MiniMeEntity extends Monster {
   }
 
   public void setGameProfileByName(String name) {
+    if (name.length() > 16) {
+      name = name.substring(0, 16);
+    }
+
+    if (!StringUtil.isValidPlayerName(name)) {
+      MiniaturesAPI.LOG.error("Invalid player name: '{}'. Unable to set profile for '{}'.", name, this);
+      return;
+    }
+
     setProfile(ResolvableProfile.createUnresolved(name.toLowerCase(Locale.ROOT)));
   }
 
